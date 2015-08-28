@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<analysed-artifact artifact-name="sample.jar">
+    <meta status="500" error-message="No compiled classes found">
+    </meta>
+    <meta status="200" compiled-version="8">
+        <!--+
+            | Deployment
+            | lib = no main, no identified meta data such as OSGI-INF, WEB-INF
+            | osgi = OSGI-INF with blueprint.xml detected
+            | web = WEB-INF with web.xml detected
+            +-->
+    </meta>
+    
+    <!-- In case a pom file is found -->
+    <maven>
+        <groupId></groupId>
+        <artifactId></artifactId>
+        <version></version>
+    </maven>
+    
+    <summary>
+    </summary>
+    
+    <files>
+        <file type="class" total="60"/>
+        <file type="xml" total="4"/>
+    </files>
+    
+    <!-- List all external dependencies -->    
+    <dependencies>
+        
+    </dependencies>
+    
+    <patterns>
+        
+    </patterns>
+</analysed-artifact>
+
+<!--
+    META-INF/MANIFEST.MF
+    META-INF/
+    META-INF/maven/
+    META-INF/maven/com.liberty.global/
+    META-INF/maven/com.liberty.global/service-recommendation/
+    META-INF/maven/com.liberty.global/service-recommendation/pom.properties
+    META-INF/maven/com.liberty.global/service-recommendation/pom.xml
+    OSGI-INF/
+    OSGI-INF/blueprint/
+    OSGI-INF/blueprint/blueprint.xml
+    com/
+    com/lgi/
+    com/lgi/training/
+    com/lgi/training/service/
+    com/lgi/training/service/recommendation/
+    com/lgi/training/service/recommendation/RecommendationRouteBuilder.class
+    com/lgi/training/service/recommendation/RecommendationService.class
+    com/lgi/training/service/recommendation/processor/
+    com/lgi/training/service/recommendation/processor/ErrorProcessor.class
+    com/lgi/training/service/recommendation/processor/StatusProcessor.class
+    features.xml
+-->
