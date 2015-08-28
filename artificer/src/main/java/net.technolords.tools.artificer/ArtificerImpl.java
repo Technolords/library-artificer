@@ -96,6 +96,7 @@ public class ArtificerImpl implements Analyser {
         // TODO: count the classes and determine their types (summary)
         // TODO: determine the compiled version
         // TODO: determine the imports (by reflection)
+        // TODO: more stuff
 
         // Report analysis
         this.writeReport(analysis);
