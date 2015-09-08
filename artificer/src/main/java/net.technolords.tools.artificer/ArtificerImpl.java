@@ -26,8 +26,6 @@ import java.nio.file.StandardOpenOption;
 public class ArtificerImpl implements Analyser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtificerImpl.class);
     private static final Charset CHARSET = Charset.forName("UTF-8");
-    public static final String STATUS_OK = "200";
-    public static final String STATUS_ERROR = "500";
 
     private Path outputLocation;
     private String outputFilename;
@@ -92,6 +90,8 @@ public class ArtificerImpl implements Analyser {
         analysis.setMeta(meta);
 
         // Start analysis
+        ArtifactManager artifactManager = new ArtifactManager();
+        artifactManager.openArtifact(analysis, inputLocation);
         // TODO: determine if the source is valid (i.e. a zip file)
         // TODO: count the classes and determine their types (summary)
         // TODO: determine the compiled version

@@ -2,6 +2,7 @@
 <analysed-artifact artifact-name="sample.jar">
     <meta status="500" error-message="No compiled classes found">
     </meta>
+
     <meta status="200" compiled-version="8">
         <!--+
             | Deployment
@@ -10,27 +11,23 @@
             | web = WEB-INF with web.xml detected
             +-->
     </meta>
-    
+
+    <resources>
+        <resource type=".class" total="60"/>
+        <resource type=".xml" total="4"/>
+    </resources>
+
+    <!-- List all external dependencies -->
+    <dependencies>
+    </dependencies>
+
     <!-- In case a pom file is found -->
     <maven>
         <groupId></groupId>
         <artifactId></artifactId>
         <version></version>
     </maven>
-    
-    <summary>
-    </summary>
-    
-    <files>
-        <file type="class" total="60"/>
-        <file type="xml" total="4"/>
-    </files>
-    
-    <!-- List all external dependencies -->    
-    <dependencies>
-        
-    </dependencies>
-    
+
     <patterns>
         
     </patterns>

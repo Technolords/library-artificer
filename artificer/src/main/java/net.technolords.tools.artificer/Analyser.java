@@ -8,6 +8,8 @@ import java.nio.file.Path;
  * Created by Technolords on 2015-Aug-18.
  */
 public interface Analyser {
+    String STATUS_OK = "200";
+    String STATUS_ERROR = "500";
 
     /**
      * Specify the output location of where the XML file shall be generated.

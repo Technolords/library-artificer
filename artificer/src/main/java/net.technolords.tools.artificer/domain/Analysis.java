@@ -1,9 +1,7 @@
 package net.technolords.tools.artificer.domain;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
+import java.util.*;
 
 /**
  * Created by Technolords on 2015-Aug-21.
@@ -16,6 +14,8 @@ public class Analysis {
     private Meta meta;
     private String artifactName;
     private String generatedFilename;
+    private List<Resource> resources = new ArrayList<>();
+    private Map<String, ResourceGroup> resourceGroups = new HashMap<>();
 
     public Analysis() {
     }
@@ -45,5 +45,31 @@ public class Analysis {
 
     public void setGeneratedFilename(String generatedFilename) {
         this.generatedFilename = generatedFilename;
+    }
+
+//    @XmlElementWrapper (name = "resources")
+//    @XmlElement (name = "resource")
+    @XmlTransient
+    public List<Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
+    }
+
+    @XmlTransient
+    public Map<String, ResourceGroup> getResourceGroups() {
+        return resourceGroups;
+    }
+
+    public void setResourceGroups(Map<String, ResourceGroup> resourceGroups) {
+        this.resourceGroups = resourceGroups;
+    }
+
+    @XmlElementWrapper (name = "resources")
+    @XmlElement (name ="resource")
+    public List<ResourceGroup> getResourcesAsGroups() {
+        return new ArrayList(this.resourceGroups.values());
     }
 }
