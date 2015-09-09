@@ -1,4 +1,4 @@
-package net.technolords.tools.artificer;
+package net.technolords.tools.artificer.artifact;
 
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.Resource;

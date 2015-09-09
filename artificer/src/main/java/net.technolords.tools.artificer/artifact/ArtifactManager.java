@@ -1,5 +1,6 @@
-package net.technolords.tools.artificer;
+package net.technolords.tools.artificer.artifact;
 
+import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.Meta;
 import org.slf4j.Logger;
