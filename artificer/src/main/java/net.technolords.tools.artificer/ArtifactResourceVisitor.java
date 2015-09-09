@@ -11,9 +11,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Technolords on 2015-Sep-04.
@@ -55,40 +52,46 @@ public class ArtifactResourceVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /**
+     * Classify the resource based on the extension of the resource. For example, the resources:
+     *
+     * - sample.class
+     * - another.class
+     *
+     * Will be (both) put under classification '.class'.
+     *
+     * @param resource
+     *  The Resource to be classified.
+     */
     protected void classifyResource(Resource resource) {
         String resourceName = resource.getName();
         if(resourceName.contains(".")) {
-            String extension = resourceName.substring(resourceName.lastIndexOf("."));
+            String classification = resourceName.substring(resourceName.lastIndexOf("."));
             // Classify resource under its filename extension
-            ResourceGroup resourceGroup = this.analysis.getResourceGroups().get(extension);
-            if(resourceGroup == null) {
-                resourceGroup = new ResourceGroup();
-                resourceGroup.setGroupType(extension);
-                this.analysis.getResourceGroups().put(extension, resourceGroup);
-            }
-            resourceGroup.getResources().add(resource);
-//            List<Resource> list = resourceGroups.get(extension);
-//            if(list == null) {
-//                list = new ArrayList<>();
-//                resourceGroups.put(extension, list);
-//            }
-//            list.add(resource);
+            this.addResourceToClassificationGroup(resource, classification);
         } else {
             // Classify resource as _undefined_classification_
-            ResourceGroup resourceGroup = this.analysis.getResourceGroups().get(ArtifactManager.UNDEFINED_CLASSIFICATION);
-            if(resourceGroup == null) {
-                resourceGroup = new ResourceGroup();
-                resourceGroup.setGroupType(ArtifactManager.UNDEFINED_CLASSIFICATION);
-                this.analysis.getResourceGroups().put(ArtifactManager.UNDEFINED_CLASSIFICATION, resourceGroup);
-            }
-            resourceGroup.getResources().add(resource);
-//            List<Resource> list = resourceGroups.get(ArtifactManager.UNDEFINED_CLASSIFICATION);
-//            if(list == null) {
-//                list = new ArrayList<>();
-//                resourceGroups.put(ArtifactManager.UNDEFINED_CLASSIFICATION, list);
-//            }
-//            list.add(resource);
+            this.addResourceToClassificationGroup(resource, ArtifactManager.CLASSIFICATION_UNDEFINED);
         }
+    }
+
+    /**
+     * Add the resource to its classification group. If a group does not exist, it will
+     * be created.
+     *
+     * @param resource
+     *  The resource to be added.
+     * @param classification
+     *  The classification group.
+     */
+    protected void addResourceToClassificationGroup(Resource resource, String classification) {
+        ResourceGroup resourceGroup = this.analysis.getResourceGroups().get(classification);
+        if(resourceGroup == null) {
+            resourceGroup = new ResourceGroup();
+            resourceGroup.setGroupType(classification);
+            this.analysis.getResourceGroups().put(classification, resourceGroup);
+        }
+        resourceGroup.getResources().add(resource);
     }
 
 }

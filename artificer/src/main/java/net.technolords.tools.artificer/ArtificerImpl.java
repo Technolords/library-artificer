@@ -91,7 +91,7 @@ public class ArtificerImpl implements Analyser {
 
         // Start analysis
         ArtifactManager artifactManager = new ArtifactManager();
-        artifactManager.openArtifact(analysis, inputLocation);
+        artifactManager.analyseArtifact(analysis, inputLocation);
         // TODO: determine if the source is valid (i.e. a zip file)
         // TODO: count the classes and determine their types (summary)
         // TODO: determine the compiled version
