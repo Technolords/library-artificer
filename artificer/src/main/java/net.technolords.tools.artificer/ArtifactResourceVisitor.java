@@ -26,14 +26,14 @@ public class ArtifactResourceVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         LOGGER.debug("Found file: " + file.getFileName().toString() + ", with path: " + file.toString());
+
         // Create resource
         Resource resource = new Resource();
         resource.setName(file.getFileName().toString());
         resource.setPath(file);
-        this.analysis.getResources().add(resource);
+
         // Classify resource
         this.classifyResource(resource);
-        // return super.visitFile(file, attrs);
         return FileVisitResult.CONTINUE;
     }
 

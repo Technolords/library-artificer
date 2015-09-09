@@ -14,7 +14,6 @@ public class Analysis {
     private Meta meta;
     private String artifactName;
     private String generatedFilename;
-    private List<Resource> resources = new ArrayList<>();
     private Map<String, ResourceGroup> resourceGroups = new HashMap<>();
 
     public Analysis() {
@@ -45,17 +44,6 @@ public class Analysis {
 
     public void setGeneratedFilename(String generatedFilename) {
         this.generatedFilename = generatedFilename;
-    }
-
-//    @XmlElementWrapper (name = "resources")
-//    @XmlElement (name = "resource")
-    @XmlTransient
-    public List<Resource> getResources() {
-        return resources;
-    }
-
-    public void setResources(List<Resource> resources) {
-        this.resources = resources;
     }
 
     @XmlTransient
