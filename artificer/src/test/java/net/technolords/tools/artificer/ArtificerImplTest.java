@@ -46,7 +46,7 @@ public class ArtificerImplTest {
     @Test
     public void testDeterminationOfArtifactNameWithComplexURI() {
         final String EXPECTED = "file.jar";
-        final String FICTIVE_LOCATION = "file://some" + File.separator + "random" + File.separator + "path" + File.separator + EXPECTED;
+        final String FICTIVE_LOCATION = "some" + File.separator + "random" + File.separator + "path" + File.separator + EXPECTED;
         ArtificerImpl analyser = new ArtificerImpl();
         String artifactName = analyser.determineArtifactName(FileSystems.getDefault().getPath(FICTIVE_LOCATION));
         Assert.assertEquals(artifactName, EXPECTED, "Expected: " + EXPECTED);
