@@ -1,0 +1,24 @@
+The idea is to generate a visualize the packages and its classes, so it looks like:
+
+http://insights.dice.com/2015/07/01/dice-data-how-tech-skills-connect/?CMPID=AF_SD_UP_JS_AV_OG_DNA_
+
+According to that article, it was created using the following:
+
+For those interested in how we built this visualization, it involved multiple steps.
+We started with Gephi, an open-source network analysis and visualization software package, by importing a pair-wise
+comma-separated list of skills and their similarity scores (as Simon described in his article) and running a number
+of analyses: Force Atlas layout to draw a force-directed graph, Avg. Path Length to calculate the Betweenness
+Centrality that determines the size of a node, and finally Modularity to detect communities of skills
+(again, color-coded in the visualization).
+
+Once the graph was the way we wanted, we exported it as an XML graph file (GEXF) and converted it to JSON format,
+with two sets of elements: Nodes and links. It was then a matter of leveraging D3 to visualize the data as a network.
+
+See also:
+    http://insights.dice.com/d3/skills-graph/
+        iframe to:
+    http://insights.dice.com/wp-content/themes/dicenews2015/assets/d3/2015/SkillsGraph/index.html
+
+    http://nexus.gephi.org/nexus/#view-repositories;releases~browsestorage
+    http://gephi.github.io/developers/
+    http://stackoverflow.com/questions/19328307/gephi-dependency-in-maven-missing-artifact-0-9-snapshot

@@ -8,6 +8,7 @@ import net.technolords.tools.artificer.output.OutputManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -99,7 +100,7 @@ public class ArtificerImpl implements Analyser {
      */
     protected String determineArtifactName(Path inputLocation) {
         // Expect input as ugly as: file://some/path/to/artifact.jar
-        int lastIndex = inputLocation.toAbsolutePath().toString().lastIndexOf("/");
+        int lastIndex = inputLocation.toAbsolutePath().toString().lastIndexOf(File.separator);
         return inputLocation.toAbsolutePath().toString().substring(lastIndex + 1);
     }
 

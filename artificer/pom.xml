@@ -28,6 +28,12 @@
         +-->
     <dependencies></dependencies>
 
+    <!--
+        http://nexus.gephi.org/nexus/#view-repositories;releases~browsestorage
+        http://gephi.github.io/developers/
+        http://stackoverflow.com/questions/19328307/gephi-dependency-in-maven-missing-artifact-0-9-snapshot
+    -->
+
     <!--+
         | Build
         +-->

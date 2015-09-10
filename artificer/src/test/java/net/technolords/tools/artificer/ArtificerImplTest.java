@@ -8,6 +8,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,8 +46,9 @@ public class ArtificerImplTest {
     @Test
     public void testDeterminationOfArtifactNameWithComplexURI() {
         final String EXPECTED = "file.jar";
+        final String FICTIVE_LOCATION = "file://some" + File.separator + "random" + File.separator + "path" + File.separator + EXPECTED;
         ArtificerImpl analyser = new ArtificerImpl();
-        String artifactName = analyser.determineArtifactName(FileSystems.getDefault().getPath("file://some/random/path/with/file.jar"));
+        String artifactName = analyser.determineArtifactName(FileSystems.getDefault().getPath(FICTIVE_LOCATION));
         Assert.assertEquals(artifactName, EXPECTED, "Expected: " + EXPECTED);
     }
 
