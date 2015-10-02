@@ -1,5 +1,7 @@
 package net.technolords.tools.artificer.artifact;
 
+import javassist.ClassPool;
+import javassist.NotFoundException;
 import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.Meta;
@@ -13,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.zip.ZipError;
+import java.util.Collection;
 
 /**
  * Created by Technolords on 2015-Aug-28.
@@ -71,13 +73,32 @@ public class ArtifactManager {
                 http://stackoverflow.com/questions/698129/how-can-i-find-the-target-java-version-for-a-compiled-class
                  */
                 // TODO: determine the imports (by reflection) minus the present and standard classes
+
+                // TODO: determine the references classes for each resource
+                for( Resource resource : javaResourceGroup.getResources()) {
+                    this.getReferencedClasses(resource);
+                }
+
             }
 
-        } catch (IOException | ZipError e) {
+        } catch (IOException | NotFoundException e) {
             // Update status
             Meta meta = analysis.getMeta();
             meta.setStatus(Analyser.STATUS_ERROR);
             meta.setErrorMessage(e.getMessage());
         }
+    }
+
+    protected void getReferencedClasses(Resource resource) throws NotFoundException {
+        ClassPool classPool = ClassPool.getDefault();
+        LOGGER.debug("About to getRefClasses of: " + resource.getName());
+        // Get full package name and class
+        String packageAndClassName = resource.getPath().toString();
+        packageAndClassName = packageAndClassName.replaceAll("/", ".");
+        int index = packageAndClassName.indexOf(".class");
+        packageAndClassName = packageAndClassName.substring(1, index);
+        Collection classes = classPool.get(packageAndClassName).getRefClasses();
+        LOGGER.debug("Class " + resource.getName() + " has " + classes.size() + " referenced classes...");
+        resource.getReferencedClasses().addAll(classes);
     }
 }

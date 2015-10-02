@@ -53,6 +53,7 @@ public class ArtificerImpl implements Analyser {
      * @throws ArtificerException
      *  When an error occurred during analysis or writing the report.
      */
+    // TODO: absorb exception
     public void analyseArtifact(Path inputLocation) throws ArtificerException {
         // Verify input location exist
         if(!Files.exists(inputLocation)) {

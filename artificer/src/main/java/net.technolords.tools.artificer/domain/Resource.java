@@ -3,6 +3,8 @@ package net.technolords.tools.artificer.domain;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Technolords on 2015-Sep-04.
@@ -10,6 +12,7 @@ import java.nio.file.Path;
 public class Resource {
     private String name;
     private Path path;
+    private Set<String> referencedClasses = new HashSet<>();
 
     public Resource() {
     }
@@ -31,4 +34,15 @@ public class Resource {
     public void setPath(Path path) {
         this.path = path;
     }
+
+    @XmlTransient
+    public Set<String> getReferencedClasses() {
+        return referencedClasses;
+    }
+
+    public void setReferencedClasses(Set<String> referencedClasses) {
+        this.referencedClasses = referencedClasses;
+    }
+
+
 }
