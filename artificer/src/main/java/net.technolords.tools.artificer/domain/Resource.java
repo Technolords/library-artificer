@@ -13,6 +13,7 @@ public class Resource {
     private String name;
     private Path path;
     private Set<String> referencedClasses = new HashSet<>();
+    private String compiledVersion;
 
     public Resource() {
     }
@@ -42,6 +43,15 @@ public class Resource {
 
     public void setReferencedClasses(Set<String> referencedClasses) {
         this.referencedClasses = referencedClasses;
+    }
+
+    @XmlTransient
+    public String getCompiledVersion() {
+        return compiledVersion;
+    }
+
+    public void setCompiledVersion(String compiledVersion) {
+        this.compiledVersion = compiledVersion;
     }
 
 
