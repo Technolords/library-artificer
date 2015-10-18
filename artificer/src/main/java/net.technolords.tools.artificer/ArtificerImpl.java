@@ -105,4 +105,5 @@ public class ArtificerImpl implements Analyser {
         return inputLocation.toAbsolutePath().toString().substring(lastIndex + 1);
     }
 
+
 }

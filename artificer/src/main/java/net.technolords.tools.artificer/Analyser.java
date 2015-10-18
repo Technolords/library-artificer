@@ -34,4 +34,5 @@ public interface Analyser {
      *  The location of the artifact.
      */
     void analyseArtifact(Path inputLocation) throws ArtificerException;
+
 }

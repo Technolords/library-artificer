@@ -8,6 +8,7 @@ import net.technolords.tools.artificer.domain.Meta;
 import net.technolords.tools.artificer.domain.Resource;
 import net.technolords.tools.artificer.domain.ResourceGroup;
 import net.technolords.tools.artificer.exception.ArtificerException;
+import net.technolords.tools.artificer.reference.JavaVersionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +24,12 @@ import java.util.Collection;
  * Created by Technolords on 2015-Aug-28.
  */
 public class ArtifactManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManager.class);
+    private static final int MAGIC_NUMBER = 0xcafebabe;
+    private static final String JAVA_VERSIONS_REFERENCE = "reference/java-versions.xml";
     public static final String CLASSIFICATION_UNDEFINED = "_classification_undefined_";
     public static final String CLASSIFICATION_JAVA_CLASSES = ".class";
-    private static final int MAGIC_NUMBER = 0xcafebabe;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManager.class);
+    private JavaVersionManager javaVersionManager;
 
     public ArtifactManager() {
     }
@@ -40,6 +43,10 @@ public class ArtifactManager {
 
     public void analyseArtifact(Analysis analysis, Path pathToZipFile) {
         try {
+            // Initialize manager of java compiler versions (for lookup)
+            if(this.javaVersionManager == null) {
+                this.javaVersionManager = new JavaVersionManager(JAVA_VERSIONS_REFERENCE);
+            }
             // Walk the tree for initial scan, and classify the resources
             ArtifactResourceVisitor artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
             FileSystem fileSystem = FileSystems.newFileSystem(pathToZipFile, null);
@@ -50,9 +57,12 @@ public class ArtifactManager {
             if(javaResourceGroup != null) {
                 for( Resource resource : javaResourceGroup.getResources()) {
                     // Determine the compiled version of the resource
-                    // TODO: load external definition and perform a readable lookup/translate
+                    String unmappedCompilerVersion = this.getCompilerVersion(resource);
+                    resource.setCompiledVersion(this.javaVersionManager.lookupJavaVersion(unmappedCompilerVersion));
                     // TODO: keep map at high lvl to count classes per compiler version (think uber jar)
-                    resource.setCompiledVersion(this.getCompilerVersion(resource));
+                    // note that this information is also available on all resources combined so post
+                    // analysis is an option.
+
                     // Determine the references classes by the resource
                     this.getReferencedClasses(resource);
                 }
@@ -96,15 +106,9 @@ public class ArtifactManager {
         DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
 
         // Get first 4 bytes, as that represents the magic number
-//        int magic = dataInputStream.readInt();
         if (dataInputStream.readInt() != MAGIC_NUMBER) {
             throw new ArtificerException(resource.getName() + " is not a valid java class!");
         }
-//        int minor = dataInputStream.readUnsignedShort();
-//        int major = dataInputStream.readUnsignedShort();
-//        LOGGER.info(resource.getName() + ": " + major + " . " + minor);
-//        String magicVersion = Integer.toHexString(dataInputStream.readInt());
-//        return magicVersion;
         return Integer.toHexString(dataInputStream.readInt());
     }
 
