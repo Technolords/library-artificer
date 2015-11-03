@@ -59,6 +59,7 @@ public class ArtifactManager {
                     // Determine the compiled version of the resource
                     String unmappedCompilerVersion = this.getCompilerVersion(resource);
                     resource.setCompiledVersion(this.javaVersionManager.lookupJavaVersion(unmappedCompilerVersion));
+
                     // TODO: keep map at high lvl to count classes per compiler version (think uber jar)
                     // note that this information is also available on all resources combined so post
                     // analysis is an option.
@@ -67,6 +68,21 @@ public class ArtifactManager {
                     this.getReferencedClasses(resource);
                 }
             }
+
+            // TODO: filter the references classes (own classes, standard classes, external classes)
+            // http://stackoverflow.com/questions/1983839/determine-which-jar-file-a-class-is-from
+            // CodeSource src = MyClass.class.getProtectionDomain().getCodeSource();
+            // if (src != null) {
+            // URL jar = src.getLocation();
+
+            // Investigate further
+            // http://docs.oracle.com/javase/specs/jls/se7/html/jls-7.html
+
+            // TODO: chart packages and classes into visual groups using graphviz/gephi
+
+            // TODO: analyse other type of files (i.e. OSGI, WEB-INF etc)
+
+            // TODO: generate sequence diagrams
 
         } catch (IOException | NotFoundException | ArtificerException e) {
             // Update status

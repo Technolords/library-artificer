@@ -73,6 +73,7 @@ public class JavaVersionManager {
             LOGGER.debug("Total java versions initialized: " + this.lookupMap.size());
         } catch (JAXBException e) {
             throw new ArtificerException(e);
+
         }
     }
 
