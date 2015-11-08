@@ -18,5 +18,6 @@ The extended idea is to have:
 
 ## Sequence diagrams
 In order to explain the current implementation the following UML sequence diagrams are available:
+[Sequence Diagrams](/sequence.md)
 - [Analyser](/src/main/resources/design/sequence-analyser.png)
 - [Artifact Manager](/src/main/resources/design/sequence-artifact-manager.png)
