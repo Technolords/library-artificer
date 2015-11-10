@@ -1,17 +1,10 @@
 package net.technolords.tools.artificer.reference;
 
-import net.technolords.tools.artificer.Analyser;
-import net.technolords.tools.artificer.ArtificerImpl;
-import net.technolords.tools.artificer.domain.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
-import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 
 import static org.testng.Assert.*;
 
