@@ -71,7 +71,7 @@ public class JavaVersionManager {
                 this.lookupMap.put(javaVersion.getMagicNumber(), javaVersion.getVersion());
             }
             LOGGER.debug("Total java versions initialized: " + this.lookupMap.size());
-        } catch (JAXBException e) {
+        } catch (JAXBException | IllegalArgumentException e) {
             throw new ArtificerException(e);
 
         }
