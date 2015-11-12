@@ -48,7 +48,7 @@ public class JavaVersionManagerTest {
     }
 
     //Test Case #3 : unhappy flow: malformed reference file
-    @Test (dataProvider = "compilerVersionDataProvider")
+    @Test (dataProvider = "compilerVersionDataProvider", expectedExceptions = ArtificerException.class)
     public void testMalformedReferenceFile(final String magicNumber, final String expectedVersion) throws ArtificerException{
         JavaVersionManager javaVersionManager = new JavaVersionManager(MALFORMAT_REFERENCE_FILE);
         String foundJavaVersion = javaVersionManager.lookupJavaVersion(magicNumber);
