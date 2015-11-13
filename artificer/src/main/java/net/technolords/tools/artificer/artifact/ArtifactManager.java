@@ -19,6 +19,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.zip.ZipError;
 
 /**
  * Created by Technolords on 2015-Aug-28.
@@ -44,9 +45,9 @@ public class ArtifactManager {
     public void analyseArtifact(Analysis analysis, Path pathToZipFile) {
         try {
             // Initialize manager of java compiler versions (for lookup)
-            if(this.javaVersionManager == null) {
-                this.javaVersionManager = new JavaVersionManager(JAVA_VERSIONS_REFERENCE);
-            }
+//            if(this.javaVersionManager == null) {
+//                this.javaVersionManager = new JavaVersionManager(JAVA_VERSIONS_REFERENCE);
+//            }
             // Walk the tree for initial scan, and classify the resources
             ArtifactResourceVisitor artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
             FileSystem fileSystem = FileSystems.newFileSystem(pathToZipFile, null);
@@ -54,11 +55,11 @@ public class ArtifactManager {
 
             // Inspect the categories
             ResourceGroup javaResourceGroup = analysis.getResourceGroups().get(CLASSIFICATION_JAVA_CLASSES);
-            if(javaResourceGroup != null) {
-                for(Resource resource : javaResourceGroup.getResources()) {
+            if (javaResourceGroup != null) {
+                for (Resource resource : javaResourceGroup.getResources()) {
                     // Determine the compiled version of the resource
                     String unmappedCompilerVersion = this.getCompilerVersion(resource);
-                    resource.setCompiledVersion(this.javaVersionManager.lookupJavaVersion(unmappedCompilerVersion));
+//                    resource.setCompiledVersion(this.javaVersionManager.lookupJavaVersion(unmappedCompilerVersion));
 
                     // TODO: keep map at high lvl to count classes per compiler version (think uber jar)
                     // note that this information is also available on all resources combined so post
@@ -83,7 +84,10 @@ public class ArtifactManager {
             // TODO: analyse other type of files (i.e. OSGI, WEB-INF etc)
 
             // TODO: generate sequence diagrams
-
+        } catch (ZipError e) {
+            if("zip END header not found".equals(e.getMessage())) {
+                LOGGER.warn("Ignoring error: Got END header not found....");
+            }
         } catch (IOException | NotFoundException | ArtificerException e) {
             // Update status
             Meta meta = analysis.getMeta();
