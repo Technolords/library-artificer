@@ -38,7 +38,8 @@ public class ArtifactResourceVisitor implements FileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+    public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException {
+        LOGGER.warn("File (" + file.toString() + ") visit failed, but proceeding: " + e.getMessage(), e);
         return FileVisitResult.CONTINUE;
     }
 

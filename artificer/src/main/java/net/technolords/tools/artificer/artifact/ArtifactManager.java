@@ -55,7 +55,7 @@ public class ArtifactManager {
             // Inspect the categories
             ResourceGroup javaResourceGroup = analysis.getResourceGroups().get(CLASSIFICATION_JAVA_CLASSES);
             if(javaResourceGroup != null) {
-                for( Resource resource : javaResourceGroup.getResources()) {
+                for(Resource resource : javaResourceGroup.getResources()) {
                     // Determine the compiled version of the resource
                     String unmappedCompilerVersion = this.getCompilerVersion(resource);
                     resource.setCompiledVersion(this.javaVersionManager.lookupJavaVersion(unmappedCompilerVersion));
