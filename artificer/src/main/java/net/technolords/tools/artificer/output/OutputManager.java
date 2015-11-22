@@ -53,6 +53,7 @@ public class OutputManager extends Marshaller.Listener {
             // Initialize data and a listener
             JAXBContext context = JAXBContext.newInstance(Analysis.class);
             Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.setListener(this);
 
             // Write data
