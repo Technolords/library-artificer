@@ -3,7 +3,10 @@
     <meta status="500" error-message="No compiled classes found">
     </meta>
 
-    <meta status="200" compiled-version="8">
+    <meta status="200" compiled-version="1.8">
+        <java-versions>
+            <java version="1.8" total=""/>
+        </java-versions>
         <!--+
             | Deployment
             | lib = no main, no identified meta data such as OSGI-INF, WEB-INF
@@ -13,7 +16,10 @@
     </meta>
 
     <resources>
-        <resource type=".class" total="60"/>
+        <resource type=".class" total="60">
+            <class full="net/technolords/sample/Hello.class" valid="true" java-version=""/>
+            <class full="doc/crap.class" valid="false"/>
+        </resource>
         <resource type=".xml" total="4"/>
     </resources>
 
@@ -56,3 +62,18 @@
     com/lgi/training/service/recommendation/processor/StatusProcessor.class
     features.xml
 -->
+<?xml version="1.0" ?>
+<analysed-artifact artifact-name="service-recommendation-1.0.0.jar">
+    <!--Output generated at: Sun Nov 22 14:08:08 CET 2015-->
+    <meta status="200">
+        <java-versions>
+            <java version="1.7"></java>
+        </java-versions>
+    </meta>
+    <resources>
+        <resource type=".properties" total="1"></resource>
+        <resource type=".MF" total="1"></resource>
+        <resource type=".class" total="4"></resource>
+        <resource type=".xml" total="3"></resource>
+    </resources>
+</analysed-artifact>
