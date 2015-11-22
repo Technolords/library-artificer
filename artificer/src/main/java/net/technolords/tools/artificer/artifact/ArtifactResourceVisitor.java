@@ -1,8 +1,8 @@
 package net.technolords.tools.artificer.artifact;
 
 import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.Resource;
-import net.technolords.tools.artificer.domain.ResourceGroup;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.artificer.domain.resource.ResourceGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

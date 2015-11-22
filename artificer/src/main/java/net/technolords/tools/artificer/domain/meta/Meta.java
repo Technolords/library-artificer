@@ -1,6 +1,4 @@
-package net.technolords.tools.artificer.domain;
-
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
+package net.technolords.tools.artificer.domain.meta;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;

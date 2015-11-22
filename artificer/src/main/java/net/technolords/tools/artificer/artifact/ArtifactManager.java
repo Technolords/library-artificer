@@ -4,25 +4,19 @@ import javassist.ClassPool;
 import javassist.NotFoundException;
 import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.Meta;
-import net.technolords.tools.artificer.domain.Resource;
-import net.technolords.tools.artificer.domain.ResourceGroup;
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
-import net.technolords.tools.artificer.exception.ArtificerException;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.artificer.domain.resource.ResourceGroup;
 import net.technolords.tools.artificer.reference.JavaVersionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.zip.ZipError;
 
 /**

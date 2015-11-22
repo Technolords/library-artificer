@@ -1,7 +1,7 @@
 package net.technolords.tools.artificer.output;
 
 import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.Meta;
+import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package net.technolords.tools.artificer.domain;
+package net.technolords.tools.artificer.domain.resource;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;

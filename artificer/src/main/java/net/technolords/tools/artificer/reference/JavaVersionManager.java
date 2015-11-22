@@ -1,7 +1,7 @@
 package net.technolords.tools.artificer.reference;
 
-import net.technolords.tools.artificer.domain.Meta;
-import net.technolords.tools.artificer.domain.Resource;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
 import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
 import net.technolords.tools.artificer.exception.ArtificerException;

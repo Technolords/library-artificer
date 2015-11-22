@@ -1,31 +1,37 @@
 package net.technolords.tools.artificer.domain;
 
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.ResourceGroup;
+
 import javax.xml.bind.annotation.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by Technolords on 2015-Aug-21.
+ * This class represents the Analysis element, which is the root, and contains the following attributes:
+ *
+ * - artifact-name     : The name of the artifact associated with the analysis
+ *
+ * Happy and Unhappy flow:
+ *
+ * <analysed-artifact artifact-name="xxx.jar">
+ *     <meta>
+ *         ...
+ *     </meta>
+ *     <resources>
+ *         ...
+ *     </resources>
  */
-// <analysed-artifact artifact-name="name">
-//    ...
-// </analysed-artifact>
 @XmlRootElement (name = "analysed-artifact")
 public class Analysis {
-    private Meta meta;
     private String artifactName;
     private String generatedFilename;
+    private Meta meta;
     private Map<String, ResourceGroup> resourceGroups = new HashMap<>();
 
     public Analysis() {
-    }
-
-    @XmlElement (name = "meta")
-    public Meta getMeta() {
-        return meta;
-    }
-
-    public void setMeta(Meta meta) {
-        this.meta = meta;
     }
 
     @XmlAttribute (name = "artifact-name")
@@ -44,6 +50,15 @@ public class Analysis {
 
     public void setGeneratedFilename(String generatedFilename) {
         this.generatedFilename = generatedFilename;
+    }
+
+    @XmlElement (name = "meta")
+    public Meta getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Meta meta) {
+        this.meta = meta;
     }
 
     @XmlTransient
