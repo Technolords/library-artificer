@@ -14,6 +14,7 @@ public class Resource {
     private Path path;
     private Set<String> referencedClasses = new HashSet<>();
     private String compiledVersion;
+    boolean validClass = true;
 
     public Resource() {
     }
@@ -54,5 +55,12 @@ public class Resource {
         this.compiledVersion = compiledVersion;
     }
 
+    @XmlTransient
+    public boolean isValidClass() {
+        return validClass;
+    }
 
+    public void setValidClass(boolean validClass) {
+        this.validClass = validClass;
+    }
 }

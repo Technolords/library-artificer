@@ -1,5 +1,9 @@
 package net.technolords.tools.artificer.reference;
 
+import net.technolords.tools.artificer.domain.Meta;
+import net.technolords.tools.artificer.domain.Resource;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +23,7 @@ import java.util.Map;
  */
 public class JavaVersionManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaVersionManager.class);
+    private static final int MAGIC_NUMBER = 0xcafebabe;
     private static final String UNKNOWN_JAVA_VERSION = "unknownJavaVersion";
     private Map<String, String> lookupMap;
     private String referenceFile;
@@ -74,6 +82,91 @@ public class JavaVersionManager {
         } catch (JAXBException | IllegalArgumentException e) {
             throw new ArtificerException(e);
 
+        }
+    }
+
+    /**
+     * Auxiliary method to determine the compiler version. Every java class
+     * has some 'leading' bytes as part of a file signature and basically
+     * represents the magic number and version.
+     *
+     * Every '.class' file starts off with the following:
+     * - Magic Number [4 bytes]
+     * - Version Information [4 bytes]
+     *
+     * javac -target 1.1 ==> CA FE BA BE 00 03 00 2D
+     * javac -target 1.2 ==> CA FE BA BE 00 00 00 2E
+     * javac -target 1.3 ==> CA FE BA BE 00 00 00 2F
+     * javac -target 1.4 ==> CA FE BA BE 00 00 00 30
+     * javac -target 1.5 ==> CA FE BA BE 00 00 00 31
+     * javac -target 1.6 ==> CA FE BA BE 00 00 00 32
+     * javac -target 1.7 ==> CA FE BA BE 00 00 00 33
+     * javac -target 1.8 ==> CA FE BA BE 00 00 00 34
+     *
+     * See also: http://stackoverflow.com/questions/698129/how-can-i-find-the-target-java-version-for-a-compiled-class
+     *
+     * @param resource
+     *  The resource used to determine the compiler version.
+     * @return
+     *  The magic number associated with the compiler version.
+     * @throws IOException
+     *  When reading bytes from the class file fails.
+     * @throws ArtificerException
+     *  When the class file is not compliant with the standard Java identification of byte code(i.e. prefixed with CAFEBABE)
+     */
+    public String getMagicNumber(Resource resource) throws IOException, ArtificerException {
+        DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
+
+        // Get first 4 bytes, as that represents the magic number
+        if (dataInputStream.readInt() != MAGIC_NUMBER) {
+            throw new ArtificerException(resource.getName() + " is not a valid java class!");
+        }
+        return Integer.toHexString(dataInputStream.readInt());
+    }
+
+    /**
+     * Auxiliary method to register the compiled version of this class. In any event
+     * the class is corrupted or non compliant with java, it is marked as invalid so
+     * further parsing for this resource is skipped.
+     *
+     * @param meta
+     *  The Meta reference is used to register the found java compiled version on
+     *  Meta level (so an overview is present).
+     * @param resource
+     *  The Resource reference is used to register the found java compiled version
+     *  on Resource level.
+     */
+    public void registerCompiledVersion(Meta meta, Resource resource) {
+        try {
+            // Register on Resource level
+            String magicNumber = this.getMagicNumber(resource);
+            String javaCompilerVersion = this.lookupJavaVersion(magicNumber);
+            resource.setCompiledVersion(javaCompilerVersion);
+
+            // Register on Meta level
+            FoundJavaVersions foundJavaVersions = meta.getFoundJavaVersions();
+            if(foundJavaVersions == null) {
+                foundJavaVersions = new FoundJavaVersions();
+                meta.setFoundJavaVersions(foundJavaVersions);
+            }
+            FoundJavaVersion foundJavaVersion = null;
+            for(FoundJavaVersion currentJavaVersion : foundJavaVersions.getFoundJavaVersionList()) {
+                if(currentJavaVersion.getFoundJavaVersion().equals(javaCompilerVersion)) {
+                    foundJavaVersion = currentJavaVersion;
+                    break;
+                }
+            }
+            if(foundJavaVersion == null) {
+                foundJavaVersion = new FoundJavaVersion();
+                foundJavaVersion.setFoundJavaVersion(javaCompilerVersion);
+                foundJavaVersions.getFoundJavaVersionList().add(foundJavaVersion);
+            }
+            foundJavaVersion.setTotalClasses(foundJavaVersion.getTotalClasses() + 1);
+        } catch (IOException | ArtificerException e) {
+            // Empty .class files, or .class files not compliant with java intrinsic magic number are marked
+            // as invalid (as further processing is not required)
+            LOGGER.warn("Resource " + resource.getName() + ", is not a valid java class and will be skipped");
+            resource.setValidClass(false);
         }
     }
 

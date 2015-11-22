@@ -1,19 +1,39 @@
 package net.technolords.tools.artificer.domain;
 
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
+
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
- * Created by Technolords on 2015-Aug-18.
+ * This class represents the Meta element, and contains the following attributes:
+ *
+ * - status         : mandatory element, which represents the overall success, as in
+ *                    the value is 200 (OK), or 500 (not OK).
+ * - error-message  : optional element, and filled when an error has occurred.
+ *
+ * Other than the attributes, it contains the following elements:
+ *
+ * - java-versions  : which contains a list of found java compiler versions, derived
+ *                    from the java .class files.
+ *
+ * Happy flow:
+ *
+ * <meta status="200">
+ *     <java-versions>
+ *         <java version="1.7" total-classes="4"></java>
+ *     </java-versions>
+ * </meta>
+ *
+ * Unhappy flow:
+ *
+ * <meta status="500" error-message="No compiled classes found">
+ * </meta>
  */
-// <meta status="200" compiled-version="8">
-// </meta>
-//
-// <meta status="500" error-message="No compiled classes found">
-// </meta>
 public class Meta {
     private String status;
     private String errorMessage;
-    private String compiledVersion;
+    private FoundJavaVersions foundJavaVersions;
 
     @XmlAttribute(name = "status", required = true)
     public String getStatus() {
@@ -33,13 +53,13 @@ public class Meta {
         this.errorMessage = errorMessage;
     }
 
-    @XmlAttribute(name = "compiled-version")
-    public String getCompiledVersion() {
-        return compiledVersion;
+    @XmlElement(name = "java-versions")
+    public FoundJavaVersions getFoundJavaVersions() {
+        return foundJavaVersions;
     }
 
-    public void setCompiledVersion(String compiledVersion) {
-        this.compiledVersion = compiledVersion;
+    public void setFoundJavaVersions(FoundJavaVersions foundJavaVersions) {
+        this.foundJavaVersions = foundJavaVersions;
     }
 
 }
