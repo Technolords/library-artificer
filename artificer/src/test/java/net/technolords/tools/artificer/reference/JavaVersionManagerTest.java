@@ -140,7 +140,8 @@ public class JavaVersionManagerTest {
     }
 
     /**
-     * Test case 4: Test the extraction of a magic number from a class file as functionality, using the data set.
+     * Test case 4: Test the extraction of a magic number from a class file as functionality, using the data set
+     * containing valid classes.
      *
      * @param fileName
      *  The file name of the class name, associated with the magic number extraction.
@@ -171,9 +172,21 @@ public class JavaVersionManagerTest {
         }
     }
 
+    /**
+     * Test case 5: Test the extraction of a magic number from a class file as functionality, using the data set
+     * containing invalid classes.
+     */
     @Test
     public void testMagicNumberExtractionWithInvalidClasses() {
         // TODO: implement, using abc.class and what not...
+    }
+
+    /**
+     * Test case 6: Test the registration of the java versions in the model.
+     */
+    @Test
+    public void testRegistrationOfjavaVersionInModel() {
+        // TODO: implement
     }
 
 }

@@ -40,6 +40,13 @@
     </properties>
 
     <!--+
+        |
+        +-->
+    <scm>
+        <connection>scm:git:https://github.com/Technolords/techno-tools</connection>
+    </scm>
+
+    <!--+
         | Modules
         +-->
     <modules>
@@ -154,7 +161,7 @@
                 <configuration>
                     <!-- @ : substitute the values after the version transformation has taken place -->
                     <tagNameFormat>${project.artifactId}-@{project.version}-${maven.build.timestamp}</tagNameFormat>
-                    <tagBase>http://ams-sub02:18080/svn/esb/tags/${project.artifactId}</tagBase>
+                    <tagBase>https://github.com/Technolords/techno-tools/releases/${project.artifactId}</tagBase>
                 </configuration>
             </plugin>
 

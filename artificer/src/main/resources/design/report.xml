@@ -62,9 +62,9 @@
     com/lgi/training/service/recommendation/processor/StatusProcessor.class
     features.xml
 -->
-<?xml version="1.0" ?>
+<!--
 <analysed-artifact artifact-name="service-recommendation-1.0.0.jar">
-    <!--Output generated at: Sun Nov 22 14:08:08 CET 2015-->
+    Output generated at: Sun Nov 22 14:08:08 CET 2015
     <meta status="200">
         <java-versions>
             <java version="1.7"></java>
@@ -77,3 +77,4 @@
         <resource type=".xml" total="3"></resource>
     </resources>
 </analysed-artifact>
+-->

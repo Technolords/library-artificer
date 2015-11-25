@@ -39,29 +39,6 @@ public class JavaVersionManager {
     }
 
     /**
-     * Auxiliary method to perform a lookup for a particular magic number. Based on this magical number
-     * a java version is determined.
-     *
-     * @param magicNumber
-     *  The magic number associated with the look up.
-     * @return
-     *  The java (compiler) version.
-     * @throws ArtificerException
-     *  When loading the XML configuration file for lookup purposes fails.
-     */
-    public String lookupJavaVersion(String magicNumber) throws ArtificerException {
-        if(this.lookupMap == null) {
-            this.lookupMap = new HashMap<>();
-            this.initializeLookupMap();
-        }
-        if(!this.lookupMap.containsKey(magicNumber)) {
-            LOGGER.warn("Unable to map magic version: " + magicNumber + ", defaulting to unknown java version: " + UNKNOWN_JAVA_VERSION);
-            return UNKNOWN_JAVA_VERSION;
-        }
-        return this.lookupMap.get(magicNumber);
-    }
-
-    /**
      * Auxiliary method to initialize the lookup map. It uses the default classloader to obtain
      * an inputstream as reference for the XML file and then JAXB will use this to unmarshall this
      * to an instance of the JavaVersions file.
@@ -125,6 +102,29 @@ public class JavaVersionManager {
     }
 
     /**
+     * Auxiliary method to perform a lookup for a particular magic number. Based on this magical number
+     * a java version is determined.
+     *
+     * @param magicNumber
+     *  The magic number associated with the look up.
+     * @return
+     *  The java (compiler) version.
+     * @throws ArtificerException
+     *  When loading the XML configuration file for lookup purposes fails.
+     */
+    public String lookupJavaVersion(String magicNumber) throws ArtificerException {
+        if(this.lookupMap == null) {
+            this.lookupMap = new HashMap<>();
+            this.initializeLookupMap();
+        }
+        if(!this.lookupMap.containsKey(magicNumber)) {
+            LOGGER.warn("Unable to map magic version: " + magicNumber + ", defaulting to unknown java version: " + UNKNOWN_JAVA_VERSION);
+            return UNKNOWN_JAVA_VERSION;
+        }
+        return this.lookupMap.get(magicNumber);
+    }
+
+    /**
      * Auxiliary method to register the compiled version of this class. In any event
      * the class is corrupted or non compliant with java, it is marked as invalid so
      * further parsing for this resource is skipped.
@@ -165,7 +165,7 @@ public class JavaVersionManager {
         } catch (IOException | ArtificerException e) {
             // Empty .class files, or .class files not compliant with java intrinsic magic number are marked
             // as invalid (as further processing is not required)
-            LOGGER.warn("Resource " + resource.getName() + ", is not a valid java class and will be skipped");
+            LOGGER.warn("Resource " + resource.getName() + ", is not a valid java class and will be skipped.");
             resource.setValidClass(false);
         }
     }
