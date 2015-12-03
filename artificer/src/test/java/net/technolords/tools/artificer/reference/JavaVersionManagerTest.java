@@ -1,5 +1,6 @@
 package net.technolords.tools.artificer.reference;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -172,13 +174,40 @@ public class JavaVersionManagerTest {
         }
     }
 
+    /** Invalid Classes Data Set to test the Magic Number Extraction.
+    */
+    @DataProvider (name = "dataSetWithInvalidClasses")
+    public Object[][] dataSetWithInvalidClasses() {
+        return new Object[][] {
+                { "abc.class", ArtificerException.class},
+                { "iAmEmpty.class", EOFException.class}
+        };
+    }
     /**
      * Test case 5: Test the extraction of a magic number from a class file as functionality, using the data set
      * containing invalid classes.
      */
-    @Test
-    public void testMagicNumberExtractionWithInvalidClasses() {
-        // TODO: implement, using abc.class and what not...
+    @Test(dataProvider = "dataSetWithInvalidClasses")
+    public void testMagicNumberExtractionWithInvalidClasses(String fileName, Class expectedException) throws ArtificerException, IOException {
+        //TODO: to be reviewed by Mike
+
+        try{
+            // Create a path to the file
+            Path pathToResourceLocation = FileSystems.getDefault().getPath(this.pathToDataFolder.toAbsolutePath() + File.separator + "invalidClass" + File.separator + fileName);
+            LOGGER.debug("The path towards the class file '" + fileName + "' exists: " + Files.exists(pathToResourceLocation));
+
+            // Create a resource reference linking to the file
+            Resource resource = new Resource();
+            resource.setPath(pathToResourceLocation);
+
+            // Find the magic number associated to the resource
+            JavaVersionManager javaVersionManager = new JavaVersionManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
+            String actualVersion = javaVersionManager.getMagicNumber(resource);
+
+        } catch (Exception e) {
+            Assert.assertEquals(e.getClass(), expectedException);
+            LOGGER.debug("Exception caused by : " + e.getCause() + " and: " + e.getMessage());
+        }
     }
 
     /**
