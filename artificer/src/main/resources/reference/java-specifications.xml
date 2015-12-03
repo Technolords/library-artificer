@@ -1,0 +1,38 @@
+<java-specifications>
+    <java-specification magic-number="33" alias="1.7">
+        <constant-pool-constants>
+            <constant type="Class" value="7"/>
+            <constant type="Fieldref" value="9"/>
+            <constant type="Methodref" value="10"/>
+            <constant type="IterfaceMethodref" value="11"/>
+            <constant type="String" value="8"/>
+            <constant type="Integer" value="3"/>
+            <constant type="Float" value="4"/>
+            <constant type="Long" value="5"/>
+            <constant type="Double" value="6"/>
+            <constant type="NameAndType" value="12"/>
+            <constant type="Utf8" value="1"/>
+        </constant-pool-constants>
+    </java-specification>
+    <java-specification magic-number="34" alias="1.8">
+        <!--+
+            | Source: http://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
+            +-->
+        <constant-pool-constants>
+            <constant type="Class" value="7"/>
+            <constant type="Fieldref" value="9"/>
+            <constant type="Methodref" value="10"/>
+            <constant type="IterfaceMethodref" value="11"/>
+            <constant type="String" value="8"/>
+            <constant type="Integer" value="3"/>
+            <constant type="Float" value="4"/>
+            <constant type="Long" value="5"/>
+            <constant type="Double" value="6"/>
+            <constant type="NameAndType" value="12"/>
+            <constant type="Utf8" value="1"/>
+            <constant type="MethodHandle" value="15"/>
+            <constant type="MethodType" value="16"/>
+            <constant type="InvokeDynamic" value="18"/>
+        </constant-pool-constants>
+    </java-specification>
+</java-specifications>

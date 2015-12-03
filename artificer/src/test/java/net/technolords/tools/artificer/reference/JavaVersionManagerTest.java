@@ -1,5 +1,8 @@
 package net.technolords.tools.artificer.reference;
 
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
+import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
