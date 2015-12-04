@@ -1,6 +1,8 @@
 package net.technolords.tools.artificer.reference;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
+import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import sun.rmi.runtime.Log;
 
 import java.io.EOFException;
 import java.io.File;
@@ -16,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
@@ -209,13 +214,47 @@ public class JavaVersionManagerTest {
             LOGGER.debug("Exception caused by : " + e.getCause() + " and: " + e.getMessage());
         }
     }
-
+    /** Data Set to test the registered Java Versions */
+    @DataProvider (name = "dataSetWithCompiledVersions")
+    public Object[][] dataSetWithCompiledVersions() {
+        return new Object[][] {
+                { "Analysis.class", "1.8"},
+                { "RfuRouteBuilder.class", "1.7"}
+        };
+    }
     /**
      * Test case 6: Test the registration of the java versions in the model.
      */
-    @Test
-    public void testRegistrationOfjavaVersionInModel() {
-        // TODO: implement
+
+    @Test(dataProvider = "dataSetWithCompiledVersions")
+    public void testRegistrationOfJavaVersionInModel(String fileName, String expectedCompiledVersion){
+
+        Path pathToResourceLocation = FileSystems.getDefault().getPath(this.pathToDataFolder.toAbsolutePath() + File.separator + fileName);
+        LOGGER.debug("The path towards the class file '" + fileName + "' exists: " + Files.exists(pathToResourceLocation));
+
+        Resource resource = new Resource();
+        resource.setPath(pathToResourceLocation);
+
+        Meta meta = new Meta();
+
+        JavaVersionManager javaVersionManager = new JavaVersionManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
+        javaVersionManager.registerCompiledVersion(meta, resource);
+
+        Assert.assertEquals(resource.getCompiledVersion(), expectedCompiledVersion);
+        LOGGER.debug("Resource Compiled Version = " + resource.getCompiledVersion());
+/**
+    The below statements were a trial to retrieve the Found Version but I am unsuccessful.
+    I can see the foundVersion in the Debug mode, but could not retrieve the value.
+    I wanted to assert on meta foundVersion, but instead used resource.getCompiledVersion.
+//ToDO : need to implement assertion on found version and total number of classes
+ */
+//        FoundJavaVersion foundJavaVersion = new FoundJavaVersion();
+//
+//        LOGGER.debug("meta.getStatus() = " + meta.getStatus());
+//        LOGGER.debug("meta.getFoundJavaVersions() = " + meta.getFoundJavaVersions().getFoundJavaVersionList().size());
+//        LOGGER.debug("Index of Found JavaVersion = " + meta.getFoundJavaVersions().getFoundJavaVersionList().indexOf(foundJavaVersion));
+//        LOGGER.debug("Found versions = "+ meta.getFoundJavaVersions().getFoundJavaVersionList());
+
     }
 
 }
