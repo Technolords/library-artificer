@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Technolords on 2015-Nov-25.
@@ -99,12 +100,13 @@ public class BytecodeManager {
                 this.lookupMap = new HashMap<>();
                 this.initializeSpecifications();
             }
-            LOGGER.debug("About to analyse byte code of: + " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
+            LOGGER.debug("About to analyse byte code of: " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
             DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
             // Absorb magic number, minor and major version
             this.absorbOverhead(dataInputStream);
             // Extract the constant pool
             ConstantPool constantPool = this.extractConstantPool(dataInputStream, resource.getCompiledVersion());
+            // TODO: parse the constantPool for referenced classes
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
         } catch (ArtificerException e) {
@@ -112,6 +114,18 @@ public class BytecodeManager {
         }
     }
 
+    /**
+     * An auxiliary method to read some bytes from the stream and absorb them as the information is not
+     * needed in this phase (and is already known). This phase is all about the deeper stuff of the .class file.
+     *
+     * The previous phase, done by the JavaVersionManager, was about the initial scanning of the .class files
+     * for basic reporting purposes.
+     *
+     * @param dataInputStream
+     *  The byte stream associated with the resource (aka .class file).
+     * @throws IOException
+     *  When reading bytes from the stream fails.
+     */
     protected void absorbOverhead(DataInputStream dataInputStream) throws IOException {
         // Absorb magic number (as it is already known)
         dataInputStream.readInt();
@@ -120,8 +134,12 @@ public class BytecodeManager {
     }
 
     /**
-     * An auxiliary method to extract the constant pool from the byte stream. Note that the value of
-     * the constant_pool_count is equal to the number of entries in the constant_pool table plus one.
+     * An auxiliary method to extract the constant pool from the byte stream. Based on the detected
+     * JVM version, the associated specification is fetched to construct the constant pool. The
+     * constant pool returned consists of a number of constants.
+     *
+     * According to the JVM specification, it mentions that the value of the constant_pool_count is equal
+     * to the number of entries in the constant_pool table plus one.
      *
      * A constant_pool index is considered valid if it is greater than zero and less than the
      * constant_pool_count, with the exceptions for constants of type long and double.
@@ -142,9 +160,9 @@ public class BytecodeManager {
      * - u8: unsigned eight byte quantity, to be read as: readLong
      *
      * @param dataInputStream
-     *  The byte stream associated with the extraction.
+     *  The byte stream associated with the constant pool extraction.
      * @param compiledVersion
-     *  The compiled version associated with the byte stream (constant pool).
+     *  The compiled version associated with the resource (aka .class file).
      * @return
      *  The extracted constant pool.
      * @throws IOException
@@ -168,9 +186,12 @@ public class BytecodeManager {
     }
 
     /**
-     * Each item in the constant_pool must begin with a 1-byte tag indicating the kind of cp_info entry. The contents
-     * of the info array vary with the value of tag. The valid tags and their values are (example is fetched from JVM 8
-     * specification):
+     * An auxiliary method to extract the constant from the byte stream. The constant describes the type and contains
+     * more information, such as a referenced class or constant value.
+     *
+     * According to the JVM specification, each item in the constant_pool must begin with a 1-byte tag indicating
+     * the kind of cp_info entry. The contents of the info array vary with the value of tag. The valid tags and
+     * their values are (example is fetched from JVM 8 specification):
      *
      * - Class              7
      * - FieldRef           9
@@ -190,7 +211,16 @@ public class BytecodeManager {
      * Each tag byte must be followed by two or more bytes giving information about the specific constant. The format
      * of the additional information varies with the tag value.
      *
+     * @param dataInputStream
+     *  The byte stream associated with the constant extraction.
+     * @param constantPoolIndex
+     *  The passed constant pool index, for logging and tracking purposes.
+     * @param compiledVersion
+     *  The compiled version associated with the resource (aka .class file).
      * @return
+     *  The extracted constant.
+     * @throws IOException
+     *  When reading bytes from the stream fails.
      */
     protected Constant extractConstant(DataInputStream dataInputStream, int constantPoolIndex, String compiledVersion) throws IOException {
         // Read tag
@@ -208,6 +238,18 @@ public class BytecodeManager {
         return constant;
     }
 
+    /**
+     * An auxiliary method to extract the constant details from the byte stream.
+     *
+     * @param dataInputStream
+     *  The byte stream associated with the constant extraction.
+     * @param constant
+     *  The constant associated with the details extracted.
+     * @param constantPoolConstant
+     *  The structure of the constant pool constant.
+     * @throws IOException
+     *  When reading bytes from the stream fails.
+     */
     protected void extractConstantDetails(DataInputStream dataInputStream, Constant constant, ConstantPoolConstant constantPoolConstant) throws IOException {
         for(ConstantPoolInfoFragment infoFragment : constantPoolConstant.getFragments()) {
             ConstantInfo constantInfo = new ConstantInfo();
@@ -217,6 +259,20 @@ public class BytecodeManager {
         }
     }
 
+    /**
+     * Auxiliary method to read a number of bytes, based on the constant pool info data (represented by the
+     * ConstantPoolInfoFragment). This instance of reference is based on the specification, and tells how much
+     * byes (as in value) must be read. The data being read is set on the ConstantInfo object for further processing.
+     *
+     * @param dataInputStream
+     *  The byte stream associated with the extraction (reading of bytes).
+     * @param constantInfo
+     *  The constant info associated with the resource.
+     * @param infoFragment
+     *  The constant pool info fragment associated with the constant pool constant.
+     * @throws IOException
+     *  When reading bytes from the stream fails.
+     */
     protected void readInfoSize(DataInputStream dataInputStream, ConstantInfo constantInfo, ConstantPoolInfoFragment infoFragment) throws IOException {
         switch(infoFragment.getSize()) {
             case "readUnsignedByte" :
@@ -251,21 +307,30 @@ public class BytecodeManager {
         }
     }
 
-    // 2015-12-04 00:40:59,025 [INFO] [main] [net.technolords.tools.artificer.bytecode.BytecodeManager] constantPoolSize: 23
-
+    /**
+     * Auxiliary method to find an instance of the ConstantPoolConstant based on two parameters,
+     * namely the tag and the compiled version.
+     *
+     * @param tag
+     *  The tag associated with the constant pool constant.
+     * @param compiledVersion
+     *  The compiled version, used to lookup for the correct JVM specification.
+     * @return
+     *  The constant pool constant.
+     */
     protected ConstantPoolConstant findConstantPoolConstantByValue(int tag, String compiledVersion) {
-        // TODO: rewrite this in lambda format?
+        Optional<ConstantPoolConstant> optionalConstantPoolConstant = Optional.ofNullable(null);
+
         JavaSpecification javaSpecification = this.lookupMap.get(compiledVersion);
         if(javaSpecification != null) {
             ConstantPoolConstants constantPoolConstants = javaSpecification.getConstantPoolConstants();
             if(constantPoolConstants != null) {
-                for(ConstantPoolConstant constantPoolConstant : constantPoolConstants.getConstantPoolConstants()) {
-                    if(Integer.valueOf(constantPoolConstant.getTag()) == tag) {
-                        return constantPoolConstant;
-                    }
-                }
+                optionalConstantPoolConstant = constantPoolConstants.getConstantPoolConstants().
+                    stream().
+                    filter( cp -> Integer.valueOf(cp.getTag()) == tag ).
+                    findFirst();
             }
         }
-        return null;
+        return optionalConstantPoolConstant.get();
     }
 }

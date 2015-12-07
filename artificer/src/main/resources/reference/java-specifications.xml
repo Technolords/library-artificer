@@ -76,30 +76,69 @@
                 <info-fragment size="readUnsignedShort" description="string_index"/>
             </constant>
             <constant type="Integer" tag="3">
+                <!--+
+                    | The CONSTANT_Integer_info and CONSTANT_Float_info structures represent 4-byte numeric
+                    | (int and float) constants. The bytes of the CONSTANT_Integer_info structure represents the
+                    | value of the int constant. The bytes of the value are stored in big-endian (high byte first)
+                    | order.
+                    +-->
                 <info-fragment size="readInt" description="TODO"/>
             </constant>
             <constant type="Float" tag="4">
+                <!--+
+                    | The CONSTANT_Integer_info and CONSTANT_Float_info structures represent 4-byte numeric
+                    | (int and float) constants. The bytes of the CONSTANT_Float_info structure represents the
+                    | value of the float constant in IEEE 754 floating-point single format. The bytes of the single
+                    | format representation are stored in big-endian (high byte first) order. The value
+                    | represented by the CONSTANT_Float_info structure is determined as follows. The bytes of the
+                    | value are first converted into an intconstant bits. Then:
+                    | - if bits is 0x7f80 0000, the float value will be positive infinity.
+                    | - if bits is 0xff80 0000, the float value will be negative infinity.
+                    | - if bits is in the range 0x7f80 0001 through 0x7fff ffff the float value will be NaN
+                    | - if bits is in the range 0xff80 0001 through 0xffff ffff the float value will be NaN
+                    +-->
                 <info-fragment size="readFloat" description="TODO"/>
             </constant>
             <constant type="Long" tag="5">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readLong" description="TODO"/>
             </constant>
             <constant type="Double" tag="6">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readDouble" description="TODO"/>
             </constant>
             <constant type="NameAndType" tag="12">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readInt" description="TODO"/>
             </constant>
             <constant type="Utf8" tag="1">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readUTF" description="TODO"/>
             </constant>
             <constant type="MethodHandle" tag="15">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readUnsignedShort" description="TODO"/>
             </constant>
             <constant type="MethodType" tag="16">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readUnsignedShort" description="TODO"/>
             </constant>
             <constant type="InvokeDynamic" tag="18">
+                <!--+
+                    |
+                    +-->
                 <info-fragment size="readInt" description="TODO"/>
             </constant>
         </constant-pool-constants>
