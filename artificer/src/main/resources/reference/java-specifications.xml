@@ -1,38 +1,107 @@
 <java-specifications>
     <java-specification magic-number="33" alias="1.7">
         <constant-pool-constants>
-            <constant type="Class" value="7"/>
-            <constant type="Fieldref" value="9"/>
-            <constant type="Methodref" value="10"/>
-            <constant type="IterfaceMethodref" value="11"/>
-            <constant type="String" value="8"/>
-            <constant type="Integer" value="3"/>
-            <constant type="Float" value="4"/>
-            <constant type="Long" value="5"/>
-            <constant type="Double" value="6"/>
-            <constant type="NameAndType" value="12"/>
-            <constant type="Utf8" value="1"/>
+            <constant type="Class" tag="7" info-size="readUnsignedShort"/>
+            <constant type="Fieldref" tag="9" info-size="readInt"/>
+            <constant type="Methodref" tag="10" info-size="readInt"/>
+            <constant type="IterfaceMethodref" tag="11" info-size="readInt"/>
+            <constant type="String" tag="8" info-size="readUnsignedShort"/>
+            <constant type="Integer" tag="3" info-size="readInt"/>
+            <constant type="Float" tag="4" info-size="readFloat"/>
+            <constant type="Long" tag="5" info-size="readUnsignedShort"/>
+            <constant type="Double" tag="6" info-size="readUnsignedShort"/>
+            <constant type="NameAndType" tag="12" info-size="readInt"/>
+            <constant type="Utf8" tag="readUTF"/>
         </constant-pool-constants>
     </java-specification>
     <java-specification magic-number="34" alias="1.8">
-        <!--+
-            | Source: http://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
-            +-->
         <constant-pool-constants>
-            <constant type="Class" value="7"/>
-            <constant type="Fieldref" value="9"/>
-            <constant type="Methodref" value="10"/>
-            <constant type="IterfaceMethodref" value="11"/>
-            <constant type="String" value="8"/>
-            <constant type="Integer" value="3"/>
-            <constant type="Float" value="4"/>
-            <constant type="Long" value="5"/>
-            <constant type="Double" value="6"/>
-            <constant type="NameAndType" value="12"/>
-            <constant type="Utf8" value="1"/>
-            <constant type="MethodHandle" value="15"/>
-            <constant type="MethodType" value="16"/>
-            <constant type="InvokeDynamic" value="18"/>
+            <constant type="Class" tag="7">
+                <!--+
+                    | The value of name_index item must be a valid index to the constant pool table. The
+                    | constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing
+                    | a valid binary class or interface name encoded in internal form.
+                    +-->
+                <info-fragment size="readUnsignedShort" description="name_index"/>
+            </constant>
+            <constant type="Fieldref" tag="9">
+                <!--+
+                    | Fields, methods, and interface methods are represented by similar structures. The value
+                    | of class_index must be a valid index in the constant pool table. The constant pool entry
+                    | at that index must be a CONSTANT_Class_info structure representing either a class type or
+                    | an interface type.
+                    | The value of name_and_type_index must be a valid index in the constant pool table. The
+                    | constant pool entry must be a CONSTANT_NameAndType_info structure. This constant pool entry
+                    | indicates the name and descriptor of the field.
+                    -->
+                <info-fragment size="readUnsignedShort" description="class_index"/>
+                <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
+            </constant>
+            <constant type="Methodref" tag="10" info-size="readInt">
+                <!--+
+                    | Fields, methods, and interface methods are represented by similar structures. The value
+                    | of class_index must be a valid index in the constant pool table. The constant pool entry
+                    | at that index must be a CONSTANT_Class_info structure representing a class type, not
+                    | an interface type.
+                    | The value of name_and_type_index must be a valid index in the constant pool table. The
+                    | constant pool entry must be a CONSTANT_NameAndType_info structure. This constant pool entry
+                    | indicates the name and descriptor of the method.
+                    | If the name of the method CONSTANT_Methodref_info structure begins with a '<' ('\u003c'),
+                    | then the name must be the special name <init>, representing an instance initialization
+                    | method. The return type of such method must be void.
+                    -->
+                <info-fragment size="readUnsignedShort" description="class_index"/>
+                <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
+            </constant>
+            <constant type="IterfaceMethodref" tag="11" info-size="readInt">
+                <!--+
+                    | Fields, methods, and interface methods are represented by similar structures. The value
+                    | of class_index must be a valid index in the constant pool table. The constant pool entry
+                    | at that index must be a CONSTANT_Class_info structure representing an interface type,
+                    | not a class type.
+                    | The value of name_and_type_index must be a valid index in the constant pool table. The
+                    | constant pool entry must be a CONSTANT_NameAndType_info structure. This constant pool entry
+                    | indicates the name and descriptor of the method.
+                    -->
+                <info-fragment size="readUnsignedShort" description="class_index"/>
+                <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
+            </constant>
+            <constant type="String" tag="8">
+                <!--+
+                    | The CONSTANT_String_info structure is used to represent constant objects of the type String.
+                    | The value of the string_index item must be a valid index in the constant pool table. The
+                    | constant pool entry at that index must be a CONSTANT_Utf8_info structure representing the
+                    | sequence of Unicode code points to which the String object is to be initialized.
+                    +-->
+                <info-fragment size="readUnsignedShort" description="string_index"/>
+            </constant>
+            <constant type="Integer" tag="3">
+                <info-fragment size="readInt" description="TODO"/>
+            </constant>
+            <constant type="Float" tag="4">
+                <info-fragment size="readFloat" description="TODO"/>
+            </constant>
+            <constant type="Long" tag="5">
+                <info-fragment size="readLong" description="TODO"/>
+            </constant>
+            <constant type="Double" tag="6">
+                <info-fragment size="readDouble" description="TODO"/>
+            </constant>
+            <constant type="NameAndType" tag="12">
+                <info-fragment size="readInt" description="TODO"/>
+            </constant>
+            <constant type="Utf8" tag="1">
+                <info-fragment size="readUTF" description="TODO"/>
+            </constant>
+            <constant type="MethodHandle" tag="15">
+                <info-fragment size="readUnsignedShort" description="TODO"/>
+            </constant>
+            <constant type="MethodType" tag="16">
+                <info-fragment size="readUnsignedShort" description="TODO"/>
+            </constant>
+            <constant type="InvokeDynamic" tag="18">
+                <info-fragment size="readInt" description="TODO"/>
+            </constant>
         </constant-pool-constants>
     </java-specification>
 </java-specifications>

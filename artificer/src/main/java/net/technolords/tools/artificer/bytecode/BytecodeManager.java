@@ -1,9 +1,13 @@
 package net.technolords.tools.artificer.bytecode;
 
 import net.technolords.tools.artificer.bytecode.specification.ConstantPoolConstant;
+import net.technolords.tools.artificer.bytecode.specification.ConstantPoolConstants;
 import net.technolords.tools.artificer.bytecode.specification.JavaSpecification;
 import net.technolords.tools.artificer.bytecode.specification.JavaSpecifications;
+import net.technolords.tools.artificer.domain.bytecode.Constant;
+import net.technolords.tools.artificer.domain.bytecode.ConstantInfo;
 import net.technolords.tools.artificer.domain.bytecode.ConstantPool;
+import net.technolords.tools.artificer.bytecode.specification.ConstantPoolInfoFragment;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
@@ -82,6 +86,7 @@ public class BytecodeManager {
      * - u1: unsigned one byte quantity, to be read as: readUnsignedByte
      * - u2: unsigned two byte quantity, to be read as: readUnsignedShort
      * - u4: unsigned four byte quantity, to be read as: readInt
+     * - u8: unsigned eight byte quantity, to be read as: readLong
      *
      * The constant pool is of particular interest, as this contains references of classes.
      *
@@ -94,7 +99,7 @@ public class BytecodeManager {
                 this.lookupMap = new HashMap<>();
                 this.initializeSpecifications();
             }
-            LOGGER.debug("About to analyse byte code of: + " + resource.getName() + " identified for JVM spec: " + resource.getCompiledVersion());
+            LOGGER.debug("About to analyse byte code of: + " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
             DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
             // Absorb magic number, minor and major version
             this.absorbOverhead(dataInputStream);
@@ -134,7 +139,35 @@ public class BytecodeManager {
      * - u1: unsigned one byte quantity, to be read as: readUnsignedByte
      * - u2: unsigned two byte quantity, to be read as: readUnsignedShort
      * - u4: unsigned four byte quantity, to be read as: readInt
+     * - u8: unsigned eight byte quantity, to be read as: readLong
      *
+     * @param dataInputStream
+     *  The byte stream associated with the extraction.
+     * @param compiledVersion
+     *  The compiled version associated with the byte stream (constant pool).
+     * @return
+     *  The extracted constant pool.
+     * @throws IOException
+     *  When reading bytes from the stream fails.
+     */
+    protected ConstantPool extractConstantPool(DataInputStream dataInputStream, String compiledVersion) throws IOException {
+        int constantPoolSize = dataInputStream.readUnsignedShort();
+        LOGGER.info("constantPoolSize: " + constantPoolSize);
+        ConstantPool constantPool = new ConstantPool();
+
+        // Extract the constants
+        for(int i = 1; i < constantPoolSize; i++) {
+            Constant constant = this.extractConstant(dataInputStream, i, compiledVersion);
+            constant.setConstantPoolIndex(i);
+            if(constant.getType().equals("Long") || constant.getType().equals("Double")) {
+                i++;
+            }
+            constantPool.getConstants().add(constant);
+        }
+        return constantPool;
+    }
+
+    /**
      * Each item in the constant_pool must begin with a 1-byte tag indicating the kind of cp_info entry. The contents
      * of the info array vary with the value of tag. The valid tags and their values are (example is fetched from JVM 8
      * specification):
@@ -157,34 +190,82 @@ public class BytecodeManager {
      * Each tag byte must be followed by two or more bytes giving information about the specific constant. The format
      * of the additional information varies with the tag value.
      *
-     * @param dataInputStream
-     *  The byte stream associated with the extraction.
      * @return
-     *  The extracted constant pool.
-     * @throws IOException
-     *  When reading bytes from the stream fails.
      */
-    protected ConstantPool extractConstantPool(DataInputStream dataInputStream, String compiledVersion) throws IOException {
-        int constantPoolSize = dataInputStream.readUnsignedShort();
-        LOGGER.info("constantPoolSize: " + constantPoolSize);
-        ConstantPool constantPool = new ConstantPool();
-        // First tag
+    protected Constant extractConstant(DataInputStream dataInputStream, int constantPoolIndex, String compiledVersion) throws IOException {
+        // Read tag
         int tag = dataInputStream.readUnsignedByte();
-        LOGGER.info("First tag: " + tag);
-        return constantPool;
+        // Find associated constant pool constant
+        ConstantPoolConstant constantPoolConstant = this.findConstantPoolConstantByValue(tag, compiledVersion);
+        // Instantiate constant
+        Constant constant = new Constant();
+        constant.setConstantPoolIndex(constantPoolIndex);
+        constant.setTag(tag);
+        constant.setType(constantPoolConstant.getType());
+        LOGGER.info("Constant index: " + constant.getConstantPoolIndex() + ", tag: " + constant.getTag() + ", type: " + constant.getType());
+        // Extract details
+        this.extractConstantDetails(dataInputStream, constant, constantPoolConstant);
+        return constant;
     }
 
-    /**
-     * Resolve three class pools:
-     * - self contained
-     * - packaged by SE
-     *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
-     * - externak
-     */
+    protected void extractConstantDetails(DataInputStream dataInputStream, Constant constant, ConstantPoolConstant constantPoolConstant) throws IOException {
+        for(ConstantPoolInfoFragment infoFragment : constantPoolConstant.getFragments()) {
+            ConstantInfo constantInfo = new ConstantInfo();
+            constantInfo.setDescription(infoFragment.getDescription());
+            this.readInfoSize(dataInputStream, constantInfo, infoFragment);
+            constant.getConstantInfoList().add(constantInfo);
+        }
+    }
 
-    protected ConstantPoolConstant findConstantPoolConstantByValue(int value, String compiledVersion) {
-        ConstantPoolConstant constantPoolConstant = null;
+    protected void readInfoSize(DataInputStream dataInputStream, ConstantInfo constantInfo, ConstantPoolInfoFragment infoFragment) throws IOException {
+        switch(infoFragment.getSize()) {
+            case "readUnsignedByte" :
+                constantInfo.setIntValue(dataInputStream.readUnsignedByte());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
+                break;
+            case "readInt" :
+                constantInfo.setIntValue(dataInputStream.readInt());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
+                break;
+            case "readFloat" :
+                constantInfo.setFloatValue(dataInputStream.readFloat());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getFloatValue());
+                break;
+            case "readLong" :
+                constantInfo.setLongValue(dataInputStream.readLong());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getLongValue());
+                break;
+            case "readDouble" :
+                constantInfo.setDoubeValue(dataInputStream.readDouble());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getDoubeValue());
+                break;
+            case "readUTF":
+                constantInfo.setStringValue(dataInputStream.readUTF());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getStringValue());
+                break;
+            case "readUnsignedShort" :
+            default:
+                constantInfo.setIntValue(dataInputStream.readUnsignedShort());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
+                break;
+        }
+    }
+
+    // 2015-12-04 00:40:59,025 [INFO] [main] [net.technolords.tools.artificer.bytecode.BytecodeManager] constantPoolSize: 23
+
+    protected ConstantPoolConstant findConstantPoolConstantByValue(int tag, String compiledVersion) {
+        // TODO: rewrite this in lambda format?
         JavaSpecification javaSpecification = this.lookupMap.get(compiledVersion);
-        return constantPoolConstant;
+        if(javaSpecification != null) {
+            ConstantPoolConstants constantPoolConstants = javaSpecification.getConstantPoolConstants();
+            if(constantPoolConstants != null) {
+                for(ConstantPoolConstant constantPoolConstant : constantPoolConstants.getConstantPoolConstants()) {
+                    if(Integer.valueOf(constantPoolConstant.getTag()) == tag) {
+                        return constantPoolConstant;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

@@ -71,6 +71,13 @@ public class ArtifactManager {
 
                     // Determine the references classes by the resource
                     this.bytecodeManager.analyseBytecode(resource);
+                    /**
+                     * Resolve three class pools:
+                     * - self contained
+                     * - packaged by SE
+                     *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
+                     * - external
+                     */
                 }
             }
 

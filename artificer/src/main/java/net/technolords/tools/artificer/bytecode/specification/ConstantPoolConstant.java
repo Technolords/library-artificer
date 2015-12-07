@@ -1,13 +1,21 @@
 package net.technolords.tools.artificer.bytecode.specification;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Technolords on 2015-Dec-02.
  */
 public class ConstantPoolConstant {
     private String type;
-    private String value;
+    private String tag;
+    List<ConstantPoolInfoFragment> fragments;
+
+    public void ConstantPoolConstant() {
+        this.fragments = new ArrayList<>();
+    }
 
     @XmlAttribute(name = "type")
     public String getType() {
@@ -18,12 +26,21 @@ public class ConstantPoolConstant {
         this.type = type;
     }
 
-    @XmlAttribute(name = "value")
-    public String getValue() {
-        return value;
+    @XmlAttribute(name = "tag")
+    public String getTag() {
+        return tag;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    @XmlElement(name = "info-fragment")
+    public List<ConstantPoolInfoFragment> getFragments() {
+        return fragments;
+    }
+
+    public void setFragments(List<ConstantPoolInfoFragment> fragments) {
+        this.fragments = fragments;
     }
 }
