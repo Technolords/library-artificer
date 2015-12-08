@@ -100,13 +100,13 @@ public class BytecodeManager {
                 this.lookupMap = new HashMap<>();
                 this.initializeSpecifications();
             }
-            LOGGER.debug("About to analyse byte code of: " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
+            LOGGER.info("About to analyse byte code of: " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
             DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
             // Absorb magic number, minor and major version
             this.absorbOverhead(dataInputStream);
             // Extract the constant pool
             ConstantPool constantPool = this.extractConstantPool(dataInputStream, resource.getCompiledVersion());
-            // TODO: parse the constantPool for referenced classes
+            resource.setConstantPool(constantPool);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
         } catch (ArtificerException e) {
@@ -170,7 +170,7 @@ public class BytecodeManager {
      */
     protected ConstantPool extractConstantPool(DataInputStream dataInputStream, String compiledVersion) throws IOException {
         int constantPoolSize = dataInputStream.readUnsignedShort();
-        LOGGER.info("constantPoolSize: " + constantPoolSize);
+        LOGGER.debug("constantPoolSize: " + constantPoolSize);
         ConstantPool constantPool = new ConstantPool();
 
         // Extract the constants
@@ -232,7 +232,7 @@ public class BytecodeManager {
         constant.setConstantPoolIndex(constantPoolIndex);
         constant.setTag(tag);
         constant.setType(constantPoolConstant.getType());
-        LOGGER.info("Constant index: " + constant.getConstantPoolIndex() + ", tag: " + constant.getTag() + ", type: " + constant.getType());
+        LOGGER.debug("Constant index: " + constant.getConstantPoolIndex() + ", tag: " + constant.getTag() + ", type: " + constant.getType());
         // Extract details
         this.extractConstantDetails(dataInputStream, constant, constantPoolConstant);
         return constant;

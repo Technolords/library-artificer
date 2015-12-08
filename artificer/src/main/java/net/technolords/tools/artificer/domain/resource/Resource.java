@@ -1,5 +1,7 @@
 package net.technolords.tools.artificer.domain.resource;
 
+import net.technolords.tools.artificer.domain.bytecode.ConstantPool;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import java.nio.file.Path;
@@ -15,6 +17,7 @@ public class Resource {
     private Set<String> referencedClasses = new HashSet<>();
     private String compiledVersion;
     boolean validClass = true;
+    private ConstantPool constantPool;
 
     public Resource() {
     }
@@ -62,5 +65,14 @@ public class Resource {
 
     public void setValidClass(boolean validClass) {
         this.validClass = validClass;
+    }
+
+    @XmlTransient
+    public ConstantPool getConstantPool() {
+        return constantPool;
+    }
+
+    public void setConstantPool(ConstantPool constantPool) {
+        this.constantPool = constantPool;
     }
 }
