@@ -15,6 +15,13 @@
         </constant-pool-constants>
     </java-specification>
     <java-specification magic-number="34" alias="1.8">
+        <!--+
+            | Legend:
+            | - u1: unsigned one byte quantity, to be read as: readUnsignedByte
+            | - u2: unsigned two byte quantity, to be read as: readUnsignedShort
+            | - u4: unsigned four byte quantity, to be read as: readInt
+            | - u8: unsigned eight byte quantity, to be read as: readLong
+            +-->
         <constant-pool-constants>
             <constant type="Class" tag="7">
                 <!--+
@@ -101,45 +108,106 @@
             </constant>
             <constant type="Long" tag="5">
                 <!--+
-                    |
+                    | The CONSTANT_Long_info and CONSTANT_Double_info represent 8-byte numeric (long and double
+                    | constants). All 8-byte constants take up two entries in the constant_pool table of the class file.
+                    | The unsigned high_bytes and low_bytes items of the CONSTANT_Long_info structure together represent
+                    | the value of the long constant where they are stored in big-endian (high byte first) order.
                     +-->
                 <info-fragment size="readLong" description="TODO"/>
             </constant>
             <constant type="Double" tag="6">
                 <!--+
-                    |
-                    +-->
+                   | The CONSTANT_Long_info and CONSTANT_Double_info represent 8-byte numeric (long and double
+                   | constants). All 8-byte constants take up two entries in the constant_pool table of the class file.
+                   | The value represented by CONSTANT_Double_info structure is determined as follows. The high_bytes
+                   | and low_bytes are converted into the long constant bits.
+                   | If bits is 0xff00 0000 0000 0000L, the double value will be positive infinity.
+                   | If bits is 0xfff0 0000 0000 0000L, the double value will be negative infinity.
+                   | If bits is in the range 0x7ff0 0000 0000 0001L through 0x7fff ffff ffff ffffL the double value will be NaN
+                   | If bits is in the range 0xfff0 0000 0000 0001L through 0xffff ffff ffff ffffL the double value will be NaN
+                   +-->
                 <info-fragment size="readDouble" description="TODO"/>
             </constant>
             <constant type="NameAndType" tag="12">
                 <!--+
-                    |
+                    | The CONSTANT_NameAndType_info structure is used to represent a field or method, without indicating
+                    | which class or interface type it belongs to.
+                    | The value of the name_index must be a valid index in the constant pool table. The constant pool
+                    | entry must be a CONSTANT_Utf8_info structure representing either the special method name <init> or
+                    | a valid unqualified name denoting a field or method.
+                    | The value of the descriptor_index item must be a valid index in the constant pool table. The
+                    | constant pool entry must be a CONSTANT_Utf8_info structure representing a valid field descriptor
+                    | or method descriptor.
                     +-->
-                <info-fragment size="readInt" description="TODO"/>
+                <info-fragment size="readUnsignedShort" description="name_index"/>
+                <info-fragment size="readUnsignedShort" description="descriptor_index"/>
             </constant>
             <constant type="Utf8" tag="1">
                 <!--+
-                    |
+                    | The CONSTANT_Utf8_info structure is used to represent constant string values. Note that strings
+                    | have a maximum length of 64k characters. The bytes of multibyte characters are stored in the class
+                    | file in big-endian (high byte first) order. There are two differences between this (modified UTF-8)
+                    | format and the 'standard' UTF-8 format. First, the null character (char)0 is encoded using the
+                    | 2-byte format rather than the 1-byte format, so that modified UTF-8 strings never have embedded
+                    | nulls. Second, only the 1-byte, 2-byte and 3-byte formats of standard UTF-8 are used. The JVM does
+                    | not recognize the four-byte format of standard UTF-8; it uses its own two-times-three-byte format
+                    | instead.
                     +-->
-                <info-fragment size="readUTF" description="TODO"/>
+                <info-fragment size="readUTF" description="string-value"/>
             </constant>
             <constant type="MethodHandle" tag="15">
                 <!--+
-                    |
+                    | The CONSTANT_MethodHandle_info structure is used to represent a method handle.
+                    | The value of the reference_kind item must be in the range 1 to 9. The value denotes the kind
+                    | of this method handle, which characterizes its bytecode behavior.
+                    | The value of the reference_index item must be a valid index in the constant pool table. The
+                    | constant pool entry at that index must be as follows:
+                    | - if the value of the reference kind is 1 (REF_getField), 2 (REF_getStatic), 3 (REF_putField) or
+                    |   4 (REF_putStatic), then the constant pool entry at that index must be a CONSTANT_Fieldref_info
+                    |   structure representing a field for which a method handle is to be created.
+                    | - if the value of the reference kind is 5 (REF_invokeVirtual) or 8 (REF_newInvokeSpecial), then
+                    |   the constant pool entry at that index must be a CONSTANT_Methodref_info structure representing
+                    |   a class's method or constructor for which a method handle is to be created.
+                    | - if the value of the reference kind is 6 (REF_invokeStatic) or 7 (REF_invokeSpecial), then if
+                    |   the class file version number is less than 52.0, the constant pool entry at that index must be
+                    |   a CONSTANT_Methodref_info_structure representing a class's method for which a method handle is to
+                    |   be created; if the class file version is 52.0 or above, the constant pool entry at that index
+                    |   must be either a CONSTANT_Methodref_info_structure or a CONSTANT_InterfaceMethodref_info structure
+                    |   representing a class's or interface's method for which a method handle is to be created.
+                    | - if the value of the reference kind is 9 (REF_invokeInterface), then the constant pool entry at
+                    |   that index must be a CONSTANT_InterfaceMethodref_info structure representing an interface's
+                    |   method for which a method handle is to be created.
+                    | If the value of reference kind item is 5, 6, 7 or 9, the name of the method represented by a
+                    | CONSTANT_Methodref_info structure or a CONSTANT_InterfaceMethodref_info structure must not be
+                    | <init> or <cinit>.
+                    | If the value is 8, the name of the method represented by a CONSTANT_Methodref_info structure must
+                    | be <init>.
                     +-->
-                <info-fragment size="readUnsignedShort" description="TODO"/>
+                <info-fragment size="readUnsignedByte" description="reference_kind"/>
+                <info-fragment size="readUnsignedShort" description="reference_index"/>
             </constant>
             <constant type="MethodType" tag="16">
                 <!--+
-                    |
+                    | The CONSTANT_MethodType_info structure is used to represent a method type.
+                    | The value of the descriptor index item must be a valid index in the constant pool table. The
+                    | constant pool entry at that index must be a CONSTANT_Utf8_info structure representing a method
+                    | descriptor.
                     +-->
-                <info-fragment size="readUnsignedShort" description="TODO"/>
+                <info-fragment size="readUnsignedShort" description="descriptor_index"/>
             </constant>
             <constant type="InvokeDynamic" tag="18">
                 <!--+
-                    |
+                    | The CONSTANT_InvokeDynamic_info structure is used by an invokedynamic instruction to specify a
+                    | bootstrap method, the dynamic invocation name, the argument and return types of the call, and
+                    | optionally, a sequence of additional constants called static arguments to the bootstrap method.
+                    | The value of the bootstrap_method_attr_index item must be a valid index of the bootstrap_methods
+                    | array of the bootstrap method table of this class file.
+                    | The value of the name_and_type_index item must be a valid index in the constant pool table. The
+                    | constant pool entry at that index must be a CONSTANT_NameAndType_info structure representing a
+                    | method name and method descriptor.
                     +-->
-                <info-fragment size="readInt" description="TODO"/>
+                <info-fragment size="readUnsignedShort" description="bootstrap_method_attr_index"/>
+                <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
         </constant-pool-constants>
     </java-specification>
