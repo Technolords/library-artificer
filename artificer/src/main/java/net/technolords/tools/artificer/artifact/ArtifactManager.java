@@ -1,8 +1,7 @@
 package net.technolords.tools.artificer.artifact;
 
-import javassist.ClassPool;
-import javassist.NotFoundException;
 import net.technolords.tools.artificer.Analyser;
+import net.technolords.tools.artificer.bytecode.BytecodeManager;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
@@ -16,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.zip.ZipError;
 
 /**
@@ -25,9 +23,11 @@ import java.util.zip.ZipError;
 public class ArtifactManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManager.class);
     private static final String JAVA_VERSIONS_REFERENCE = "reference/java-versions.xml";
+    private static final String JAVA_SPECIFICATIONS_REFERENCE = "reference/java-specifications.xml";
     public static final String CLASSIFICATION_UNDEFINED = "_classification_undefined_";
     public static final String CLASSIFICATION_JAVA_CLASSES = ".class";
     private JavaVersionManager javaVersionManager;
+    private BytecodeManager bytecodeManager;
 
     public ArtifactManager() {
     }
@@ -57,6 +57,11 @@ public class ArtifactManager {
             FileSystem fileSystem = FileSystems.newFileSystem(pathToZipFile, null);
             Files.walkFileTree(fileSystem.getPath("/"), artifactResourceVisitor);
 
+            // Initialize manager of byte code analysis (for referenced classes)
+            if (this.bytecodeManager == null) {
+                this.bytecodeManager = new BytecodeManager(JAVA_SPECIFICATIONS_REFERENCE);
+            }
+
             // Inspect the category, with java classes
             ResourceGroup javaResourceGroup = analysis.getResourceGroups().get(CLASSIFICATION_JAVA_CLASSES);
             if (javaResourceGroup != null) {
@@ -65,32 +70,25 @@ public class ArtifactManager {
                     this.javaVersionManager.registerCompiledVersion(analysis.getMeta(), resource);
 
                     // Determine the references classes by the resource
-//                    this.getReferencedClasses(resource);
+                    this.bytecodeManager.analyseBytecode(resource);
+                    /**
+                     * Resolve three class pools:
+                     * - self contained
+                     * - packaged by SE
+                     *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
+                     * - external
+                     */
                 }
             }
-
-            // TODO: study ASM, BCEL
-            // http://www.theserverside.com/news/1363881/The-Working-Developers-Guide-to-Java-Bytecode
-            // http://stackoverflow.com/questions/3315938/is-it-possible-to-view-bytecode-of-class-file
-            // https://commons.apache.org/proper/commons-bcel/manual.html
-            // TODO: filter the references classes (own classes, standard classes, external classes)
-            // http://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection
-            // Write util class, that reads classes from a rt jar
-            // filters the anonymous inner classes (as they cannot be instantiated anyways)
-            // JVM spec: http://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4
 
             // TODO: chart packages and classes into visual groups using graphviz/gephi
 
             // TODO: analyse other type of files (i.e. OSGI, WEB-INF etc)
 
+            // TODO: generate class diagrams
+
             // TODO: generate sequence diagrams
-//        } catch (ZipError e) {
-//            if ("zip END header not found".equals(e.getMessage())) {
-//                LOGGER.warn("Ignoring error: Got END header not found....");
-//            }
-//        } catch (NotFoundException e) {
-//            LOGGER.error(e.getMessage(), e);
-//        } catch (IOException | ArtificerException e) {
+
         } catch (IOException | ZipError e) {
             // Update status
             Meta meta = analysis.getMeta();
@@ -99,29 +97,4 @@ public class ArtifactManager {
         }
     }
 
-    /**
-     * Auxiliary method to get the referenced classes per resource.
-     *
-     * @param resource
-     *  The resource associated with the referenced classes.
-     * @throws NotFoundException
-     *  When the class (resource) cannot be found (full package name and class) in the class pool.
-     */
-    protected void getReferencedClasses(Resource resource) throws NotFoundException {
-        LOGGER.debug("About to getRefClasses of: " + resource.getName());
-
-        // Initialize class pool
-        ClassPool classPool = ClassPool.getDefault();
-
-        // Get full package name and class
-        String packageAndClassName = resource.getPath().toString();
-        packageAndClassName = packageAndClassName.replaceAll("/", ".");
-        int index = packageAndClassName.indexOf(".class");
-        packageAndClassName = packageAndClassName.substring(1, index);
-
-        // Obtain the referenced classes
-        Collection classes = classPool.get(packageAndClassName).getRefClasses();
-        LOGGER.debug("Class " + resource.getName() + " has " + classes.size() + " referenced classes...");
-        resource.getReferencedClasses().addAll(classes);
-    }
 }

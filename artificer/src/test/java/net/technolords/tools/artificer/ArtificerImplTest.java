@@ -90,8 +90,8 @@ public class ArtificerImplTest {
         return new Object[][] {
 //            {"corrupted.jar",                    "report-of-corrupted.xml",              "corrupted.xml"},
 //            {"navigate.zip",                     "report-of-navigate.xml",               "navigate.xml"},
-            {"service-recommendation-1.0.0.jar", "report-of-service-recommendation.xml", "service-recommendation.xml"},
-//            {"artificer-1.0.0-SNAPSHOT.jar",     "repost-of-artificer.xml",              "arificer.xml"},
+//            {"service-recommendation-1.0.0.jar", "report-of-service-recommendation.xml", "service-recommendation.xml"},
+            {"artificer-1.0.0-SNAPSHOT.jar",     "repost-of-artificer.xml",              "arificer.xml"},
         };
     }
 
