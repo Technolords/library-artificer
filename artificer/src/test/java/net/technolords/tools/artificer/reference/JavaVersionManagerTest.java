@@ -11,7 +11,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import sun.rmi.runtime.Log;
 
 import java.io.EOFException;
 import java.io.File;
@@ -19,8 +18,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
@@ -218,8 +215,8 @@ public class JavaVersionManagerTest {
     @DataProvider (name = "dataSetWithCompiledVersions")
     public Object[][] dataSetWithCompiledVersions() {
         return new Object[][] {
-                { "Analysis.class", "1.8"},
-                { "RfuRouteBuilder.class", "1.7"}
+                { "Analysis.class", "1.8", 1, 1},
+                { "RfuRouteBuilder.class", "1.7", 1, 1}
         };
     }
     /**
@@ -227,7 +224,7 @@ public class JavaVersionManagerTest {
      */
 
     @Test(dataProvider = "dataSetWithCompiledVersions")
-    public void testRegistrationOfJavaVersionInModel(String fileName, String expectedCompiledVersion){
+    public void testRegistrationOfJavaVersionInModel(String fileName, String expectedCompiledVersion, int expectedListSize, long expectedTotalClasses){
 
         Path pathToResourceLocation = FileSystems.getDefault().getPath(this.pathToDataFolder.toAbsolutePath() + File.separator + fileName);
         LOGGER.debug("The path towards the class file '" + fileName + "' exists: " + Files.exists(pathToResourceLocation));
@@ -242,19 +239,20 @@ public class JavaVersionManagerTest {
 
         Assert.assertEquals(resource.getCompiledVersion(), expectedCompiledVersion);
         LOGGER.debug("Resource Compiled Version = " + resource.getCompiledVersion());
-/**
-    The below statements were a trial to retrieve the Found Version but I am unsuccessful.
-    I can see the foundVersion in the Debug mode, but could not retrieve the value.
-    I wanted to assert on meta foundVersion, but instead used resource.getCompiledVersion.
-//ToDO : need to implement assertion on found version and total number of classes
- */
-//        FoundJavaVersion foundJavaVersion = new FoundJavaVersion();
-//
-//        LOGGER.debug("meta.getStatus() = " + meta.getStatus());
-//        LOGGER.debug("meta.getFoundJavaVersions() = " + meta.getFoundJavaVersions().getFoundJavaVersionList().size());
-//        LOGGER.debug("Index of Found JavaVersion = " + meta.getFoundJavaVersions().getFoundJavaVersionList().indexOf(foundJavaVersion));
-//        LOGGER.debug("Found versions = "+ meta.getFoundJavaVersions().getFoundJavaVersionList());
 
+        FoundJavaVersions foundJavaVersions = meta.getFoundJavaVersions();
+
+        int currentJavaVersionListSize = meta.getFoundJavaVersions().getFoundJavaVersionList().size();
+        Assert.assertEquals(currentJavaVersionListSize,expectedListSize);
+
+        for(FoundJavaVersion currentJavaVersion : foundJavaVersions.getFoundJavaVersionList()) {
+            if(currentJavaVersion.getFoundJavaVersion().equals(expectedCompiledVersion)) {
+
+                Assert.assertEquals(currentJavaVersion.getFoundJavaVersion(),expectedCompiledVersion);
+                Assert.assertEquals(currentJavaVersion.getTotalClasses(),expectedTotalClasses);
+                break;
+            }
+        }
     }
-
 }
+
