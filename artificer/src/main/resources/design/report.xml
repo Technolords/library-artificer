@@ -5,7 +5,7 @@
 
     <meta status="200" compiled-version="1.8">
         <java-versions>
-            <java version="1.8" total=""/>
+            <java version="1.8" total="4"/>
         </java-versions>
         <!--+
             | Deployment
@@ -17,7 +17,7 @@
 
     <resources>
         <resource type=".class" total="60">
-            <class full="net/technolords/sample/Hello.class" valid="true" java-version=""/>
+            <class full="net/technolords/sample/Hello.class" valid="true" java-version="1.8"/>
             <class full="doc/crap.class" valid="false"/>
         </resource>
         <resource type=".xml" total="4"/>
