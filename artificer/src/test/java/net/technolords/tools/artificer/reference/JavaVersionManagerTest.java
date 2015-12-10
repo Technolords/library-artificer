@@ -12,11 +12,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -176,21 +178,83 @@ public class JavaVersionManagerTest {
         }
     }
 
+    /** Invalid Classes Data Set to test the Magic Number Extraction.
+    */
+    @DataProvider (name = "dataSetWithInvalidClasses")
+    public Object[][] dataSetWithInvalidClasses() {
+        return new Object[][] {
+                { "abc.class", ArtificerException.class},
+                { "iAmEmpty.class", EOFException.class}
+        };
+    }
     /**
      * Test case 5: Test the extraction of a magic number from a class file as functionality, using the data set
      * containing invalid classes.
      */
-    @Test
-    public void testMagicNumberExtractionWithInvalidClasses() {
-        // TODO: implement, using abc.class and what not...
-    }
+    @Test(dataProvider = "dataSetWithInvalidClasses")
+    public void testMagicNumberExtractionWithInvalidClasses(String fileName, Class expectedException) throws ArtificerException, IOException {
+        //TODO: to be reviewed by Mike
 
+        try{
+            // Create a path to the file
+            Path pathToResourceLocation = FileSystems.getDefault().getPath(this.pathToDataFolder.toAbsolutePath() + File.separator + "invalidClass" + File.separator + fileName);
+            LOGGER.debug("The path towards the class file '" + fileName + "' exists: " + Files.exists(pathToResourceLocation));
+
+            // Create a resource reference linking to the file
+            Resource resource = new Resource();
+            resource.setPath(pathToResourceLocation);
+
+            // Find the magic number associated to the resource
+            JavaVersionManager javaVersionManager = new JavaVersionManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
+            String actualVersion = javaVersionManager.getMagicNumber(resource);
+
+        } catch (Exception e) {
+            Assert.assertEquals(e.getClass(), expectedException);
+            LOGGER.debug("Exception caused by : " + e.getCause() + " and: " + e.getMessage());
+        }
+    }
+    /** Data Set to test the registered Java Versions */
+    @DataProvider (name = "dataSetWithCompiledVersions")
+    public Object[][] dataSetWithCompiledVersions() {
+        return new Object[][] {
+                { "Analysis.class", "1.8", 1, 1},
+                { "RfuRouteBuilder.class", "1.7", 1, 1}
+        };
+    }
     /**
      * Test case 6: Test the registration of the java versions in the model.
      */
-    @Test
-    public void testRegistrationOfjavaVersionInModel() {
-        // TODO: implement
-    }
 
+    @Test(dataProvider = "dataSetWithCompiledVersions")
+    public void testRegistrationOfJavaVersionInModel(String fileName, String expectedCompiledVersion, int expectedListSize, long expectedTotalClasses){
+
+        Path pathToResourceLocation = FileSystems.getDefault().getPath(this.pathToDataFolder.toAbsolutePath() + File.separator + fileName);
+        LOGGER.debug("The path towards the class file '" + fileName + "' exists: " + Files.exists(pathToResourceLocation));
+
+        Resource resource = new Resource();
+        resource.setPath(pathToResourceLocation);
+
+        Meta meta = new Meta();
+
+        JavaVersionManager javaVersionManager = new JavaVersionManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
+        javaVersionManager.registerCompiledVersion(meta, resource);
+
+        Assert.assertEquals(resource.getCompiledVersion(), expectedCompiledVersion);
+        LOGGER.debug("Resource Compiled Version = " + resource.getCompiledVersion());
+
+        FoundJavaVersions foundJavaVersions = meta.getFoundJavaVersions();
+
+        int currentJavaVersionListSize = meta.getFoundJavaVersions().getFoundJavaVersionList().size();
+        Assert.assertEquals(currentJavaVersionListSize,expectedListSize);
+
+        for(FoundJavaVersion currentJavaVersion : foundJavaVersions.getFoundJavaVersionList()) {
+            if(currentJavaVersion.getFoundJavaVersion().equals(expectedCompiledVersion)) {
+
+                Assert.assertEquals(currentJavaVersion.getFoundJavaVersion(),expectedCompiledVersion);
+                Assert.assertEquals(currentJavaVersion.getTotalClasses(),expectedTotalClasses);
+                break;
+            }
+        }
+    }
 }
+
