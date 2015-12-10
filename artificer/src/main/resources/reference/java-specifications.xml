@@ -89,7 +89,7 @@
                     | value of the int constant. The bytes of the value are stored in big-endian (high byte first)
                     | order.
                     +-->
-                <info-fragment size="readInt" description="TODO"/>
+                <info-fragment size="readInt" description="int_value"/>
             </constant>
             <constant type="Float" tag="4">
                 <!--+
@@ -104,7 +104,7 @@
                     | - if bits is in the range 0x7f80 0001 through 0x7fff ffff the float value will be NaN
                     | - if bits is in the range 0xff80 0001 through 0xffff ffff the float value will be NaN
                     +-->
-                <info-fragment size="readFloat" description="TODO"/>
+                <info-fragment size="readFloat" description="float_value"/>
             </constant>
             <constant type="Long" tag="5">
                 <!--+
@@ -113,7 +113,7 @@
                     | The unsigned high_bytes and low_bytes items of the CONSTANT_Long_info structure together represent
                     | the value of the long constant where they are stored in big-endian (high byte first) order.
                     +-->
-                <info-fragment size="readLong" description="TODO"/>
+                <info-fragment size="readLong" description="long_value"/>
             </constant>
             <constant type="Double" tag="6">
                 <!--+
@@ -126,7 +126,7 @@
                    | If bits is in the range 0x7ff0 0000 0000 0001L through 0x7fff ffff ffff ffffL the double value will be NaN
                    | If bits is in the range 0xfff0 0000 0000 0001L through 0xffff ffff ffff ffffL the double value will be NaN
                    +-->
-                <info-fragment size="readDouble" description="TODO"/>
+                <info-fragment size="readDouble" description="double_value"/>
             </constant>
             <constant type="NameAndType" tag="12">
                 <!--+
@@ -153,7 +153,7 @@
                     | not recognize the four-byte format of standard UTF-8; it uses its own two-times-three-byte format
                     | instead.
                     +-->
-                <info-fragment size="readUTF" description="string-value"/>
+                <info-fragment size="readUTF" description="string_value"/>
             </constant>
             <constant type="MethodHandle" tag="15">
                 <!--+
