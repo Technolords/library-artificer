@@ -1,5 +1,5 @@
 <java-specifications>
-    <java-specification magic-number="33" alias="1.7">
+    <java-specification magic-number="33" version="1.7">
         <constant-pool-constants>
             <constant type="Class" tag="7" info-size="readUnsignedShort"/>
             <constant type="Fieldref" tag="9" info-size="readInt"/>
@@ -14,7 +14,7 @@
             <constant type="Utf8" tag="readUTF"/>
         </constant-pool-constants>
     </java-specification>
-    <java-specification magic-number="34" alias="1.8">
+    <java-specification magic-number="34" version="1.8">
         <!--+
             | Legend:
             | - u1: unsigned one byte quantity, to be read as: readUnsignedByte

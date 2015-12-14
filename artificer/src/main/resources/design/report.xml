@@ -78,3 +78,40 @@
     </resources>
 </analysed-artifact>
 -->
+<!--
+1) refactor packages
+2) test with simple class with nested instantion of another class and see if bytecodemanager picks this up
+3) compile list of se classes and ee classes
+
+java-specifications
+  java-specification magic-number="33" version="1.7"
+
+/analysis/class/
+  JavaSpecificationManager
+  BytecodeParser
+  ClassReferenceAnalyser
+
+/analysis/xml
+  MetaInfManager
+  OsgiInfManager
+  WebInfManager
+
+/analysis/mf
+  ManifestManager
+
+/domain/class
+
+techno-tools
+  artificer                                     -> generates data
+  artificer-javadoc                     -> generates presentation
+  artificer-camel-route                 -> generates presentation
+
+---
+    // - name_index                                     -> index constant pool (utf8)
+    // - class_index                                    -> index constant pool (field, method, interfacemethod)
+    // - name_and_type_index                            -> index constant pool (name_and_type)
+    // - string_index                                   -> index constant pool (utf8)
+    // - descriptor_index                               -> index constant pool (utf8)
+    // - reference_kind                                 -> value 1 to 9
+
+-->
