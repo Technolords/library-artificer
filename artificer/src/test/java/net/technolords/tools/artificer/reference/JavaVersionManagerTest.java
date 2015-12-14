@@ -9,7 +9,6 @@ import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
-
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -17,7 +16,6 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
-
 import java.nio.file.Path;
 
 import static org.testng.Assert.assertEquals;

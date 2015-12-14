@@ -35,7 +35,6 @@ public class TestSupport {
         StringBuilder buffer = new StringBuilder();
         buffer.append("src").append(File.separator).append("test").append(File.separator);
         buffer.append("resources").append(File.separator).append("data");
-//        buffer.append("data").append(File.separator).append("class");
 
         // Set path to folder containing the data, i.e. src/test/resources/data/class
         Path pathToData = FileSystems.getDefault().getPath(buffer.toString());
