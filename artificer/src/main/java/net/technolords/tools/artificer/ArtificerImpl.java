@@ -1,6 +1,6 @@
 package net.technolords.tools.artificer;
 
-import net.technolords.tools.artificer.artifact.ArtifactManager;
+import net.technolords.tools.artificer.input.ArtifactManager;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.exception.ArtificerException;
