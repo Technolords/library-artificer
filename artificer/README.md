@@ -4,10 +4,10 @@ A tool to inspect a single java library and report its contents. For more inform
 Technically, this means to have the following information about a java library:
 - DONE: Breakdown of the files embedded in the jar file. I.e. number of .class files, .xml files, etc
 - DONE: Determination of which compiler the .class files are generated
-- DONE: Find out the references classes, i.e. the implicit dependencies of the .class file (note that a subset of those classesare the imports, however this is bytecode)
+- PROGRESS: Find out the references classes, i.e. the implicit dependencies of the .class file (note that a subset of those classesare the imports, however this is bytecode)
 - [ ] Classify the dependencies, as in, which are embedded in the jar, which are part of SE and which are neither (3rd party)
 - [ ] Determine the implicit support of the library, by examining the manifest and support folders (i.e. presence OSGI-INF, WEB-INF, META-INF, etc)
-- [ ] Model the .classes, by grouping them into packages and assign weight factors (preparing for view)
+- [ ] Model the .classes, by grouping them into packages and assign weight factors (preparing for graph view)
 - [ ] Provide a graphical representation of these .classes, using the groups, packages and weight factors (the actual view)
 
 An example of how such graphical representation could look like:

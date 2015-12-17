@@ -40,78 +40,21 @@
 </analysed-artifact>
 
 <!--
-    META-INF/MANIFEST.MF
-    META-INF/
-    META-INF/maven/
-    META-INF/maven/com.liberty.global/
-    META-INF/maven/com.liberty.global/service-recommendation/
-    META-INF/maven/com.liberty.global/service-recommendation/pom.properties
-    META-INF/maven/com.liberty.global/service-recommendation/pom.xml
-    OSGI-INF/
-    OSGI-INF/blueprint/
-    OSGI-INF/blueprint/blueprint.xml
-    com/
-    com/lgi/
-    com/lgi/training/
-    com/lgi/training/service/
-    com/lgi/training/service/recommendation/
-    com/lgi/training/service/recommendation/RecommendationRouteBuilder.class
-    com/lgi/training/service/recommendation/RecommendationService.class
-    com/lgi/training/service/recommendation/processor/
-    com/lgi/training/service/recommendation/processor/ErrorProcessor.class
-    com/lgi/training/service/recommendation/processor/StatusProcessor.class
-    features.xml
--->
-<!--
-<analysed-artifact artifact-name="service-recommendation-1.0.0.jar">
-    Output generated at: Sun Nov 22 14:08:08 CET 2015
+Current output:
+
+<analysed-artifact artifact-name="artificer-1.0.0-SNAPSHOT.jar">
+    Output generated at: Wed Dec 16 18:29:03 CET 2015
     <meta status="200">
         <java-versions>
-            <java version="1.7"></java>
+            <java version="1.8" total-classes="13"/>
         </java-versions>
     </meta>
     <resources>
-        <resource type=".properties" total="1"></resource>
-        <resource type=".MF" total="1"></resource>
-        <resource type=".class" total="4"></resource>
-        <resource type=".xml" total="3"></resource>
+        <resource type=".txt" total="1"/>
+        <resource type=".properties" total="1"/>
+        <resource type=".MF" total="1"/>
+        <resource type=".class" total="13"/>
+        <resource type=".xml" total="3"/>
     </resources>
 </analysed-artifact>
--->
-<!--
-1) refactor packages
-2) test with simple class with nested instantion of another class and see if bytecodemanager picks this up
-3) compile list of se classes and ee classes
-
-java-specifications
-  java-specification magic-number="33" version="1.7"
-
-/analysis/class/
-  JavaSpecificationManager
-  BytecodeParser
-  ClassReferenceAnalyser
-
-/analysis/xml
-  MetaInfManager
-  OsgiInfManager
-  WebInfManager
-
-/analysis/mf
-  ManifestManager
-
-/domain/class
-
-techno-tools
-  artificer                                     -> generates data
-  artificer-javadoc                     -> generates presentation
-  artificer-camel-route                 -> generates presentation
-
----
-    // - name_index                                     -> index constant pool (utf8)
-    // - class_index                                    -> index constant pool (field, method, interfacemethod)
-    // - name_and_type_index                            -> index constant pool (name_and_type)
-    // - string_index                                   -> index constant pool (utf8)
-    // - descriptor_index                               -> index constant pool (utf8)
-    // - reference_kind                                 -> value 1 to 9
-
 -->

@@ -47,13 +47,6 @@
         </constant-pool-constants>
     </java-specification>
     <java-specification magic-number="34" version="1.8">
-        <!--+
-            | Legend:
-            | - u1: unsigned one byte quantity, to be read as: readUnsignedByte
-            | - u2: unsigned two byte quantity, to be read as: readUnsignedShort
-            | - u4: unsigned four byte quantity, to be read as: readInt
-            | - u8: unsigned eight byte quantity, to be read as: readLong
-            +-->
         <constant-pool-constants>
             <constant type="Class" tag="7">
                 <!--+
