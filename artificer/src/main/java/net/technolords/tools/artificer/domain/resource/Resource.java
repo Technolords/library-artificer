@@ -1,6 +1,6 @@
 package net.technolords.tools.artificer.domain.resource;
 
-import net.technolords.tools.artificer.domain.bytecode.ConstantPool;
+import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;

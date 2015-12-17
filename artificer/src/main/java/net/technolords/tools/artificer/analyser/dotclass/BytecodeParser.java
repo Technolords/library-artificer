@@ -5,9 +5,9 @@ import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantP
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolInfoFragment;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecifications;
-import net.technolords.tools.artificer.domain.bytecode.Constant;
-import net.technolords.tools.artificer.domain.bytecode.ConstantInfo;
-import net.technolords.tools.artificer.domain.bytecode.ConstantPool;
+import net.technolords.tools.artificer.domain.dotclass.Constant;
+import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
+import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;

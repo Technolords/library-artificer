@@ -1,4 +1,4 @@
-package net.technolords.tools.artificer.domain.bytecode;
+package net.technolords.tools.artificer.domain.dotclass;
 
 /**
  * Created by Technolords on 2015-Dec-07.

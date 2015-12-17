@@ -1,4 +1,4 @@
-package net.technolords.tools.artificer.domain.bytecode;
+package net.technolords.tools.artificer.domain.dotclass;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -18,12 +18,12 @@ DONE 2) refactor java-specifications.xml
     java-specifications
       java-specification magic-number="33" version="1.7"
 
-3) refactor class JavaSpecificationManager
+DONE 3) refactor class JavaSpecificationManager
     - use the java-specifications.xml file
     - delete the java-versions.xml file
     - rename the test .xml files
 
-4) delete the reference package and classes
+DONE 4) delete the reference package and classes
 
 5) implement ClassReferenceAnalyser:
     - create method that extracts a 'normalized' class (x/y/z)
