@@ -16,7 +16,7 @@ import java.nio.file.Path;
  */
 public class BytecodeParserTest extends TestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(BytecodeParserTest.class);
-    private static final String KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE = "reference/java-specifications.xml";
+    private static final String KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE = "analyser/dotclass/java-specifications.xml";
 
     @Test
     public void testAnalyseBytecodeForSingleClass() throws Exception {

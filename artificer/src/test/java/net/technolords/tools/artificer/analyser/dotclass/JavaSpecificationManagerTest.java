@@ -24,12 +24,9 @@ public class JavaSpecificationManagerTest extends TestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaSpecificationManagerTest.class);
     private static final String UNKNOWN_JAVA_VERSION = "unknownJavaVersion";
-    private static final String KNOWN_JAVA_VERSIONS_REFERENCE_FILE = "reference/java-specifications.xml";
-    private static final String MALFORMED_REFERENCE_FILE = "reference/malformed-java-versions.xml";
-    private static final String NON_EXISTING_JAVA_VERSIONS_REFERENCE_FILE = "reference/no-java-versions.xml";
-
-    // TODO: move malformed away
-    // TODO: change folder name of reference into analyser
+    private static final String KNOWN_JAVA_VERSIONS_REFERENCE_FILE = "analyser/dotclass/java-specifications.xml";
+    private static final String MALFORMED_REFERENCE_FILE = "analyser/dotclass/malformed-java-versions.xml";
+    private static final String NON_EXISTING_JAVA_VERSIONS_REFERENCE_FILE = "analyser/dotclass/no-java-versions.xml";
 
     /**
      * Test case #1: Test initialization of the JavaSpecificationManager with a reference of a non

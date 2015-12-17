@@ -23,7 +23,7 @@ import java.util.zip.ZipError;
 public class ArtifactManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManager.class);
 //    private static final String JAVA_VERSIONS_REFERENCE = "reference/java-versions.xml";
-    private static final String JAVA_SPECIFICATIONS_REFERENCE = "reference/java-specifications.xml";
+    private static final String JAVA_SPECIFICATIONS_REFERENCE = "analyser/dotclass/java-specifications.xml";
     public static final String CLASSIFICATION_UNDEFINED = "_classification_undefined_";
     public static final String CLASSIFICATION_JAVA_CLASSES = ".class";
     private JavaSpecificationManager javaSpecificationManager;

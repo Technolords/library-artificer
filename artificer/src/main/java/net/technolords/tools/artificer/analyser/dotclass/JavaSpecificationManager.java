@@ -7,8 +7,6 @@ import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
 import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
 import net.technolords.tools.artificer.exception.ArtificerException;
-import net.technolords.tools.artificer.reference.JavaVersion;
-import net.technolords.tools.artificer.reference.JavaVersions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +28,6 @@ public class JavaSpecificationManager {
     private static final int MAGIC_NUMBER = 0xcafebabe;
     private static final String UNKNOWN_JAVA_VERSION = "unknownJavaVersion";
     private Map<String, String> lookupMap;
-//    private Map<String, JavaSpecification> lookupMap;
     private String referenceFile;
 
     /**
@@ -46,21 +43,16 @@ public class JavaSpecificationManager {
     /**
      * Auxiliary method to initialize the lookup map. It uses the default classloader to obtain
      * an inputstream as reference for the XML file and then JAXB will use this to unmarshall this
-     * to an instance of the JavaVersions file.
+     * to an instance of the JavaSpecifications class.
      *
      * @throws ArtificerException
      *  When unmarshalling the XML file fails.
      */
     public void initializeLookupMap() throws ArtificerException {
         try {
-//            JAXBContext jaxbContext = JAXBContext.newInstance(JavaVersions.class);
             JAXBContext jaxbContext = JAXBContext.newInstance(JavaSpecifications.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(this.referenceFile);
-//            JavaVersions javaVersions = (JavaVersions) unmarshaller.unmarshal(inputStream);
-//            for(JavaVersion javaVersion : javaVersions.getJavaVersions()) {
-//                this.lookupMap.put(javaVersion.getMagicNumber(), javaVersion.getVersion());
-//            }
             JavaSpecifications javaSpecifications = (JavaSpecifications) unmarshaller.unmarshal(inputStream);
             for(JavaSpecification javaSpecification : javaSpecifications.getJavaSpecifications()) {
                 this.lookupMap.put(javaSpecification.getMagicNumber(), javaSpecification.getVersion());
@@ -130,8 +122,6 @@ public class JavaSpecificationManager {
             LOGGER.warn("Unable to map magic version: " + magicNumber + ", defaulting to unknown java version: " + UNKNOWN_JAVA_VERSION);
             return UNKNOWN_JAVA_VERSION;
         }
-//        JavaSpecification javaSpecification = this.lookupMap.get(magicNumber);
-//        return javaSpecification.getVersion();
         return this.lookupMap.get(magicNumber);
     }
 
