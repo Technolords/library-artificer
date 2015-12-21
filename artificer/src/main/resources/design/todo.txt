@@ -1,31 +1,4 @@
-DONE 1) refactor packages
-    /analysis/dotclass/
-      JavaSpecificationManager
-      BytecodeParser
-      ClassReferenceAnalyser
-
-    /analysis/dotxml
-      MetaInfManager
-      OsgiInfManager
-      WebInfManager
-
-    /analysis/dotmf
-      ManifestManager
-
-    /domain/class
-
-DONE 2) refactor java-specifications.xml
-    java-specifications
-      java-specification magic-number="33" version="1.7"
-
-DONE 3) refactor class JavaSpecificationManager
-    - use the java-specifications.xml file
-    - delete the java-versions.xml file
-    - rename the test .xml files
-
-DONE 4) delete the reference package and classes
-
-5) implement ClassReferenceAnalyser:
+- implement ClassReferenceAnalyser:
     - create method that extracts a 'normalized' class (x/y/z)
        - name_index                                     -> index constant pool (utf8)
        - class_index                                    -> index constant pool (field, method, interfacemethod)
@@ -35,14 +8,22 @@ DONE 4) delete the reference package and classes
        - reference_kind                                 -> value 1 to 9
     - expose method on main interface to retrieve list of referenced classes??
 
-6) test with simple class with nested instantion of another class and see if bytecodemanager picks this up
+- test with simple class with nested instantion of another class and see if bytecodemanager picks this up
 
-7) compile list of se classes and ee classes
+- compile list of se classes and ee classes
     - decide which class keeps this state
 
-8) extend roadmap with
+- extend roadmap with
     techno-tools
         artificer                                       -> generates data
         artificer-javadoc                               -> generates presentation
         artificer-camel-route                           -> generates presentation
 
+- other stuf
+    /analysis/dotxml
+        MetaInfManager
+        OsgiInfManager
+        WebInfManager
+
+    /analysis/dotmf
+        ManifestManager

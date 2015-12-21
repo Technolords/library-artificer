@@ -2,6 +2,7 @@ package net.technolords.tools.artificer.input;
 
 import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.analyser.dotclass.BytecodeParser;
+import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
@@ -22,12 +23,12 @@ import java.util.zip.ZipError;
  */
 public class ArtifactManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManager.class);
-//    private static final String JAVA_VERSIONS_REFERENCE = "reference/java-versions.xml";
     private static final String JAVA_SPECIFICATIONS_REFERENCE = "analyser/dotclass/java-specifications.xml";
     public static final String CLASSIFICATION_UNDEFINED = "_classification_undefined_";
     public static final String CLASSIFICATION_JAVA_CLASSES = ".class";
     private JavaSpecificationManager javaSpecificationManager;
     private BytecodeParser bytecodeParser;
+    private ConstantPoolAnalyser constantPoolAnalyser;
 
     public ArtifactManager() {
     }
@@ -49,7 +50,6 @@ public class ArtifactManager {
 
             // Initialize manager of java compiler versions (for lookup)
             if (this.javaSpecificationManager == null) {
-//                this.javaSpecificationManager = new JavaSpecificationManager(JAVA_VERSIONS_REFERENCE);
                 this.javaSpecificationManager = new JavaSpecificationManager(JAVA_SPECIFICATIONS_REFERENCE);
             }
 
@@ -61,6 +61,11 @@ public class ArtifactManager {
             // Initialize manager of byte code analysis (for referenced classes)
             if (this.bytecodeParser == null) {
                 this.bytecodeParser = new BytecodeParser(JAVA_SPECIFICATIONS_REFERENCE);
+            }
+
+            // Initialize constant pool analyzer
+            if (this.constantPoolAnalyser == null) {
+                this.constantPoolAnalyser = new ConstantPoolAnalyser();
             }
 
             // Inspect the category, with java classes
@@ -79,9 +84,11 @@ public class ArtifactManager {
                      *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
                      * - external
                      */
+                    this.constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
+                    // For each resource, fetch referenced classes from constant pool
+                    // Create unique list and update model (XML)
                 }
             }
-
             // TODO: chart packages and classes into visual groups using graphviz/gephi
 
             // TODO: analyse other type of files (i.e. OSGI, WEB-INF etc)
@@ -91,6 +98,7 @@ public class ArtifactManager {
             // TODO: generate sequence diagrams
 
         } catch (IOException | ZipError e) {
+            LOGGER.error("Updated meta with error message: " + e.getMessage(), e);
             // Update status
             Meta meta = analysis.getMeta();
             meta.setStatus(Analyser.STATUS_ERROR);

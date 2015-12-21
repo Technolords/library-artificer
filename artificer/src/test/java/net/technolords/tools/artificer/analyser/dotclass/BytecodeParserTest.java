@@ -20,7 +20,8 @@ public class BytecodeParserTest extends TestSupport {
 
     @Test
     public void testAnalyseBytecodeForSingleClass() throws Exception {
-        final String CLASSNAME = "Analyser.class";
+//        final String CLASSNAME = "Analyser.class";
+        final String CLASSNAME = "ErrorProcessor.class";
         Path pathToResourceLocation = FileSystems.getDefault().getPath(super.getPathToClassFolder().toAbsolutePath() + File.separator + CLASSNAME);
         LOGGER.debug("The path towards the class file '" + CLASSNAME + "' exists: " + Files.exists(pathToResourceLocation));
 
@@ -32,5 +33,8 @@ public class BytecodeParserTest extends TestSupport {
 
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
         bytecodeParser.analyseBytecode(resource);
+
+        ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
+        constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
     }
 }
