@@ -125,6 +125,17 @@ public class BytecodeParser {
             this.absorbOverhead(dataInputStream);
             // Extract the constant pool
             ConstantPool constantPool = this.extractConstantPool(dataInputStream, resource.getCompiledVersion());
+            // TODO: (u2) access_flags
+            // TODO: (u2) this_class
+            // TODO: (u2) super_class
+            // TODO: (u2) interfaces_count
+            // TODO: (u2) interfaces
+            // TODO: (u2) fields_count
+            // TODO: (??) fields                    <--
+            // TODO: (u2) methods_count
+            // TODO: (??) methods                   <--
+            // TODO: (u2) attributes_count
+            // TODO: (??) attributes                <--
             resource.setConstantPool(constantPool);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);

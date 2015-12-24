@@ -235,5 +235,10 @@
                 <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
         </constant-pool-constants>
+        <field-info>
+            <info-fragment size="readUnsignedShort" description="access_flags"/>
+            <info-fragment size="readUnsignedShort" description="name_index"/>
+        </field-info>
+        <attribute-info/>
     </java-specification>
 </java-specifications>

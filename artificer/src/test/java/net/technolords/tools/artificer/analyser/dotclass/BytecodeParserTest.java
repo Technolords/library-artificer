@@ -10,6 +10,7 @@ import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 /**
  * Created by Technolords on 2015-Dec-04.
@@ -20,8 +21,8 @@ public class BytecodeParserTest extends TestSupport {
 
     @Test
     public void testAnalyseBytecodeForSingleClass() throws Exception {
-//        final String CLASSNAME = "Analyser.class";
-        final String CLASSNAME = "ErrorProcessor.class";
+        final String CLASSNAME = "Analyser.class";
+//        final String CLASSNAME = "ErrorProcessor.class";
         Path pathToResourceLocation = FileSystems.getDefault().getPath(super.getPathToClassFolder().toAbsolutePath() + File.separator + CLASSNAME);
         LOGGER.debug("The path towards the class file '" + CLASSNAME + "' exists: " + Files.exists(pathToResourceLocation));
 
@@ -35,6 +36,6 @@ public class BytecodeParserTest extends TestSupport {
         bytecodeParser.analyseBytecode(resource);
 
         ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
-        constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
+        Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
     }
 }
