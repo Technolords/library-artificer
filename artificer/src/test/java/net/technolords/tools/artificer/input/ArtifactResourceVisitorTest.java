@@ -4,9 +4,12 @@ import net.technolords.tools.artificer.TestSupport;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.resource.Resource;
 
+import org.omg.CORBA.UNKNOWN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -25,6 +28,17 @@ public class ArtifactResourceVisitorTest extends TestSupport {
     private static final String INPUT_JAR       = "jars" + File.separator + "artificer-1.0.0-SNAPSHOT.jar";
     private static final String INPUT_UNDEFINED = "abc";
 
+    private static Analysis analysis;
+    private static Resource resource;
+    private static ArtifactResourceVisitor artifactResourceVisitor;
+
+    @BeforeGroups("setUp")
+    public void createCommonObjects(){
+        analysis = new Analysis();
+        resource = new Resource();
+        artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
+    }
+
     /**
      * Test case #1: Test classification of a resource.
      */
@@ -32,29 +46,26 @@ public class ArtifactResourceVisitorTest extends TestSupport {
     @DataProvider(name = "dataSetClassifyResource")
     public Object[][] dataSetClassifyResource() {
         return new Object[][] {
-                {INPUT_CLASS},
-                {INPUT_UNDEFINED}
+                {INPUT_CLASS, ".class"},
+                {INPUT_UNDEFINED, "_classification_undefined_"},
+                {"abc.txt.class", "_classification_undefined_"}
         };
     }
-
-    @Test(dataProvider = "dataSetClassifyResource")
-    public void testClassificationOfResource(String input) {
+    /**
+    Note: input = abc.txt.class is not classified under any group and Analysis object do not store its state.
+     */
+    @Test(groups = "setUp" , dataProvider = "dataSetClassifyResource")
+    public void testClassificationOfResource(final String input, final String expectedClassification) {
 
         Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToDataFolder() + File.separator + input);
         LOGGER.debug("The path towards the input file '" + input + "' exists: " + Files.exists(pathToResourceLocation));
 
-        Analysis analysis = new Analysis();
-        analysis.setArtifactName(input);
-
-        // Create a resource reference linking to the file
-        Resource resource = new Resource();
         resource.setPath(pathToResourceLocation);
         resource.setName(input);
 
-        ArtifactResourceVisitor artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
         artifactResourceVisitor.classifyResource(resource);
 
-        Assert.assertTrue(true);
+        assert analysis.getResourceGroups().containsKey(expectedClassification);
     }
 
     /**
@@ -64,30 +75,24 @@ public class ArtifactResourceVisitorTest extends TestSupport {
     @DataProvider(name = "dataSetResourceGroupClassification")
     public Object[][] dataSetResourceGroupClassification() {
         return new Object[][] {
-                {INPUT_CLASS, ".class"},
-                {INPUT_UNDEFINED, "_classification_undefined_"},
-                {INPUT_JAR, ".jar"}
+                {INPUT_CLASS, ".class", 1},
+                {INPUT_UNDEFINED, "_classification_undefined_", 2},
+                {INPUT_JAR, ".jar", 3}
         };
     }
-
-    @Test(dataProvider = "dataSetResourceGroupClassification")
-    public void testAddResourceToClassificationGroup(String input, String classification) {
+    @Test(groups = "setUp", dataProvider = "dataSetResourceGroupClassification")
+    public void testAddResourceToClassificationGroup(final String input, final String classification, final int groupSize) {
 
         Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToDataFolder() + File.separator + input);
         LOGGER.debug("The path towards the input file '" + input + "' exists: " + Files.exists(pathToResourceLocation));
 
-        Analysis analysis = new Analysis();
-        analysis.setArtifactName("artificer-1.0.0-SNAPSHOT.jar");
-
-        // Create a resource reference linking to the file
-        Resource resource = new Resource();
         resource.setPath(pathToResourceLocation);
         resource.setName(input);
 
-        ArtifactResourceVisitor artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
         artifactResourceVisitor.addResourceToClassificationGroup(resource,classification);
 
         Assert.assertTrue(analysis.getResourceGroups().containsKey(classification));
+        Assert.assertTrue(analysis.getResourceGroups().size() == groupSize);
 
         }
 }
