@@ -47,6 +47,13 @@
         </constant-pool-constants>
     </java-specification>
     <java-specification magic-number="34" version="1.8">
+        <!-- TODO: class magic number -->
+        <!-- TODO: class minor version -->
+        <!-- TODO: class major version -->
+        <!--
+             TODO: rename constant-pool-constant into class-constantpool
+             TODO: add count as attribute
+            -->
         <constant-pool-constants>
             <constant type="Class" tag="7">
                 <!--+
@@ -235,10 +242,51 @@
                 <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
         </constant-pool-constants>
+        <!-- TODO: support access flags-->
+        <class-access-flags size="readUnsignedShort">
+            <flag mask="0x0001" description="public"/>
+            <flag mask="0x0010" description="final"/>
+            <flag mask="0x0020" description="super"/>
+            <flag mask="0x0200" description="interface"/>
+            <flag mask="0x0400" description="abstract"/>
+            <flag mask="0x1000" description="synthetic"/>
+            <flag mask="0x2000" description="annotation"/>
+            <flag mask="0x4000" description="enum"/>
+        </class-access-flags>
+        <!-- TODO: support this class reference -->
+        <class-this-class-reference size="readUnsignedShort"/>
+        <!-- TODO: support super class reference -->
+        <class-super-class-reference size="readUnsignedShort"/>
+        <!--
+            TODO: support field info
+            TODO: add count as attribute
+            -->
         <field-info>
+            <field-access-flags>
+                <flag mask="0x0001" description="public"/>
+                <flag mask="0x0002" description="private"/>
+                <flag mask="0x0004" description="protected"/>
+                <flag mask="0x0008" description="static"/>
+                <flag mask="0x0010" description="final"/>
+                <flag mask="0x0040" description="volatile"/>
+                <flag mask="0x0080" description="transient"/>
+                <flag mask="0x0100" description="synthetic"/>
+                <flag mask="0x0400" description="enum"/>
+            </field-access-flags>
             <info-fragment size="readUnsignedShort" description="access_flags"/>
             <info-fragment size="readUnsignedShort" description="name_index"/>
+            <info-fragment size="readUnsignedShort" description="descriptor_index"/>
+            <info-fragment size="readUnsignedShort" description="attributes_count"/>
         </field-info>
+        <!--
+            TODO: support method info
+            TODO: add count as attribute
+            -->
+        <method-info/>
+        <!--
+            TODO: support attribute info
+            TODO: add count as attribute
+            -->
         <attribute-info/>
     </java-specification>
 </java-specifications>
