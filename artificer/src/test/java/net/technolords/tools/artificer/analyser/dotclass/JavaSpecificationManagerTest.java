@@ -190,6 +190,7 @@ public class JavaSpecificationManagerTest extends TestSupport {
             // Find the magic number associated to the resource
             JavaSpecificationManager javaSpecificationManager = new JavaSpecificationManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
             String actualVersion = javaSpecificationManager.getMagicNumber(resource);
+            Assert.fail("Should fail as the class: " + fileName + "is invalid.");
 
         } catch (Exception e) {
             Assert.assertEquals(e.getClass(), expectedException);

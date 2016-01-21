@@ -3,13 +3,10 @@ package net.technolords.tools.artificer.input;
 import net.technolords.tools.artificer.TestSupport;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.resource.Resource;
-
-import org.omg.CORBA.UNKNOWN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -35,7 +32,6 @@ public class ArtifactResourceVisitorTest extends TestSupport {
     @BeforeGroups("setUp")
     public void createCommonObjects(){
         analysis = new Analysis();
-        resource = new Resource();
         artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
     }
 
@@ -46,19 +42,19 @@ public class ArtifactResourceVisitorTest extends TestSupport {
     @DataProvider(name = "dataSetClassifyResource")
     public Object[][] dataSetClassifyResource() {
         return new Object[][] {
+                {"abc.txt.class", ".class"},
                 {INPUT_CLASS, ".class"},
-                {INPUT_UNDEFINED, "_classification_undefined_"},
-                {"abc.txt.class", "_classification_undefined_"}
+                {INPUT_UNDEFINED, "_classification_undefined_"}
         };
     }
-    /**
-    Note: input = abc.txt.class is not classified under any group and Analysis object do not store its state.
-     */
+
     @Test(groups = "setUp" , dataProvider = "dataSetClassifyResource")
     public void testClassificationOfResource(final String input, final String expectedClassification) {
 
         Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToDataFolder() + File.separator + input);
         LOGGER.debug("The path towards the input file '" + input + "' exists: " + Files.exists(pathToResourceLocation));
+
+        resource = new Resource();
 
         resource.setPath(pathToResourceLocation);
         resource.setName(input);
@@ -86,6 +82,7 @@ public class ArtifactResourceVisitorTest extends TestSupport {
         Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToDataFolder() + File.separator + input);
         LOGGER.debug("The path towards the input file '" + input + "' exists: " + Files.exists(pathToResourceLocation));
 
+        resource = new Resource();
         resource.setPath(pathToResourceLocation);
         resource.setName(input);
 
