@@ -61,7 +61,7 @@ public class ArtifactResourceVisitorTest extends TestSupport {
 
         artifactResourceVisitor.classifyResource(resource);
 
-        assert analysis.getResourceGroups().containsKey(expectedClassification);
+        Assert.assertTrue(analysis.getResourceGroups().containsKey(expectedClassification));
     }
 
     /**
@@ -91,5 +91,5 @@ public class ArtifactResourceVisitorTest extends TestSupport {
         Assert.assertTrue(analysis.getResourceGroups().containsKey(classification));
         Assert.assertTrue(analysis.getResourceGroups().size() == groupSize);
 
-        }
+    }
 }
