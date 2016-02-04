@@ -74,7 +74,7 @@ public class ArtificerImplTest extends TestSupport{
     }
 
     @Test (dataProvider = "artifactDataProvider")
-    public void testWithVariousArtifacts(String artifact, String generatedReportFilename) throws ArtificerException {
+    public void testWithVariousArtifacts(final String artifact,final String generatedReportFilename) throws ArtificerException {
 
         LOGGER.info("Testing artifact {} with expected report {}", artifact, generatedReportFilename);
         Analyser analyser = new ArtificerImpl();

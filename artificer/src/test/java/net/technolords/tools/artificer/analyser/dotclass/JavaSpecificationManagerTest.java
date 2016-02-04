@@ -9,6 +9,7 @@ import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -27,6 +28,13 @@ public class JavaSpecificationManagerTest extends TestSupport {
     private static final String KNOWN_JAVA_VERSIONS_REFERENCE_FILE = "analyser/dotclass/java-specifications.xml";
     private static final String MALFORMED_REFERENCE_FILE = "analyser/dotclass/malformed-java-versions.xml";
     private static final String NON_EXISTING_JAVA_VERSIONS_REFERENCE_FILE = "analyser/dotclass/no-java-versions.xml";
+
+    private static Resource resource;
+
+    @BeforeGroups("objectCreation")
+    public void setUp(){
+        resource = new Resource();
+    }
 
     /**
      * Test case #1: Test initialization of the JavaSpecificationManager with a reference of a non
@@ -133,13 +141,12 @@ public class JavaSpecificationManagerTest extends TestSupport {
      * @throws IOException
      *  When the file of which to extract the magic number does not exist.
      */
-    @Test (dataProvider = "dataSetWithFileNamesAndMagicNumbers")
+    @Test (groups = "objectCreation" , dataProvider = "dataSetWithFileNamesAndMagicNumbers")
     public void testMagicNumberExtractionWithValidClasses(final String fileName, final String expectedVersion) throws ArtificerException, IOException {
         try{
             Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToClassFolder() + File.separator + fileName);
 
             // Create a resource reference linking to the file
-            Resource resource = new Resource();
             resource.setPath(pathToResourceLocation);
 
             // Find the magic number associated to the resource
@@ -171,20 +178,19 @@ public class JavaSpecificationManagerTest extends TestSupport {
      * Test case 5: Test the extraction of a magic number from a class file as functionality, using the data set
      * containing invalid classes.
      */
-    @Test(dataProvider = "dataSetWithInvalidClassesAndException")
+    @Test(groups = "objectCreation", dataProvider = "dataSetWithInvalidClassesAndException")
     public void testMagicNumberExtractionWithInvalidClasses(final String fileName, final Class expectedException) throws ArtificerException, IOException {
 
         try{
             // Create a path to the file
             Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToClassFolder() + File.separator + "invalidClass" + File.separator + fileName);
 
-            // Create a resource reference linking to the file
-            Resource resource = new Resource();
             resource.setPath(pathToResourceLocation);
 
             // Find the magic number associated to the resource
             JavaSpecificationManager javaSpecificationManager = new JavaSpecificationManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
             String actualVersion = javaSpecificationManager.getMagicNumber(resource);
+            Assert.fail("Should fail as the class: " + fileName + "is invalid.");
 
         } catch (Exception e) {
             Assert.assertEquals(e.getClass(), expectedException);
@@ -213,12 +219,11 @@ public class JavaSpecificationManagerTest extends TestSupport {
     /**
      * Test case 6: Test the registration of the java versions in the model.
      */
-    @Test(dataProvider = "dataSetValidClassesAndCompilerVersions")
-    public void testRegistrationOfJavaVersionInModel(final String fileName, final String expectedCompiledVersion, final int expectedListSize, long expectedTotalClasses){
+    @Test(groups = "objectCreation", dataProvider = "dataSetValidClassesAndCompilerVersions")
+    public void testRegistrationOfJavaVersionInModel(final String fileName, final String expectedCompiledVersion, final int expectedListSize, final long expectedTotalClasses){
 
         Path pathToResourceLocation = FileSystems.getDefault().getPath(getPathToClassFolder() + File.separator + fileName);
 
-        Resource resource = new Resource();
         resource.setPath(pathToResourceLocation);
 
         Meta meta = new Meta();
