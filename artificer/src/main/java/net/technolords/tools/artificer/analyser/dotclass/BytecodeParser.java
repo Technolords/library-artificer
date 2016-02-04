@@ -125,6 +125,20 @@ public class BytecodeParser {
             this.absorbOverhead(dataInputStream);
             // Extract the constant pool
             ConstantPool constantPool = this.extractConstantPool(dataInputStream, resource.getCompiledVersion());
+            // Extract the access flags
+            this.extractAccessFlags(dataInputStream);
+            // Extract the 'this' class reference
+            this.extractThisClassReference(dataInputStream);
+            // Extract the 'super' class reference
+            this.extractSuperClassReference(dataInputStream);
+            // Extract the interfaces
+            this.extractInterfaces(dataInputStream);
+            // Extract the fields
+            this.extractFields(dataInputStream);
+            // TODO: (u2) methods_count
+            // TODO: (??) methods                   <--
+            // TODO: (u2) attributes_count
+            // TODO: (??) attributes                <--
             resource.setConstantPool(constantPool);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
@@ -351,5 +365,56 @@ public class BytecodeParser {
             }
         }
         return optionalConstantPoolConstant.get();
+    }
+
+    protected void extractAccessFlags(DataInputStream dataInputStream) throws IOException {
+        int accessFlags = dataInputStream.readUnsignedShort();
+        LOGGER.debug("accessFlags: " + accessFlags);
+    }
+
+    protected void extractThisClassReference(DataInputStream dataInputStream) throws IOException {
+        int thisClassReference = dataInputStream.readUnsignedShort();
+        LOGGER.debug("ConstantPool index for thisClassReference: " + thisClassReference);
+    }
+
+    protected void extractSuperClassReference(DataInputStream dataInputStream) throws IOException {
+        int superClassReference = dataInputStream.readUnsignedShort();
+        LOGGER.debug("ConstantPool index for superClassReference: " + superClassReference);
+    }
+
+    protected void extractInterfaces(DataInputStream dataInputStream) throws IOException {
+        int interfacesCount = dataInputStream.readUnsignedShort();
+        LOGGER.debug("interfacesCount: " + interfacesCount);
+        if(interfacesCount != 0) {
+            int interfaces = dataInputStream.readUnsignedShort();
+            LOGGER.debug("interfaces: " + interfaces);
+        }
+    }
+
+
+    // TODO: (u2) fields_count
+    // TODO: (??) fields                    <--
+    protected void extractFields(DataInputStream dataInputStream) throws IOException {
+        int fieldsCount = dataInputStream.readUnsignedShort();
+        LOGGER.debug("fieldsCount: " + fieldsCount);
+        if(fieldsCount != 0) {
+            // TODO: extract field
+        }
+    }
+
+    // TODO: (u2) access_flags
+    // TODO: (u2) name_index
+    // TODO: (u2) descriptor_index
+    // TODO: (u2) attributes_count
+    // TODO: (??) attributes[attributes_count]
+    protected void extractField() {
+
+    }
+
+    // TODO: (u2) attribute_name_index
+    // TODO: (u4) attribute_length
+    // TODO: (u1) info[attribute_length]
+    protected void extractAtributes() {
+
     }
 }
