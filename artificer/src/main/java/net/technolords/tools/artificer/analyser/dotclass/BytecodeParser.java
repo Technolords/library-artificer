@@ -114,6 +114,9 @@ public class BytecodeParser {
      *  The resource associated with the determination of the referenced classes.
      */
     public void analyseBytecode(Resource resource) {
+        if(!resource.isValidClass()) {
+            return;
+        }
         try {
             if(this.lookupMap == null) {
                 this.lookupMap = new HashMap<>();
