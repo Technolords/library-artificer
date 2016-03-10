@@ -17,6 +17,9 @@ public class ConstantPoolAnalyser {
 
     public Set<String> extractReferencedClasses(ConstantPool constantPool) {
         Set<String> referencedClasses = new HashSet<>();
+        if(constantPool == null) {
+            return referencedClasses;
+        }
         String referencedClass;
         for(Constant constant : constantPool.getConstants()) {
             if("Class".equals(constant.getType())) {

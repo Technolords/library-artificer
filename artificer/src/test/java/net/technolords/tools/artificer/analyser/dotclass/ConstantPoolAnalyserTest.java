@@ -24,13 +24,19 @@ public class ConstantPoolAnalyserTest extends TestSupport {
 
     @DataProvider(name = "dataSetClasses")
     public Object[][] dataSet() {
+
+        String[]expectedClasses = new String[]{"java/lang/Object", "net/technolords/tools/artificer/exception/ArtificerException", "net/technolords/tools/artificer/Analyser"};
+//        Set<String> classSet = new HashSet<String>();
+//        Collections.addAll(classSet, expectedClasses);
+
         return new Object[][] {
-                { "Analyser.class" , Arrays.asList("java/lang/Object","net/technolords/tools/artificer/exception/ArtificerException","net/technolords/tools/artificer/Analyser")},
-                { "abc.class", null }
+//                { "Analyser.class" , true, Arrays.asList("java/lang/Object", "net/technolords/tools/artificer/exception/ArtificerException", "net/technolords/tools/artificer/Analyser")},
+                { "Analyser.class" , true, new HashSet<>(Arrays.asList(expectedClasses))},
+                { "abc.class", false, new HashSet<>() }
         };
     }
     @Test(dataProvider = "dataSetClasses")
-    public void testReferencedClassesExtraction(final String CLASSNAME, final List<String> expectedClasses) {
+    public void testReferencedClassesExtraction(final String CLASSNAME,final boolean validClass ,final Set<String> expectedRefClasses) {
 
         Path pathToResourceLocation = FileSystems.getDefault().getPath(super.getPathToClassFolder().toAbsolutePath() + File.separator + CLASSNAME);
         LOGGER.debug("The path towards the class file '" + CLASSNAME + "' exists: " + Files.exists(pathToResourceLocation));
@@ -40,26 +46,15 @@ public class ConstantPoolAnalyserTest extends TestSupport {
         resource.setPath(pathToResourceLocation);
         resource.setName(CLASSNAME);
 
-        // resource.isValidClass(); // first try without using try catch
+        resource.setCompiledVersion("1.8");
 
-        // below try catch is second try
-        // however the NullPointer Exception is thrown at the failure of Assertion, and not when analyseByteCode method is called.
-       try{
+        BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
+        bytecodeParser.analyseBytecode(resource);
 
-           if (resource.isValidClass()) {
-               resource.setCompiledVersion("1.8");
+        ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
+        Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
 
-               BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
-               bytecodeParser.analyseBytecode(resource);
-
-               ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
-               Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
-
-               Assert.assertEquals(referencedClasses, expectedClasses);
-           }
-        }catch (Exception e){
-           e.printStackTrace();
-       }
+        Assert.assertEquals(referencedClasses, expectedRefClasses);
 
     }
 }
