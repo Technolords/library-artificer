@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * Created by 1795 on 3-2-2016.
+ * Created by Sridevi on 3-2-2016.
  */
 public class ConstantPoolAnalyserTest extends TestSupport {
 
@@ -24,37 +24,32 @@ public class ConstantPoolAnalyserTest extends TestSupport {
 
     @DataProvider(name = "dataSetClasses")
     public Object[][] dataSet() {
-
-        String[]expectedClasses = new String[]{"java/lang/Object", "net/technolords/tools/artificer/exception/ArtificerException", "net/technolords/tools/artificer/Analyser"};
-//        Set<String> classSet = new HashSet<String>();
-//        Collections.addAll(classSet, expectedClasses);
+        Set<String> expectedClassesForAnalyserClass = new HashSet<>();
+        expectedClassesForAnalyserClass.add("java/lang/Object");
+        expectedClassesForAnalyserClass.add("net/technolords/tools/artificer/exception/ArtificerException");
+        expectedClassesForAnalyserClass.add("net/technolords/tools/artificer/Analyser");
 
         return new Object[][] {
-//                { "Analyser.class" , true, Arrays.asList("java/lang/Object", "net/technolords/tools/artificer/exception/ArtificerException", "net/technolords/tools/artificer/Analyser")},
-                { "Analyser.class" , true, new HashSet<>(Arrays.asList(expectedClasses))},
-                { "abc.class", false, new HashSet<>() }
+            { "Analyser.class" , true,  expectedClassesForAnalyserClass },
+            { "abc.class",       false, new HashSet<>()                 }
         };
     }
     @Test(dataProvider = "dataSetClasses")
-    public void testReferencedClassesExtraction(final String CLASSNAME,final boolean validClass ,final Set<String> expectedRefClasses) {
-
-        Path pathToResourceLocation = FileSystems.getDefault().getPath(super.getPathToClassFolder().toAbsolutePath() + File.separator + CLASSNAME);
-        LOGGER.debug("The path towards the class file '" + CLASSNAME + "' exists: " + Files.exists(pathToResourceLocation));
-
+    public void testReferencedClassesExtraction(final String classname, final boolean validClass, final Set<String> expectedRefClasses) {
+        Path pathToResourceLocation = FileSystems.getDefault().getPath(super.getPathToClassFolder().toAbsolutePath() + File.separator + classname);
+        LOGGER.debug("The path towards the class file '" + classname + "' exists: " + Files.exists(pathToResourceLocation));
         // Create a resource reference linking to the file
         Resource resource = new Resource();
         resource.setPath(pathToResourceLocation);
-        resource.setName(CLASSNAME);
-
+        resource.setName(classname);
         resource.setCompiledVersion("1.8");
-
+        resource.setValidClass(validClass);
+        // Analyse bytecode
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
         bytecodeParser.analyseBytecode(resource);
-
+        // Analyse constant pool
         ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
         Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
-
         Assert.assertEquals(referencedClasses, expectedRefClasses);
-
     }
 }
