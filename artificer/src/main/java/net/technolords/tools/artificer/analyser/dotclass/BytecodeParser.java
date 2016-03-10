@@ -1,5 +1,9 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.AccessFlagsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.AttributesParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.ConstantPoolParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.FieldsParser;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstant;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstants;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolInfoFragment;
@@ -45,6 +49,8 @@ import java.util.Optional;
  * - u2: unsigned two byte quantity, to be read as: readUnsignedShort
  * - u4: unsigned four byte quantity, to be read as: readInt
  * - u8: unsigned eight byte quantity, to be read as: readLong
+ *
+ * See for reference: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html
  */
 public class BytecodeParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BytecodeParser.class);
@@ -127,9 +133,10 @@ public class BytecodeParser {
             // Absorb magic number, minor and major version
             this.absorbOverhead(dataInputStream);
             // Extract the constant pool
-            ConstantPool constantPool = this.extractConstantPool(dataInputStream, resource.getCompiledVersion());
+            ConstantPool constantPool = ConstantPoolParser.extractConstantPool(dataInputStream, resource.getCompiledVersion(), this.lookupMap);
+            resource.setConstantPool(constantPool);
             // Extract the access flags
-            this.extractAccessFlags(dataInputStream);
+            AccessFlagsParser.extractAccessFlags(dataInputStream);
             // Extract the 'this' class reference
             this.extractThisClassReference(dataInputStream);
             // Extract the 'super' class reference
@@ -137,12 +144,11 @@ public class BytecodeParser {
             // Extract the interfaces
             this.extractInterfaces(dataInputStream);
             // Extract the fields
-            this.extractFields(dataInputStream);
-            // TODO: (u2) methods_count
-            // TODO: (??) methods                   <--
-            // TODO: (u2) attributes_count
-            // TODO: (??) attributes                <--
-            resource.setConstantPool(constantPool);
+            FieldsParser.extractFields(dataInputStream, constantPool);
+            // Extract the methods
+            this.extractMethods(dataInputStream);
+            // Extract the attributes
+//            AttributesParser.extractAttributes(dataInputStream);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
         } catch (ArtificerException e) {
@@ -169,212 +175,6 @@ public class BytecodeParser {
         dataInputStream.readInt();
     }
 
-    /**
-     * An auxiliary method to extract the constant pool from the byte stream. Based on the detected
-     * JVM version, the associated specification is fetched to construct the constant pool. The
-     * constant pool returned consists of a number of constants.
-     *
-     * According to the JVM specification, it mentions that the value of the constant_pool_count is equal
-     * to the number of entries in the constant_pool table plus one.
-     *
-     * A constant_pool index is considered valid if it is greater than zero and less than the
-     * constant_pool_count, with the exceptions for constants of type long and double.
-     *
-     * The constant_pool table is indexed from 1 to constant_pool_count - 1
-     *
-     * All constant pool entries have the following general format:
-     *
-     * cp_info {
-     *     u1               tag
-     *     u1               info[]
-     * }
-     *
-     * Legend:
-     * - u1: unsigned one byte quantity, to be read as: readUnsignedByte
-     * - u2: unsigned two byte quantity, to be read as: readUnsignedShort
-     * - u4: unsigned four byte quantity, to be read as: readInt
-     * - u8: unsigned eight byte quantity, to be read as: readLong
-     *
-     * @param dataInputStream
-     *  The byte stream associated with the constant pool extraction.
-     * @param compiledVersion
-     *  The compiled version associated with the resource (aka .class file).
-     * @return
-     *  The extracted constant pool.
-     * @throws IOException
-     *  When reading bytes from the stream fails.
-     */
-    protected ConstantPool extractConstantPool(DataInputStream dataInputStream, String compiledVersion) throws IOException {
-        int constantPoolSize = dataInputStream.readUnsignedShort();
-        LOGGER.debug("constantPoolSize: " + constantPoolSize);
-        ConstantPool constantPool = new ConstantPool();
-
-        // Extract the constants
-        for(int i = 1; i < constantPoolSize; i++) {
-            Constant constant = this.extractConstant(dataInputStream, i, compiledVersion);
-            constant.setConstantPoolIndex(i);
-            if(constant.getType().equals("Long") || constant.getType().equals("Double")) {
-                i++;
-            }
-            constantPool.getConstants().add(constant);
-        }
-        return constantPool;
-    }
-
-    /**
-     * An auxiliary method to extract the constant from the byte stream. The constant describes the type and contains
-     * more information, such as a referenced class or constant value.
-     *
-     * According to the JVM specification, each item in the constant_pool must begin with a 1-byte tag indicating
-     * the kind of cp_info entry. The contents of the info array vary with the value of tag. The valid tags and
-     * their values are (example is fetched from JVM 8 specification):
-     *
-     * - Class              7
-     * - FieldRef           9
-     * - MethodRef          10
-     * - InterfaceMethodred 11
-     * - String             8
-     * - Integer            3
-     * - Float              4
-     * - Long               5
-     * - Double             6
-     * - NameAndType        12
-     * - Utf8               1
-     * - MethodHandle       15
-     * - MethodType         16
-     * - InvokeDynamic      18
-     *
-     * Each tag byte must be followed by two or more bytes giving information about the specific constant. The format
-     * of the additional information varies with the tag value.
-     *
-     * @param dataInputStream
-     *  The byte stream associated with the constant extraction.
-     * @param constantPoolIndex
-     *  The passed constant pool index, for logging and tracking purposes.
-     * @param compiledVersion
-     *  The compiled version associated with the resource (aka .class file).
-     * @return
-     *  The extracted constant.
-     * @throws IOException
-     *  When reading bytes from the stream fails.
-     */
-    protected Constant extractConstant(DataInputStream dataInputStream, int constantPoolIndex, String compiledVersion) throws IOException {
-        // Read tag
-        int tag = dataInputStream.readUnsignedByte();
-        // Find associated constant pool constant
-        ConstantPoolConstant constantPoolConstant = this.findConstantPoolConstantByValue(tag, compiledVersion);
-        // Instantiate constant
-        Constant constant = new Constant();
-        constant.setConstantPoolIndex(constantPoolIndex);
-        constant.setTag(tag);
-        constant.setType(constantPoolConstant.getType());
-        LOGGER.debug("Constant index: " + constant.getConstantPoolIndex() + ", tag: " + constant.getTag() + ", type: " + constant.getType());
-        // Extract details
-        this.extractConstantDetails(dataInputStream, constant, constantPoolConstant);
-        return constant;
-    }
-
-    /**
-     * An auxiliary method to extract the constant details from the byte stream.
-     *
-     * @param dataInputStream
-     *  The byte stream associated with the constant extraction.
-     * @param constant
-     *  The constant associated with the details extracted.
-     * @param constantPoolConstant
-     *  The structure of the constant pool constant.
-     * @throws IOException
-     *  When reading bytes from the stream fails.
-     */
-    protected void extractConstantDetails(DataInputStream dataInputStream, Constant constant, ConstantPoolConstant constantPoolConstant) throws IOException {
-        for(ConstantPoolInfoFragment infoFragment : constantPoolConstant.getFragments()) {
-            ConstantInfo constantInfo = new ConstantInfo();
-            constantInfo.setDescription(infoFragment.getDescription());
-            this.readInfoSize(dataInputStream, constantInfo, infoFragment);
-            constant.getConstantInfoList().add(constantInfo);
-        }
-    }
-
-    /**
-     * Auxiliary method to read a number of bytes, based on the constant pool info data (represented by the
-     * ConstantPoolInfoFragment). This instance of reference is based on the specification, and tells how much
-     * byes (as in value) must be read. The data being read is set on the ConstantInfo object for further processing.
-     *
-     * @param dataInputStream
-     *  The byte stream associated with the extraction (reading of bytes).
-     * @param constantInfo
-     *  The constant info associated with the resource.
-     * @param infoFragment
-     *  The constant pool info fragment associated with the constant pool constant.
-     * @throws IOException
-     *  When reading bytes from the stream fails.
-     */
-    protected void readInfoSize(DataInputStream dataInputStream, ConstantInfo constantInfo, ConstantPoolInfoFragment infoFragment) throws IOException {
-        switch(infoFragment.getSize()) {
-            case "readUnsignedByte" :
-                constantInfo.setIntValue(dataInputStream.readUnsignedByte());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
-                break;
-            case "readInt" :
-                constantInfo.setIntValue(dataInputStream.readInt());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
-                break;
-            case "readFloat" :
-                constantInfo.setFloatValue(dataInputStream.readFloat());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getFloatValue());
-                break;
-            case "readLong" :
-                constantInfo.setLongValue(dataInputStream.readLong());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getLongValue());
-                break;
-            case "readDouble" :
-                constantInfo.setDoubeValue(dataInputStream.readDouble());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getDoubeValue());
-                break;
-            case "readUTF":
-                constantInfo.setStringValue(dataInputStream.readUTF());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getStringValue());
-                break;
-            case "readUnsignedShort" :
-            default:
-                constantInfo.setIntValue(dataInputStream.readUnsignedShort());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
-                break;
-        }
-    }
-
-    /**
-     * Auxiliary method to find an instance of the ConstantPoolConstant based on two parameters,
-     * namely the tag and the compiled version.
-     *
-     * @param tag
-     *  The tag associated with the constant pool constant.
-     * @param compiledVersion
-     *  The compiled version, used to lookup for the correct JVM specification.
-     * @return
-     *  The constant pool constant.
-     */
-    protected ConstantPoolConstant findConstantPoolConstantByValue(int tag, String compiledVersion) {
-        Optional<ConstantPoolConstant> optionalConstantPoolConstant = Optional.ofNullable(null);
-
-        JavaSpecification javaSpecification = this.lookupMap.get(compiledVersion);
-        if(javaSpecification != null) {
-            ConstantPoolConstants constantPoolConstants = javaSpecification.getConstantPoolConstants();
-            if(constantPoolConstants != null) {
-                optionalConstantPoolConstant = constantPoolConstants.getConstantPoolConstants().
-                    stream().
-                    filter( cp -> Integer.valueOf(cp.getTag()) == tag ).
-                    findFirst();
-            }
-        }
-        return optionalConstantPoolConstant.get();
-    }
-
-    protected void extractAccessFlags(DataInputStream dataInputStream) throws IOException {
-        int accessFlags = dataInputStream.readUnsignedShort();
-        LOGGER.debug("accessFlags: " + accessFlags);
-    }
-
     protected void extractThisClassReference(DataInputStream dataInputStream) throws IOException {
         int thisClassReference = dataInputStream.readUnsignedShort();
         LOGGER.debug("ConstantPool index for thisClassReference: " + thisClassReference);
@@ -394,30 +194,9 @@ public class BytecodeParser {
         }
     }
 
-
-    // TODO: (u2) fields_count
-    // TODO: (??) fields                    <--
-    protected void extractFields(DataInputStream dataInputStream) throws IOException {
-        int fieldsCount = dataInputStream.readUnsignedShort();
-        LOGGER.debug("fieldsCount: " + fieldsCount);
-        if(fieldsCount != 0) {
-            // TODO: extract field
-        }
-    }
-
-    // TODO: (u2) access_flags
-    // TODO: (u2) name_index
-    // TODO: (u2) descriptor_index
-    // TODO: (u2) attributes_count
-    // TODO: (??) attributes[attributes_count]
-    protected void extractField() {
-
-    }
-
-    // TODO: (u2) attribute_name_index
-    // TODO: (u4) attribute_length
-    // TODO: (u1) info[attribute_length]
-    protected void extractAtributes() {
+    // TODO: (u2) methods_count
+    // TODO: (??) methods                   <--
+    protected void extractMethods(DataInputStream dataInputStream) {
 
     }
 }

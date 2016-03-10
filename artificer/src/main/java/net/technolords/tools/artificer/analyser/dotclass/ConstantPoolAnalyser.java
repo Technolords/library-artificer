@@ -61,17 +61,16 @@ public class ConstantPoolAnalyser {
         ConstantInfo constantInfo = constant.getConstantInfoList().get(0);
         LOGGER.debug("ConstantInfo description: " + constantInfo.getDescription());
         if("name_index".equals(constantInfo.getDescription())) {
-            Constant nameAndStringConstant = this.findConstantByIndex(constantPool, constantInfo.getIntValue());
+            Constant nameAndStringConstant = findConstantByIndex(constantPool, constantInfo.getIntValue());
             if(nameAndStringConstant != null) {
                 // Found constant associated with name_index, which should be of type Utf8
-                return this.extractStringValueFromConstantUtf8(nameAndStringConstant);
+                return extractStringValueFromConstantUtf8(nameAndStringConstant);
             }
         }
         return null;
     }
 
-    protected Constant findConstantByIndex(ConstantPool constantPool, int index) {
-        LOGGER.debug("Finding constant with index: " + index);
+    protected static Constant findConstantByIndex(ConstantPool constantPool, int index) {
         for(Constant constant : constantPool.getConstants()) {
             if(constant.getConstantPoolIndex() == index) {
                 return constant;
@@ -80,12 +79,20 @@ public class ConstantPoolAnalyser {
         return null;
     }
 
-    protected String extractStringValueFromConstantUtf8(Constant constant) {
+    protected static String extractStringValueFromConstantUtf8(Constant constant) {
         if("Utf8".equals(constant.getType())) {
             ConstantInfo constantInfo = constant.getConstantInfoList().get(0);
             return constantInfo.getStringValue();
         }
         return null;
+    }
+
+    public static String extractStringValueByConstantPoolIndex(ConstantPool constantPool, int index) {
+        Constant constant = findConstantByIndex(constantPool, index);
+        if(constant != null) {
+            return extractStringValueFromConstantUtf8(constant);
+        }
+        return "";
     }
 
 }
