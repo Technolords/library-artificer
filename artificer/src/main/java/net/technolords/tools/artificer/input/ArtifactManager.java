@@ -4,6 +4,7 @@ import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.analyser.dotclass.BytecodeParser;
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.domain.Analysis;
+import net.technolords.tools.artificer.domain.dependencies.ReferencedClass;
 import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.domain.resource.ResourceGroup;

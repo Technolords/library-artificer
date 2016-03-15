@@ -1,7 +1,8 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
-import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
+import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
+import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +42,18 @@ public class FieldsParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
-     * @param constantPool
-     *  The constant pool associated with the resource.
+     * @param resource
+     *  The resource associated woth the fields.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractFields(DataInputStream dataInputStream, ConstantPool constantPool) throws IOException {
+    public static void extractFields(DataInputStream dataInputStream, Resource resource) throws IOException {
+        // Read the number of fields
         int fieldsCount = dataInputStream.readUnsignedShort();
-        LOGGER.debug("total fields: " + fieldsCount);
+        LOGGER.debug("Total fields: " + fieldsCount);
         if(fieldsCount != 0) {
-            for(int i = 0; i < fieldsCount; i++) {
-                LOGGER.trace("extracting field: " + i);
-                extractField(dataInputStream, constantPool);
+            for(int index = 0; index < fieldsCount; index++) {
+                extractField(dataInputStream, index, resource);
             }
         }
     }
@@ -99,30 +100,45 @@ public class FieldsParser {
      *      Each value of the 'attributes' table must be an 'attribute_info' structure. A field can have any number
      *      of optional attributes associated with it.
      *
+     * This method will parse the field data. In particular the descriptor is of interest as that can hold a class
+     * reference. If so, this will be added to the referenced classes associated with the resource. In addition,
+     * the attributes will be parsed for further inspection.
+     *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
-     * @param constantPool
-     *  The constant pool associated with the resource.
+     * @param resource
+     *  The resource associated with the field.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    protected static void extractField(DataInputStream dataInputStream, ConstantPool constantPool) throws IOException {
-        int accessFlags = dataInputStream.readUnsignedShort();
+    protected static void extractField(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Field (index: ").append(index).append(")");
+
+        // Read the access flags
+        // TODO: use AccessFlagsParser correctly with type, for now absorb
+        dataInputStream.readUnsignedShort();
+
+        // Read the name index
         int nameIndex = dataInputStream.readUnsignedShort();
+        buffer.append(", with name (index: ").append(nameIndex).append("): ");
+        buffer.append(ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), nameIndex));
+
+        // Read the descriptor index
         int descriptorIndex = dataInputStream.readUnsignedShort();
-        if(LOGGER.isDebugEnabled()) {
-            StringBuilder buffer = new StringBuilder();
-            buffer.append("\n\tName of field (").append(nameIndex).append(") -> ");
-            buffer.append(ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(constantPool, nameIndex));
-            buffer.append("\n\tDescriptor of field (").append(descriptorIndex).append(") -> ");
-            buffer.append(ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(constantPool, descriptorIndex));
-            LOGGER.debug(buffer.toString());
-        }
-        // TODO: convert descriptor and add to referencedClasses list
-        // TODO: create context object holding ConstantPool and Set of referenced classes
+        String descriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), descriptorIndex);
+        buffer.append(", with descriptor (index: ").append(descriptorIndex).append("): ").append(descriptor);
+
+        // Read the number of attributes and delegate this information to the attribute parser
         int attributesCount = dataInputStream.readUnsignedShort();
-        LOGGER.debug("total attributes: " + attributesCount);
-        AttributesParser.extractAttributes(dataInputStream, attributesCount, constantPool, AttributesParser.LOCATION_FIELD_INFO);
+        buffer.append(" and total attributes: ").append(attributesCount);
+        LOGGER.debug(buffer.toString());
+
+        // Add signature (when applicable) to the referenced classes
+        SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
+
+        // Read the attributes
+        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_FIELD_INFO);
     }
 
 }

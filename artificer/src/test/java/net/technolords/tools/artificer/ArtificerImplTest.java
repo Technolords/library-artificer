@@ -66,8 +66,8 @@ public class ArtificerImplTest extends TestSupport{
     @DataProvider (name = "artifactDataProvider")
     public Object[][] artifactDataProvider() {
         return new Object[][] {
-            {"corrupted.jar", "corrupted.xml"},
-            {"navigate.zip", "navigate.xml"},
+//            {"corrupted.jar", "corrupted.xml"},
+//            {"navigate.zip", "navigate.xml"},
 //            {"service-recommendation-1.0.0.jar", "service-recommendation.xml"},
             {"artificer-1.0.0-SNAPSHOT.jar","arificer.xml"}
         };

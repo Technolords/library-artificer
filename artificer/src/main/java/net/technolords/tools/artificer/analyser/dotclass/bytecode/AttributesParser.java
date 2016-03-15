@@ -1,7 +1,8 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
-import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
+import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
+import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.io.IOException;
  */
 public class AttributesParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(AttributesParser.class);
+
     /**
      * An attribute can have a different location, namely:
      * - ClassFile
@@ -68,17 +70,16 @@ public class AttributesParser {
      *  The byte stream associated with the resource (aka .class file).
      * @param attributesCount
      *  The total attributes to parse.
-     * @param constantPool
-     *  The constant pool associated with the resource.
+     * @param resource
+     *  The resource associated with the attributes.
      * @param location
      *  The location of the attribute (which is: ClassFile, field_info, method_info or Code)
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractAttributes(DataInputStream dataInputStream, int attributesCount, ConstantPool constantPool, String location) throws IOException {
-        for(int i = 0; i < attributesCount; i++) {
-            LOGGER.trace("extracting attribute: " + i);
-            extractAttributeByName(dataInputStream, constantPool, location);
+    public static void extractAttributes(DataInputStream dataInputStream, int attributesCount, Resource resource, String location) throws IOException {
+        for(int index = 0; index < attributesCount; index++) {
+            extractAttributeByName(dataInputStream, index, resource, location);
         }
     }
 
@@ -105,7 +106,7 @@ public class AttributesParser {
      * - BootstrapMethods                      [location: ClassFile]
      * - ConstantValue                         [location: field_info]
      * - Code                                  [location: method_info]
-     * - Deprecated                            [location: ClassFile, field_info, method_info]
+     * v Deprecated                            [location: ClassFile, field_info, method_info]
      * - EnclosingMethod                       [location: ClassFile]
      * - Exceptions                            [location: method_info]
      * - InnerClasses                          [location: ClassFile]
@@ -113,13 +114,13 @@ public class AttributesParser {
      * - LocalVariableTable                    [location: Code]
      * - LocalVariableTypeTable                [location: Code]
      * - MethodParameters                      [location: method_info]
-     * - RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
+     * v RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
      * - RuntimeInvisibleParameterAnnotations  [location: method_info]
      * - RuntimeInvisibleTypeAnnotations       [location: ClassFile, field_info, method_info, Code]
-     * - RuntimeVisibleAnnotations             [location: ClassFile, field_info, method_info]
+     * v RuntimeVisibleAnnotations             [location: ClassFile, field_info, method_info]
      * - RuntimeVisibleParameterAnnotations    [location: method_info]
      * - RuntimeVisibleTypeAnnotations         [location: ClassFile, field_info, method_info, Code]
-     * - Signature                             [location: ClassFile, field_info, method_info]
+     * v Signature                             [location: ClassFile, field_info, method_info]
      * - SourceDebugExtension                  [location: ClassFile]
      * - SourceFile                            [location: ClassFile]
      * - StackMapTable                         [location: Code]
@@ -127,87 +128,88 @@ public class AttributesParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
-     * @param constantPool
-     *  The constant pool associated with the resource.
+     * @param index
+     *  The attribute index, used for precise data logging.
+     * @param resource
+     *  The resource associated with the attribute.
      * @param location
      *  The location of the attribute (which is: ClassFile, field_info, method_info or Code)
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    protected static void extractAttributeByName(DataInputStream dataInputStream, ConstantPool constantPool, String location) throws IOException {
+    protected static void extractAttributeByName(DataInputStream dataInputStream, int index, Resource resource, String location) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Attribute (index: ").append(index).append(")");
+
+        // Read the name index
         int attributeNameIndex = dataInputStream.readUnsignedShort();
-        String attributeName = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(constantPool, attributeNameIndex);
+        String attributeName = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), attributeNameIndex);
+
+        // Read attribute length
         int attributeLength = dataInputStream.readInt();
-        LOGGER.debug("About to extract attribute by name, with name: " + attributeName + ", with attribute length: " + attributeLength);
+        buffer.append(", with (index: ").append(attributeNameIndex).append("): ").append(attributeName);
+        buffer.append(", with attribute length: ").append(attributeLength);
+        LOGGER.debug(buffer.toString());
+
+        // Proceed by attribute name (sorted by alphabet)
         switch (attributeName) {
-            // ClassFile attributes
-            // field_info attributes
-            case "Signature":                       // [location: ClassFile, field_info, method_info]
-                // u2 signature_index
-                // The value of the 'signature_index' must be a valid index in the 'constant_pool' table.
-                // The 'constant_pool' entry at that index must be a 'CONSTANT_Utf8_info' structure representing
-                // a class signature if this 'Signature' is an attribute of a 'ClassFile' structure. It is a
-                // method signature of this 'Signature' is an attribute of a 'method_info' structure. It is a
-                // field signature otherwise.
-                int signature_index = dataInputStream.readUnsignedShort();
-                String signature = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(constantPool, signature_index);
-                LOGGER.debug("Class signature: " + signature + " (location: " + location + ")");
+
+            case "Deprecated":                      // [location: ClassFile, field_info, method_info]
                 break;
-            // method_info attributes
-            // Code attributes
+
+            case "RuntimeInvisibleAnnotations":     // [location: ClassFile, field_info, method_info]
+                // u2           num_annotations
+                // annotation   annotations[num_annotations]
+                //
+                // num_annotations:
+                //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
+                //  by the structure.
+                // annotation:
+                //  Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
+
+                // Read number of annotations
+                int numberOfRuntimeInvisibleAnnotations = dataInputStream.readUnsignedShort();
+                LOGGER.debug("Total annotations: " + numberOfRuntimeInvisibleAnnotations);
+                AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeInvisibleAnnotations, resource);
+                break;
+
+            case "RuntimeVisibleAnnotations":       // [location: ClassFile, field_info, method_info]
+                // u2           num_annotations
+                // annotation   annotations[num_annotations]
+                //
+                // num_annotations:
+                //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
+                //  by the structure.
+                // annotation:
+                //  Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
+
+                // Read number of annotations
+                int numberOfRuntimeVisibleAnnotations = dataInputStream.readUnsignedShort();
+                LOGGER.debug("Total annotations: " + numberOfRuntimeVisibleAnnotations);
+                AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeVisibleAnnotations, resource);
+                break;
+
+            case "Signature":                       // [location: ClassFile, field_info, method_info]
+                // u2           signature_index
+                //
+                // signature_index:
+                //  The value of the 'signature_index' must be a valid index in the 'constant_pool' table.
+                //  The 'constant_pool' entry at that index must be a 'CONSTANT_Utf8_info' structure representing
+                //  a class signature if this 'Signature' is an attribute of a 'ClassFile' structure. It is a
+                //  method signature of this 'Signature' is an attribute of a 'method_info' structure. It is a
+                //  field signature otherwise.
+                int signatureIndex = dataInputStream.readUnsignedShort();
+                String signature = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), signatureIndex);
+                LOGGER.debug("Class signature: " + signature + " (location: " + location + ")");
+                SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), signature);
+                break;
+
             default:
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName);
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
                 for(int i = 0; i < attributeLength; i++) {
                     dataInputStream.readUnsignedByte();
                 }
         }
-
     }
 
-    // ClassFile attributes:
-    //  - BootstrapMethods
-    //  - Deprecated
-    //  - EnclosingMethod
-    //  - InnerClasses
-    //  - RuntimeInvisibleAnnotations
-    //  - RuntimeInvisibleTypeAnnotations
-    //  - RuntimeVisibleAnnotations
-    //  - RuntimeVisibleTypeAnnotations
-    //  - Signature
-    //  - SourceDebugExtension
-    //  - SourceFile
-    //  - Synthetic
-
-    // field_info attributes
-    //  - ConstantValue
-    //  - Deprecated
-    //  - RuntimeInvisibleAnnotations
-    //  - RuntimeInvisibleTypeAnnotations
-    //  - RuntimeVisibleAnnotations
-    //  - RuntimeVisibleTypeAnnotations
-    //  - Signature
-    //  - Synthetic
-
-    // method_info attributes
-    //  - AnnotationDefault
-    //  - Code
-    //  - Deprecated
-    //  - Exceptions
-    //  - MethodParameters
-    //  - RuntimeInvisibleAnnotations
-    //  - RuntimeInvisibleParameterAnnotations
-    //  - RuntimeInvisibleTypeAnnotations
-    //  - RuntimeVisibleAnnotations
-    //  - RuntimeVisibleParameterAnnotations
-    //  - RuntimeVisibleTypeAnnotations
-    //  - Signature
-    //  - Synthetic
-
-    // Code attributes
-    //  - LineNumberTable
-    //  - LocalVariableTable
-    //  - LocalVariableTypeTable
-    //  - RuntimeInvisibleTypeAnnotations
-    //  - RuntimeVisibleTypeAnnotations
-    //  - StackMapTable
 }

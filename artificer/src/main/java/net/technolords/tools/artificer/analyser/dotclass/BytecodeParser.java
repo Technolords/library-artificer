@@ -136,6 +136,7 @@ public class BytecodeParser {
             ConstantPool constantPool = ConstantPoolParser.extractConstantPool(dataInputStream, resource.getCompiledVersion(), this.lookupMap);
             resource.setConstantPool(constantPool);
             // Extract the access flags
+            // TODO: add type
             AccessFlagsParser.extractAccessFlags(dataInputStream);
             // Extract the 'this' class reference
             this.extractThisClassReference(dataInputStream);
@@ -144,7 +145,7 @@ public class BytecodeParser {
             // Extract the interfaces
             this.extractInterfaces(dataInputStream);
             // Extract the fields
-            FieldsParser.extractFields(dataInputStream, constantPool);
+            FieldsParser.extractFields(dataInputStream, resource);
             // Extract the methods
             this.extractMethods(dataInputStream);
             // Extract the attributes

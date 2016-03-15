@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FieldTest1 {
+public class FieldTestWithRegularFields {
     // Ljava/lang/Boolean;
     // Signature: None...
     static Boolean simple = true;

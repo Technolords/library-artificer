@@ -3,14 +3,19 @@ package net.technolords.tools.artificer.analyser.dotclass;
 import junit.framework.Assert;
 import net.technolords.tools.artificer.TestSupport;
 import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.data.FieldTestWithAnnotations;
+import net.technolords.tools.data.FieldTestWithInnerClasses;
+import net.technolords.tools.data.FieldTestWithRegularFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -20,17 +25,46 @@ public class BytecodeParserTest extends TestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(BytecodeParserTest.class);
     private static final String KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE = "analyser/dotclass/java-specifications.xml";
 
-    @Test
-    public void testWithDataSample() {
-        final String dataSample = "/test-classes/net/technolords/tools/data/FieldTest1.class";
-        Path pathToDataSample = FileSystems.getDefault().getPath(super.getPathToTargetFolder().toAbsolutePath() + dataSample);
+    /**
+     * Auxiliary method to declare a data set to support byte code parsing of fields inside Classes. The data set
+     * is represented in a multi-dimensional array, where each entry represents a single set. An entry is specified
+     * with three elements, each meaning:
+     *
+     *  [0] : The java class containing fields
+     *  [1] : The expected number of fields
+     *  [2] : The expected Set of referenced classes
+     *
+     * @return
+     *  The data set.
+     */
+    @DataProvider (name = "dataSetWithFields", parallel = true)
+    public Object[][] dataSet() {
+        Set<String> expectedReferencedClassesWithRegularFields = new HashSet<>();
+        expectedReferencedClassesWithRegularFields.add("java/lang/Object");
+
+        return new Object[][] {
+//            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
+//            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
+        };
+    }
+
+    @Test (dataProvider = "dataSetWithFields")
+    public void testWithFieldTest(Class className, int numberOfExpectedFields, Set<String> expectedReferencedClasses) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(File.separator).append("test-classes");
+        buffer.append(File.separator).append("net").append(File.separator).append("technolords").append(File.separator).append("tools");
+        buffer.append(File.separator).append("data").append(File.separator).append(className.getSimpleName());
+        buffer.append(".class");
+
+        Path pathToDataSample = FileSystems.getDefault().getPath(super.getPathToTargetFolder().toAbsolutePath() + buffer.toString());
         LOGGER.debug("Path towards the class file exists: " + Files.exists(pathToDataSample));
         Assert.assertTrue("Expected the test class to exist...", Files.exists(pathToDataSample));
 
         // Create a resource reference linking to the file
         Resource resource = new Resource();
         resource.setPath(pathToDataSample);
-        resource.setName("FieldTest1.class");
+        resource.setName(className.getSimpleName());
         resource.setCompiledVersion("1.8");
 
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
@@ -41,6 +75,7 @@ public class BytecodeParserTest extends TestSupport {
         for(String referencedClass : referencedClasses) {
             LOGGER.debug("Found referenced class: " + referencedClass);
         }
+        // Add resource.referencedClasses to the total (which is the entire jar)
     }
 
     @Test
@@ -63,50 +98,3 @@ public class BytecodeParserTest extends TestSupport {
         Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
     }
 }
-/*
-constantPoolSize: 23
-Constant index: 1, tag: 7, type: Class
-Info fragment size: readUnsignedShort, description: name_index, value: 18
-Constant index: 2, tag: 7, type: Class
-Info fragment size: readUnsignedShort, description: name_index, value: 19
-Constant index: 3, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: STATUS_OK
-Constant index: 4, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: Ljava/lang/String;
-Constant index: 5, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: ConstantValue
-Constant index: 6, tag: 8, type: String
-Info fragment size: readUnsignedShort, description: string_index, value: 20
-Constant index: 7, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: STATUS_ERROR
-Constant index: 8, tag: 8, type: String
-Info fragment size: readUnsignedShort, description: string_index, value: 21
-Constant index: 9, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: setOutputLocation
-Constant index: 10, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: (Ljava/nio/file/Path;)V
-Constant index: 11, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: setOutputFilename
-Constant index: 12, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: (Ljava/lang/String;)V
-Constant index: 13, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: analyseArtifact
-Constant index: 14, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: Exceptions
-Constant index: 15, tag: 7, type: Class
-Info fragment size: readUnsignedShort, description: name_index, value: 22
-Constant index: 16, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: SourceFile
-Constant index: 17, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: Analyser.java
-Constant index: 18, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: net/technolords/tools/artificer/Analyser
-Constant index: 19, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: java/lang/Object
-Constant index: 20, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: 200
-Constant index: 21, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: 500
-Constant index: 22, tag: 1, type: Utf8
-Info fragment size: readUTF, description: string_value, value: net/technolords/tools/artificer/exception/ArtificerException
-*/

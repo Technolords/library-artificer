@@ -65,6 +65,17 @@ public class OutputManager extends Marshaller.Listener {
     }
 
     @Override
+    public void afterMarshal(Object source) {
+//        try {
+//            if(source instanceof Analysis) {
+//                this.xmlStreamWriter.writeComment("Output generated at: " + Calendar.getInstance().getTime().toString());
+//            }
+//        } catch (XMLStreamException e) {
+//            LOGGER.error("Failed to add a comment: " + e.getMessage(), e);
+//        }
+    }
+
+    @Override
     public void beforeMarshal(Object source) {
         try {
             if(source instanceof Meta) {

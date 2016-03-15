@@ -217,8 +217,8 @@ public class ConstantPoolParser {
                 LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getLongValue());
                 break;
             case "readDouble" :
-                constantInfo.setDoubeValue(dataInputStream.readDouble());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getDoubeValue());
+                constantInfo.setDoubleValue(dataInputStream.readDouble());
+                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getDoubleValue());
                 break;
             case "readUTF":
                 constantInfo.setStringValue(dataInputStream.readUTF());

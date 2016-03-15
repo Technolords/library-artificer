@@ -3,7 +3,6 @@ package net.technolords.tools.artificer.analyser.dotclass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,27 +43,26 @@ public class SignatureAnalyser {
      *
      * @return
      */
-    public static Set<String> referencedClasses(String signature) {
-        Set<String> referencedClasses = new HashSet<>();
+    public static void referencedClasses(Set<String> referencedClasses, String signature) {
         Matcher matcher = patternForClassReference.matcher(signature);
         if(matcher.matches()) {
             LOGGER.trace("Got a match 'L;', with groupCount: " + matcher.groupCount());
-//            String group = matcher.group(1);
             LOGGER.trace("Found group: " + matcher.group(1));
             Matcher nested = patternForCollections.matcher(matcher.group(1));
             if(nested.matches()) {
                 LOGGER.trace("Found '<>', with groupCount: " + nested.groupCount());
-                LOGGER.debug("Adding referenced class: " + nested.group(1));
-                referencedClasses.add(nested.group(1));
+                if(referencedClasses.add(nested.group(1))) {
+                    LOGGER.debug("Adding referenced class: " + nested.group(1));
+                }
                 LOGGER.trace("Found group 2: " + nested.group(2));
-                referencedClasses.addAll(referencedClasses(nested.group(2)));
+                referencedClasses(referencedClasses, nested.group(2));
             } else {
                 // No nested collections, so end state
                 LOGGER.trace("Not found <>");
-                LOGGER.debug("Adding referenced class: " + matcher.group(1));
-                referencedClasses.add(matcher.group(1));
+                if(referencedClasses.add(matcher.group(1))) {
+                    LOGGER.debug("Adding referenced class: " + matcher.group(1));
+                }
             }
         }
-        return referencedClasses;
     }
 }

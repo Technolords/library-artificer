@@ -19,6 +19,8 @@ v test with simple class with nested instantion of another class and see if byte
         artificer-javadoc                               -> generates presentation
         artificer-camel-route                           -> generates presentation
 
+- keep track of annotations??
+
 - other stuf
     /analysis/dotxml
         MetaInfManager

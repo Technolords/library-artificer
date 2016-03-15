@@ -8,7 +8,7 @@ public class ConstantInfo {
     private int intValue;
     private float floatValue;
     private long longValue;
-    private double doubeValue;
+    private double doubleValue;
     private String stringValue;
 
     public String getDescription() {
@@ -43,12 +43,12 @@ public class ConstantInfo {
         this.longValue = longValue;
     }
 
-    public double getDoubeValue() {
-        return doubeValue;
+    public double getDoubleValue() {
+        return doubleValue;
     }
 
-    public void setDoubeValue(double doubeValue) {
-        this.doubeValue = doubeValue;
+    public void setDoubleValue(double doubleValue) {
+        this.doubleValue = doubleValue;
     }
 
     public String getStringValue() {

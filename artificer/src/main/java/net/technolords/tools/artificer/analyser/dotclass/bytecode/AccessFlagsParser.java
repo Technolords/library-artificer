@@ -15,6 +15,18 @@ import java.io.IOException;
  */
 public class AccessFlagsParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessFlagsParser.class);
+    /**
+     * Access flags can have a different location, namely:
+     * - ClassFile
+     * - field_info
+     * - method_info
+     *
+     * And depending on the location, the value or info has different semantics.
+     */
+    public static final String LOCATION_CLASS_FILE = "LOCATION_CLASS_FILE";
+    public static final String LOCATION_NESTED_CLASS_FILE = "LOCATION_NESTED_CLASS_FILE";
+    public static final String LOCATION_FIELD_INFO = "LOCATION_FIELD_INFO";
+    public static final String LOCATION_METHOD_INFO = "LOCATION_METHOD_INFO";
 
     public static void extractAccessFlags(DataInputStream dataInputStream) throws IOException {
         int accessFlags = dataInputStream.readUnsignedShort();
