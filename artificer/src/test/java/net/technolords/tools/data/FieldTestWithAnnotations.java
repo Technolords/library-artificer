@@ -1,9 +1,15 @@
 package net.technolords.tools.data;
 
 import net.technolords.tools.data.annotation.AnnotationUsingAnnotation;
+import net.technolords.tools.data.annotation.AnnotationUsingArray;
+import net.technolords.tools.data.annotation.AnnotationUsingBoolean;
+import net.technolords.tools.data.annotation.AnnotationUsingByte;
+import net.technolords.tools.data.annotation.AnnotationUsingChar;
+import net.technolords.tools.data.annotation.AnnotationUsingClass;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import java.lang.reflect.Member;
+import java.util.LinkedList;
 
 /**
  * Created by Technolords on 2016-Mar-14.
@@ -12,43 +18,33 @@ public class FieldTestWithAnnotations {
 
     @XmlAttribute(name = "test", required = true)
     @Deprecated
-    private Member member;
+    private Member annotation1;
 
-    @AnnotationUsingAnnotation(
-        description = "Annotation using an annotation",
-        oldValue = "Should not use",
-        newValue = "Good stuff"
-    )
-    private String annotation1;
+    @AnnotationUsingAnnotation(description = "Annotation using an annotation", newValue = "First entry")
+    @AnnotationUsingAnnotation(description = "Annotation using an annotation", newValue = "Second entry")
+    private String annotation2;
 
-    // TODO: use different annotations:
-    // In other words, the union describes it is one of the following types:
-    // - const_value_index
-    // - enum_const_value
-    // - class_info_index
-    // - annotation_value
-    // - array_value
+    @AnnotationUsingArray(description = "Annotation using an array", names = {"alpha", "beta"}, numbers = {1, 2, 4} )
+    private String annotation3;
 
-    /*
-        Named and unnamed annotations:
+    @AnnotationUsingBoolean(description = "Annotation using a boolean", enabled = true)
+    private String annotation4;
 
-        @SupressWarnings(value = "unchecked")
-        vs
-        @SupressWarnings("unchecked")
-        This can be done when there is just one element named value, then the name can be omitted
+    @AnnotationUsingByte(description = "Annotation using a byte", unit = 8)
+    private String annotation5;
 
-        The annotation type can be one of the types that are defined in the 'java.lang' or 'java.lang.annotation' package
+    @AnnotationUsingChar(description = "Annotation using a char", unit = 'm')
+    private String annotation6;
 
-        Where annotations can be used:
-        - class instance creation expression:
-            new @Interned MyObject();
-        - type cast:
-            myString = (@NonNull String) str;
-        - implements clause:
-            class UnmodifiableList<T> implements @Readonly List<@ReadOnly T> {...}
-        - thrown exception declaration:
-            void monitorTemperature() throws @Critical TemperatureException {...}
+    @AnnotationUsingClass(description = "Annotation using a class", sample = LinkedList.class)
+    private String annotation7;
 
-        This form of annotation is called a 'type annotation'.
-     */
+    // TODO: enum
+    // TODO: float
+    // TODO: integer
+    // TODO: long
+    // TODO: short
+    // TODO: double
+    // TODO: String
+
 }

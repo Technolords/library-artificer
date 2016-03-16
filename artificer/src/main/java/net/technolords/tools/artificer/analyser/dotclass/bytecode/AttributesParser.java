@@ -155,6 +155,7 @@ public class AttributesParser {
         switch (attributeName) {
 
             case "Deprecated":                      // [location: ClassFile, field_info, method_info]
+                // Nothing to do, as it is a marker attribute for the Java Compiler
                 break;
 
             case "RuntimeInvisibleAnnotations":     // [location: ClassFile, field_info, method_info]
@@ -198,9 +199,13 @@ public class AttributesParser {
                 //  a class signature if this 'Signature' is an attribute of a 'ClassFile' structure. It is a
                 //  method signature of this 'Signature' is an attribute of a 'method_info' structure. It is a
                 //  field signature otherwise.
+
+                // Read signature index
                 int signatureIndex = dataInputStream.readUnsignedShort();
                 String signature = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), signatureIndex);
                 LOGGER.debug("Class signature: " + signature + " (location: " + location + ")");
+
+                // Add signature (when applicable) to the referenced classes
                 SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), signature);
                 break;
 

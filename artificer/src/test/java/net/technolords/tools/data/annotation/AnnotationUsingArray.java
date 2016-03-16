@@ -6,4 +6,5 @@ package net.technolords.tools.data.annotation;
 public @interface AnnotationUsingArray {
     String description();
     String[] names();
+    int[] numbers();
 }

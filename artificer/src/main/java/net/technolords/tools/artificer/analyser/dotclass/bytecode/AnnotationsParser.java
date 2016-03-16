@@ -87,7 +87,7 @@ public class AnnotationsParser {
     protected static void extractElementValuePairs(DataInputStream dataInputStream, int numberOfElementValuePairs, Resource resource) throws IOException {
         LOGGER.debug("Number of element-value pairs: " + numberOfElementValuePairs);
         for(int index = 0; index < numberOfElementValuePairs; index++) {
-            extractElementValuePair(index, dataInputStream, resource);
+            extractElementValuePair(dataInputStream, index, resource);
         }
     }
 
@@ -141,9 +141,16 @@ public class AnnotationsParser {
      * - array_value
      *
      * @param dataInputStream
+     *  The byte stream associated with the resource (aka .class file).
+     * @param index
+     *  The index of the element value pair.
      * @param resource
+     *  The resource associated with the attribute.
+     *
+     * @throws IOException
+     *  When reading bytes from the stream fails.
      */
-    protected static void extractElementValuePair(int index, DataInputStream dataInputStream, Resource resource) throws IOException {
+    protected static void extractElementValuePair(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Element-value pair (index: ").append(index).append(")");
 
@@ -152,74 +159,174 @@ public class AnnotationsParser {
         String element = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), elementNameIndex);
         buffer.append(", with key (index: ").append(elementNameIndex).append("): ").append(element);
 
+        // Extract the value
+        extractElementValue(dataInputStream, buffer, resource);
+    }
+
+    /**
+     * Auxiliary method to extract an 'element_value' from the data input stream. Note that this method can be called
+     * recursively (in case the value of the element_value is an array with more element_value's).
+     *
+     * @param dataInputStream
+     *  The byte stream associated with the resource (aka .class file).
+     * @param buffer
+     *  The buffer with relevant text to support (deep and semantic) logging.
+     * @param resource
+     *  The resource associated with the attribute.
+     *
+     * @throws IOException
+     *  When reading bytes from the stream fails.
+     */
+    protected static void extractElementValue(DataInputStream dataInputStream, StringBuilder buffer, Resource resource) throws IOException {
         // Read the tag
         int tag = dataInputStream.readUnsignedByte();
-        int constantValueIndex;
-        ConstantInfo value;
 
         // Read the element value
         switch ((char) tag) {
+
             case 'B':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (byte constant), constant value index: " + constantValueIndex);
+                int constantByteValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo byteValue = findConstantByIndex(constantByteValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantByteValueIndex).append(", type: byte): ").append(byteValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'C':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (char constant), constant value index: " + constantValueIndex);
+                int constantCharValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo charValue = findConstantByIndex(constantCharValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantCharValueIndex).append(", type: char): ").append((char) charValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'D':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (double constant), constant value index: " + constantValueIndex);
+                int constantDoubleValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo doubleValue = findConstantByIndex(constantDoubleValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantDoubleValueIndex).append(", type: double): ").append(doubleValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'F':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (float constant), constant value index: " + constantValueIndex);
+                int constantFloatValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo floatValue = findConstantByIndex(constantFloatValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantFloatValueIndex).append(", type: float): ").append(floatValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'I':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (integer constant), constant value index: " + constantValueIndex);
+                // Read the value index
+                int constantIntegerValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo integerValue = findConstantByIndex(constantIntegerValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantIntegerValueIndex).append(", type: integer): ").append(integerValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'J':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (long constant), constant value index: " + constantValueIndex);
+                // Read the value index
+                int constantLongValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo longValue = findConstantByIndex(constantLongValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantLongValueIndex).append(", type: long): ").append(longValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'S':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Associated value (short constant), constant value index: " + constantValueIndex);
+                // Read the value index
+                int constantShortValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo shortValue = findConstantByIndex(constantShortValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantShortValueIndex).append(", type: short): ").append(shortValue.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
+
             case 'Z':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                value = findConstantByIndex(constantValueIndex, resource.getConstantPool());
-                buffer.append(", with value (index: ").append(constantValueIndex).append(", type: boolean): ").append(value.getIntValue());
+                // Read the value index
+                int constantBooleanValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo booleanValue = findConstantByIndex(constantBooleanValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantBooleanValueIndex).append(", type: boolean): ").append(booleanValue.getIntValue());
                 LOGGER.debug(buffer.toString());
                 break;
+
             case 's':
-                constantValueIndex = dataInputStream.readUnsignedShort();
-                value = findConstantByIndex(constantValueIndex, resource.getConstantPool());
-                buffer.append(", with value (index: ").append(constantValueIndex).append(", type: String): ").append(value.getStringValue());
+                // Read the value index
+                int constantStringValueIndex = dataInputStream.readUnsignedShort();
+                ConstantInfo stringValue = findConstantByIndex(constantStringValueIndex, resource.getConstantPool());
+                buffer.append(", with value (index: ").append(constantStringValueIndex).append(", type: String): ").append(stringValue.getStringValue());
                 LOGGER.debug(buffer.toString());
                 break;
+
             case 'e':
                 LOGGER.debug("Got an enum constant...TODO!");
                 // TODO: parse enum
                 break;
+
             case 'c':
-                LOGGER.debug("Got a class...TODO!");
-                // TODO: parse class
+                // Read the class index
+                int classInfoIndex = dataInputStream.readUnsignedShort();
+
+                // The class_info_index denotes a class literal as the value of this element-value pair. The class_info_index
+                // must be a valid index into the 'constant_pool' table. The 'constant_pool' entry at that index must be a
+                // 'CONSTANT_Utf8_info' structure representing a return descriptor. The return descriptor give the type
+                // corresponding to the class literal represented by this 'element_value' structure. Types correspond to class
+                // literals as follows:
+                //
+                // - For a class literal C.class, where C is the name of the class, interface, or array type, the corresponding
+                //   type is C. The return descriptor in the 'constant_pool' will be an ObjectType or an ArrayType.
+                //   Example: the class literal Object.class corresponds to Object, so the 'constant_pool' entry is Ljava/lang/Object;
+                // - For a class literal p.class, where p is the name of a primitive type, the corresponding type is p. The
+                //   return descriptor in the 'constant_pool' will be a BaseType character.
+                //   Example: the literal int.class corresponds to the type int, so the 'constant_pool' entry is I.
+                // - For a class literal void.class, the corresponding type is void. The return descriptor in the 'constant_pool'
+                //   will be V.
+                //   Example: the literal void.class corresponds to void, so the 'constant_pool' entry is V, whereas
+                //   the class literal Void.class corresponds to the type Void, so the 'constant_pool' entry us Ljava/lang/Void;
+                String descriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), classInfoIndex);
+                buffer.append(", with value (index: ").append(classInfoIndex).append(", type: Class) with descriptor: ").append(descriptor);
+                LOGGER.debug(buffer.toString());
+
+                // Add signature (when applicable) to the referenced classes
+                SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
                 break;
+
             case '@':
-                LOGGER.debug("Got an annotation...TODO!");
-                // TODO: parse annotation
+                buffer.append(", with type annotation -> delegating to extract annotation (with index: -1)...");
+                LOGGER.debug(buffer.toString());
+
+                // Read annotation
+                extractAnnotation(dataInputStream, -1, resource);
                 break;
+
             case '[':
-                LOGGER.debug("Got an array...TODO!");
-                // TODO: parse array
+                int numberOfValues = dataInputStream.readUnsignedShort();
+                buffer.append(", with type array (size: ").append(numberOfValues).append(") entering recursion...");
+                LOGGER.debug(buffer.toString());
+
+                // Read array members, delegate by recursion
+                LOGGER.debug("Number of nested element-value pairs: " + numberOfValues);
+                for(int index = 0; index < numberOfValues; index++) {
+                    StringBuilder nestedBuffer = new StringBuilder();
+                    nestedBuffer.append("Nested element-value pair (index: ").append(index).append(")");
+                    extractElementValue(dataInputStream, nestedBuffer, resource);
+                }
                 break;
+
             default:
-                LOGGER.warn("Unsupported tag: " + tag);
+                buffer.append(", but tag is unsupported: " + tag);
+                LOGGER.warn(buffer.toString());
         }
     }
 
+    /**
+     * Auxiliary method to find a Constant by index (in the ConstantPool). Note that the ConstantPool
+     * has a list, but the index will not be *that* index. Each Constant reference in that list has a
+     * field member with an index which represents the semantic index in th ConstantPool. If that value
+     * matches that of the parameter, the Constant is found.
+     *
+     * @param index
+     *  The index associated with the Constant in the ConstantPool.
+     * @param constantPool
+     *  The ConstantPool associated with the Constants.
+     *
+     * @return
+     *  A reference of a ConstantInfo
+     */
     protected static ConstantInfo findConstantByIndex(int index, ConstantPool constantPool) {
         if(constantPool != null) {
             for (Constant constant : constantPool.getConstants()) {
