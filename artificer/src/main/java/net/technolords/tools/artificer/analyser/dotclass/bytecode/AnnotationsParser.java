@@ -269,6 +269,9 @@ public class AnnotationsParser {
                 buffer.append(", with type name (index: ").append(typeNameIndex).append(", type: enum): ").append(typeNameDescriptor);
                 buffer.append(" and value (index: ").append(constantNameIndex).append("): ").append(enumValue);
                 LOGGER.debug(buffer.toString());
+
+                // Add signature (when applicable) to the referenced classes
+                SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), typeNameDescriptor);
                 break;
 
             case 'c':
