@@ -6,6 +6,8 @@ import net.technolords.tools.data.annotation.AnnotationUsingBoolean;
 import net.technolords.tools.data.annotation.AnnotationUsingByte;
 import net.technolords.tools.data.annotation.AnnotationUsingChar;
 import net.technolords.tools.data.annotation.AnnotationUsingClass;
+import net.technolords.tools.data.annotation.AnnotationUsingEnum;
+import net.technolords.tools.data.annotation.AnnotationUsingInteger;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import java.lang.reflect.Member;
@@ -39,9 +41,15 @@ public class FieldTestWithAnnotations {
     @AnnotationUsingClass(description = "Annotation using a class", sample = LinkedList.class)
     private String annotation7;
 
+    @AnnotationUsingEnum(description = "Annotation using an enum", value = AnnotationUsingEnum.Priority.HIGH)
+    private String annotation8;
+
     // TODO: enum
     // TODO: float
-    // TODO: integer
+
+    @AnnotationUsingInteger(description = "Annotation using an integer", value = 100)
+    private String annotation10;
+
     // TODO: long
     // TODO: short
     // TODO: double

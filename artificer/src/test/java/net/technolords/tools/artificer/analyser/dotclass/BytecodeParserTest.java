@@ -97,4 +97,5 @@ public class BytecodeParserTest extends TestSupport {
         ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
         Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
     }
+
 }

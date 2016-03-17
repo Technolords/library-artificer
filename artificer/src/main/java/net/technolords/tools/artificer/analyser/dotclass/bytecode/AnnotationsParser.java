@@ -253,8 +253,22 @@ public class AnnotationsParser {
                 break;
 
             case 'e':
-                LOGGER.debug("Got an enum constant...TODO!");
-                // TODO: parse enum
+                // Read the enum type index
+                int typeNameIndex = dataInputStream.readUnsignedShort();
+
+                // The value of the type_name_index item must be a valid index in the 'constant_pool' table. The 'constant_pool'
+                // entry at that index must be a 'CONSTANT_Utf8_info' structure representing a field descriptor.
+                String typeNameDescriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), typeNameIndex);
+
+                // Read the constant name index
+                int constantNameIndex = dataInputStream.readUnsignedShort();
+
+                // The value of constant_name_index item must be a valid index in the 'constant_pool' table. The 'constant_pool'
+                // entry at that index must be a 'CONSTANT_Utf8_info' structure.
+                String enumValue = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), constantNameIndex);
+                buffer.append(", with type name (index: ").append(typeNameIndex).append(", type: enum): ").append(typeNameDescriptor);
+                buffer.append(" and value (index: ").append(constantNameIndex).append("): ").append(enumValue);
+                LOGGER.debug(buffer.toString());
                 break;
 
             case 'c':
@@ -276,7 +290,7 @@ public class AnnotationsParser {
                 // - For a class literal void.class, the corresponding type is void. The return descriptor in the 'constant_pool'
                 //   will be V.
                 //   Example: the literal void.class corresponds to void, so the 'constant_pool' entry is V, whereas
-                //   the class literal Void.class corresponds to the type Void, so the 'constant_pool' entry us Ljava/lang/Void;
+                //   the class literal Void.class corresponds to the type Void, so the 'constant_pool' entry is Ljava/lang/Void;
                 String descriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), classInfoIndex);
                 buffer.append(", with value (index: ").append(classInfoIndex).append(", type: Class) with descriptor: ").append(descriptor);
                 LOGGER.debug(buffer.toString());
