@@ -30,13 +30,26 @@ public class ConstantPoolParser {
      * JVM version, the associated specification is fetched to construct the constant pool. The
      * constant pool returned consists of a number of constants.
      *
-     * According to the JVM specification, it mentions that the value of the constant_pool_count is equal
-     * to the number of entries in the constant_pool table plus one.
+     * Auxiliary method to extract the minor and major version associated to the resource. From the 'ClassFile'
+     * structure, which has the following format:
      *
-     * A constant_pool index is considered valid if it is greater than zero and less than the
-     * constant_pool_count, with the exceptions for constants of type long and double.
+     * [java 8]
+     * ClassFile {
+     *     ...
+     *     u2                   constant_pool_count;
+     *     cp_info              constant_pool[constant_pool_count-1];
+     *     ...
+     * }
      *
-     * The constant_pool table is indexed from 1 to constant_pool_count - 1
+     * - constant_pool_count:
+     *      The value of the 'constant_pool_count' item is equal to the number of entries in the 'constant_pool'
+     *      table plus one. A 'constant_pool' index is considered valid if it is greater than zero and less than
+     *      'constant_pool_count', with the exception for constants of type long and double.
+     * - constant_pool[]:
+     *      The 'constant_pool' is a table of structures representing various string constants, class and
+     *      interface names, field names, and other constants that are referred to within the ClassFile structure
+     *      and its substructures. The format of each 'constant_pool' table entry is indicated by its first "tag" byte.
+     *      The constant_pool table is indexed from 1 to constant_pool_count - 1.
      *
      * All constant pool entries have the following general format:
      *
@@ -44,12 +57,6 @@ public class ConstantPoolParser {
      *     u1               tag
      *     u1               info[]
      * }
-     *
-     * Legend:
-     * - u1: unsigned one byte quantity, to be read as: readUnsignedByte
-     * - u2: unsigned two byte quantity, to be read as: readUnsignedShort
-     * - u4: unsigned four byte quantity, to be read as: readInt
-     * - u8: unsigned eight byte quantity, to be read as: readLong
      *
      * @param dataInputStream
      *  The byte stream associated with the constant pool extraction.

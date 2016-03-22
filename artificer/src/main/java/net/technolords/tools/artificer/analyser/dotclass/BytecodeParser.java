@@ -2,8 +2,13 @@ package net.technolords.tools.artificer.analyser.dotclass;
 
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.AccessFlagsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.AttributesParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.ClassReferenceParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.ConstantPoolParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.FieldsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.InterfaceParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.MagicNumberParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.MethodsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.MinorAndMajorVersionParser;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstant;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstants;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolInfoFragment;
@@ -89,6 +94,7 @@ public class BytecodeParser {
      * reading bytes from the DataInputStream representing the resource. According to the JVM specification the
      * class file has the following structure (example is fetched from JVM 8 specification):
      *
+     * [java 8]
      * ClassFile {
      *     u4               magic_number
      *     u2               minor_version
@@ -108,12 +114,6 @@ public class BytecodeParser {
      *     attributes_info  attributes[attributes_count]
      * }
      *
-     * Legend:
-     * - u1: unsigned one byte quantity, to be read as: readUnsignedByte
-     * - u2: unsigned two byte quantity, to be read as: readUnsignedShort
-     * - u4: unsigned four byte quantity, to be read as: readInt
-     * - u8: unsigned eight byte quantity, to be read as: readLong
-     *
      * The constant pool is of particular interest, as this contains references of classes.
      *
      * @param resource
@@ -130,23 +130,25 @@ public class BytecodeParser {
             }
             LOGGER.info("About to analyse byte code of: " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
             DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
-            // Absorb magic number, minor and major version
-            this.absorbOverhead(dataInputStream);
+            // Extract the magic number
+            MagicNumberParser.extractMagicNumber(dataInputStream);
+            // Extract the minor and major version
+            MinorAndMajorVersionParser.extractMinorAndMajorVersion(dataInputStream);
             // Extract the constant pool
             ConstantPool constantPool = ConstantPoolParser.extractConstantPool(dataInputStream, resource.getCompiledVersion(), this.lookupMap);
             resource.setConstantPool(constantPool);
             // Extract the access flags
             AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_CLASS_FILE);
             // Extract the 'this' class reference
-            this.extractThisClassReference(dataInputStream);
+            ClassReferenceParser.extractThisClassReference(dataInputStream);
             // Extract the 'super' class reference
-            this.extractSuperClassReference(dataInputStream);
+            ClassReferenceParser.extractSuperClassReference(dataInputStream);
             // Extract the interfaces
-            this.extractInterfaces(dataInputStream);
+            InterfaceParser.extractInterfaces(dataInputStream);
             // Extract the fields
             FieldsParser.extractFields(dataInputStream, resource);
             // Extract the methods
-            this.extractMethods(dataInputStream);
+            MethodsParser.extractMethods(dataInputStream);
             // Extract the attributes
 //            AttributesParser.extractAttributes(dataInputStream);
         } catch (IOException e) {
@@ -156,48 +158,4 @@ public class BytecodeParser {
         }
     }
 
-    /**
-     * An auxiliary method to read some bytes from the stream and absorb them as the information is not
-     * needed in this phase (and is already known). This phase is all about the deeper stuff of the .class file.
-     *
-     * The previous phase, done by the JavaSpecificationManager, was about the initial scanning of the .class files
-     * for basic reporting purposes.
-     *
-     * @param dataInputStream
-     *  The byte stream associated with the resource (aka .class file).
-     * @throws IOException
-     *  When reading bytes from the stream fails.
-     */
-    protected void absorbOverhead(DataInputStream dataInputStream) throws IOException {
-        // Absorb magic number (as it is already known)
-        dataInputStream.readInt();
-        // Absorb minor and major number
-        dataInputStream.readInt();
-    }
-
-    protected void extractThisClassReference(DataInputStream dataInputStream) throws IOException {
-        int thisClassReference = dataInputStream.readUnsignedShort();
-        LOGGER.debug("ConstantPool index for thisClassReference: " + thisClassReference);
-    }
-
-    protected void extractSuperClassReference(DataInputStream dataInputStream) throws IOException {
-        int superClassReference = dataInputStream.readUnsignedShort();
-        LOGGER.debug("ConstantPool index for superClassReference: " + superClassReference);
-    }
-
-    protected void extractInterfaces(DataInputStream dataInputStream) throws IOException {
-        int interfacesCount = dataInputStream.readUnsignedShort();
-        LOGGER.debug("interfacesCount: " + interfacesCount);
-        if(interfacesCount != 0) {
-            int interfaces = dataInputStream.readUnsignedShort();
-            LOGGER.debug("interfaces: " + interfaces);
-        }
-    }
-
-    // TODO: (u2) methods_count
-    // TODO: (??) methods                   <--
-    protected void extractMethods(DataInputStream dataInputStream) throws IOException {
-        int methodsCount = dataInputStream.readUnsignedShort();
-        LOGGER.debug("methodsCount: " + methodsCount);
-    }
 }

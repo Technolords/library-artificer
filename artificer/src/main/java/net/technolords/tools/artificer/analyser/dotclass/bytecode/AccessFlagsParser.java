@@ -31,6 +31,6 @@ public class AccessFlagsParser {
 
     public static void extractAccessFlags(DataInputStream dataInputStream, String location) throws IOException {
         int accessFlags = dataInputStream.readUnsignedShort();
-        LOGGER.debug("accessFlags: " + accessFlags);
+        LOGGER.debug("AccessFlags: " + accessFlags);
     }
 }
