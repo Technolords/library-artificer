@@ -70,7 +70,7 @@ public class ConstantPoolAnalyser {
         return null;
     }
 
-    protected static Constant findConstantByIndex(ConstantPool constantPool, int index) {
+    public static Constant findConstantByIndex(ConstantPool constantPool, int index) {
         for(Constant constant : constantPool.getConstants()) {
             if(constant.getConstantPoolIndex() == index) {
                 return constant;

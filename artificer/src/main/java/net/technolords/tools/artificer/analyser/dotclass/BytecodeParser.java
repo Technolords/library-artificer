@@ -136,8 +136,7 @@ public class BytecodeParser {
             ConstantPool constantPool = ConstantPoolParser.extractConstantPool(dataInputStream, resource.getCompiledVersion(), this.lookupMap);
             resource.setConstantPool(constantPool);
             // Extract the access flags
-            // TODO: add type
-            AccessFlagsParser.extractAccessFlags(dataInputStream);
+            AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_CLASS_FILE);
             // Extract the 'this' class reference
             this.extractThisClassReference(dataInputStream);
             // Extract the 'super' class reference
@@ -197,7 +196,8 @@ public class BytecodeParser {
 
     // TODO: (u2) methods_count
     // TODO: (??) methods                   <--
-    protected void extractMethods(DataInputStream dataInputStream) {
-
+    protected void extractMethods(DataInputStream dataInputStream) throws IOException {
+        int methodsCount = dataInputStream.readUnsignedShort();
+        LOGGER.debug("methodsCount: " + methodsCount);
     }
 }

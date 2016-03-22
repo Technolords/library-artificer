@@ -44,7 +44,6 @@ public class FieldTestWithAnnotations {
     @AnnotationUsingEnum(description = "Annotation using an enum", value = AnnotationUsingEnum.Priority.HIGH)
     private String annotation8;
 
-    // TODO: enum
     // TODO: float
 
     @AnnotationUsingInteger(description = "Annotation using an integer", value = 100)

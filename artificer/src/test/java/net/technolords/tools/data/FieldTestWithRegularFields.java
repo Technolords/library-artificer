@@ -8,7 +8,7 @@ import java.util.Map;
 public class FieldTestWithRegularFields {
     // Ljava/lang/Boolean;
     // Signature: None...
-    static Boolean simple = true;
+    static Boolean my_boolean = true;
 
     // Ljava/util/List;
     // Signature: Ljava/util/List<Ljava/lang/Integer;>;

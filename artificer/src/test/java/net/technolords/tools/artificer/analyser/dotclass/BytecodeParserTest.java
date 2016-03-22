@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import net.technolords.tools.artificer.TestSupport;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.data.FieldTestWithAnnotations;
+import net.technolords.tools.data.FieldTestWithConstants;
 import net.technolords.tools.data.FieldTestWithInnerClasses;
 import net.technolords.tools.data.FieldTestWithRegularFields;
 import org.slf4j.Logger;
@@ -43,9 +44,10 @@ public class BytecodeParserTest extends TestSupport {
         expectedReferencedClassesWithRegularFields.add("java/lang/Object");
 
         return new Object[][] {
+            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
-            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
+//            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
         };
     }
 

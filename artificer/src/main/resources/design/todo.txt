@@ -10,6 +10,8 @@
 
 v test with simple class with nested instantion of another class and see if bytecodemanager picks this up
 
+- test with static initializer blocks
+
 - compile list of se classes and ee classes
     - decide which class keeps this state
 

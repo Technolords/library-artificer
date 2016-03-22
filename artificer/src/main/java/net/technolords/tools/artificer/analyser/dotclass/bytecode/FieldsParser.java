@@ -116,8 +116,7 @@ public class FieldsParser {
         buffer.append("Field (index: ").append(index).append(")");
 
         // Read the access flags
-        // TODO: use AccessFlagsParser correctly with type, for now absorb
-        dataInputStream.readUnsignedShort();
+        AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_FIELD_INFO);
 
         // Read the name index
         int nameIndex = dataInputStream.readUnsignedShort();

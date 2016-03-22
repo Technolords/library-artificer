@@ -2,6 +2,8 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
+import net.technolords.tools.artificer.domain.dotclass.Constant;
+import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,10 +103,11 @@ public class AttributesParser {
      *      The value of the 'attribute_length' item indicates the length of the subsequent information in bytes. The
      *      length does not include the initial six bytes the 'attribute_name_index' and 'attribute_length' items.
      *
+     * TODO: implement, field, method and then ClassFile and lastly Code?
      * This specification has 23 predefined attributes (sorted by alphabet):
      * - AnnotationDefault                     [location: method_info]
      * - BootstrapMethods                      [location: ClassFile]
-     * - ConstantValue                         [location: field_info]
+     * v ConstantValue                         [location: field_info]
      * - Code                                  [location: method_info]
      * v Deprecated                            [location: ClassFile, field_info, method_info]
      * - EnclosingMethod                       [location: ClassFile]
@@ -116,15 +119,15 @@ public class AttributesParser {
      * - MethodParameters                      [location: method_info]
      * v RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
      * - RuntimeInvisibleParameterAnnotations  [location: method_info]
-     * - RuntimeInvisibleTypeAnnotations       [location: ClassFile, field_info, method_info, Code]
+     * v RuntimeInvisibleTypeAnnotations       [location: ClassFile, field_info, method_info, Code]
      * v RuntimeVisibleAnnotations             [location: ClassFile, field_info, method_info]
      * - RuntimeVisibleParameterAnnotations    [location: method_info]
-     * - RuntimeVisibleTypeAnnotations         [location: ClassFile, field_info, method_info, Code]
+     * v RuntimeVisibleTypeAnnotations         [location: ClassFile, field_info, method_info, Code]
      * v Signature                             [location: ClassFile, field_info, method_info]
      * - SourceDebugExtension                  [location: ClassFile]
      * - SourceFile                            [location: ClassFile]
      * - StackMapTable                         [location: Code]
-     * - Synthetic                             [location: ClassFile, field_info, method_info]
+     * v Synthetic                             [location: ClassFile, field_info, method_info]
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
@@ -147,20 +150,64 @@ public class AttributesParser {
 
         // Read attribute length
         int attributeLength = dataInputStream.readInt();
-        buffer.append(", with (index: ").append(attributeNameIndex).append("): ").append(attributeName);
+        buffer.append(", with (index: ").append(attributeNameIndex).append(") of type: ").append(attributeName);
         buffer.append(", with attribute length: ").append(attributeLength);
         LOGGER.debug(buffer.toString());
 
         // Proceed by attribute name (sorted by alphabet)
         switch (attributeName) {
 
+            case "ConstantValue":
+                // u2               constantvalue_index
+                //
+                // constantvalue_index:
+                //  The value of the 'constantvalue_index' must be a valid index in the 'constant_pool' table. The
+                //  'constant_pool' entry at that index gives the constant value represented by this attribute. The
+                //  'constant_pool' entry must be of a type appropriate to the field as specified in:
+                //
+                //      Field type                      Entry type
+                //      long                            CONSTANT_Long
+                //      float                           CONSTANT_Float
+                //      double                          CONSTANT_Double
+                //      int,short,char,byte,boolean     CONSTANT_Integer
+                //      String                          CONSTANT_String
+                int constantValueIndex = dataInputStream.readUnsignedShort();
+                Constant constant = ConstantPoolAnalyser.findConstantByIndex(resource.getConstantPool(), constantValueIndex);
+                ConstantInfo constantInfo = constant.getConstantInfoList().get(0);
+                StringBuilder bufferForConstant = new StringBuilder();
+                bufferForConstant.append("Attribute (index: ").append(index).append(")");
+                bufferForConstant.append(", is a constant (of type: ").append(constant.getType()).append(") with value: ");
+                switch (constant.getType()) {
+                    case "Double":
+                        bufferForConstant.append(constantInfo.getDoubleValue());
+                        break;
+                    case "Float":
+                        bufferForConstant.append(constantInfo.getFloatValue());
+                        break;
+                    case "Integer":
+                        bufferForConstant.append(constantInfo.getIntValue());
+                        break;
+                    case "Long":
+                        bufferForConstant.append(constantInfo.getLongValue());
+                        break;
+                    case "String":
+                        int stringIndex = constantInfo.getIntValue();
+                        String stringValue = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), stringIndex);
+                        bufferForConstant.append(stringValue);
+                        break;
+                    default:
+                        bufferForConstant.append("TODO: extract value...");
+                }
+                LOGGER.debug(bufferForConstant.toString());
+                break;
+
             case "Deprecated":                      // [location: ClassFile, field_info, method_info]
                 // Nothing to do, as it is a marker attribute for the Java Compiler
                 break;
 
             case "RuntimeInvisibleAnnotations":     // [location: ClassFile, field_info, method_info]
-                // u2           num_annotations
-                // annotation   annotations[num_annotations]
+                // u2               num_annotations
+                // annotation       annotations[num_annotations]
                 //
                 // num_annotations:
                 //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
@@ -174,9 +221,19 @@ public class AttributesParser {
                 AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeInvisibleAnnotations, resource);
                 break;
 
+            case "RuntimeInvisibleTypeAnnotations": // [location: ClassFile, field_info, method_info, Code]
+                // u2               num_annotations
+                // type_annotation  annotations[num_annotations]
+
+                // TODO: implement TypeAnnotationParser, but for now swallow...
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
             case "RuntimeVisibleAnnotations":       // [location: ClassFile, field_info, method_info]
-                // u2           num_annotations
-                // annotation   annotations[num_annotations]
+                // u2               num_annotations
+                // annotation       annotations[num_annotations]
                 //
                 // num_annotations:
                 //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
@@ -190,8 +247,18 @@ public class AttributesParser {
                 AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeVisibleAnnotations, resource);
                 break;
 
+            case "RuntimeVisibleTypeAnnotations":   // [location: ClassFile, field_info, method_info, Code]
+                // u2               num_annotations
+                // type_annotation  annotations[num_annotations]
+
+                // TODO: implement TypeAnnotationParser, but for now swallow...
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
             case "Signature":                       // [location: ClassFile, field_info, method_info]
-                // u2           signature_index
+                // u2               signature_index
                 //
                 // signature_index:
                 //  The value of the 'signature_index' must be a valid index in the 'constant_pool' table.
@@ -207,6 +274,10 @@ public class AttributesParser {
 
                 // Add signature (when applicable) to the referenced classes
                 SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), signature);
+                break;
+
+            case "Synthetic":                       // [location: ClassFile, field_info, method_info]
+                // Nothing to do, as it is a marker attribute for the Java Compiler
                 break;
 
             default:
