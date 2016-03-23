@@ -1,4 +1,4 @@
-package net.technolords.tools.data;
+package net.technolords.tools.data.field;
 
 import net.technolords.tools.data.annotation.AnnotationUsingAnnotation;
 import net.technolords.tools.data.annotation.AnnotationUsingArray;

@@ -1,4 +1,4 @@
-package net.technolords.tools.data;
+package net.technolords.tools.data.field;
 
 import java.util.ArrayList;
 import java.util.HashMap;

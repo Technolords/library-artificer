@@ -1,4 +1,4 @@
-package net.technolords.tools.data;
+package net.technolords.tools.data.field;
 
 /**
  * Created by Technolords on 2016-Mar-20.

@@ -1,5 +1,7 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
+import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
+import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +41,60 @@ public class MethodsParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
+     * @param resource
+     *  The resource associated with the attribute.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractMethods(DataInputStream dataInputStream) throws IOException {
+    public static void extractMethods(DataInputStream dataInputStream, Resource resource) throws IOException {
         int methodsCount = dataInputStream.readUnsignedShort();
         LOGGER.debug("MethodsCount: " + methodsCount);
+        for(int index = 0; index < methodsCount; index++) {
+            extractMethod(dataInputStream, index, resource);
+        }
+    }
+
+    /**
+     *
+     * method_info {
+     *     u2                   access_flags;
+     *     u2                   name_index;
+     *     u2                   descriptor_index;
+     *     u2                   attributes_count;
+     *     attribute_info       attributes[attributes_count];
+     * }
+     *
+     * @param dataInputStream
+     *  The byte stream associated with the resource (aka .class file).
+     * @param index
+     *  The attribute index, used for precise data logging.
+     * @param resource
+     *  The resource associated with the attribute.
+     * @throws IOException
+     */
+    protected static void extractMethod(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Method (index: ").append(index).append(")");
+
+        // Read access flags
+        int accessFlags = dataInputStream.readUnsignedShort();
+
+        // Read name index
+        int nameIndex = dataInputStream.readUnsignedShort();
+        String methodName = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), nameIndex);
+        buffer.append(", with name: ").append(methodName);
+
+        // Read descriptor index
+        int descriptorIndex = dataInputStream.readUnsignedShort();
+        String descriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), descriptorIndex);
+        buffer.append(", with descriptor (index: ").append(descriptorIndex).append("): ").append(descriptor);
+
+        // TODO: add possible descriptor
+
+        // Read attributes count
+        int attributesCount = dataInputStream.readUnsignedShort();
+        buffer.append(" and total attributes: ").append(attributesCount);
+        LOGGER.debug(buffer.toString());
+        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_CLASS_FILE);
     }
 }

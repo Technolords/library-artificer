@@ -148,7 +148,7 @@ public class BytecodeParser {
             // Extract the fields
             FieldsParser.extractFields(dataInputStream, resource);
             // Extract the methods
-            MethodsParser.extractMethods(dataInputStream);
+            MethodsParser.extractMethods(dataInputStream, resource);
             // Extract the attributes
 //            AttributesParser.extractAttributes(dataInputStream);
         } catch (IOException e) {

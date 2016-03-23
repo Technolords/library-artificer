@@ -1,4 +1,4 @@
-package net.technolords.tools.data;
+package net.technolords.tools.data.field;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

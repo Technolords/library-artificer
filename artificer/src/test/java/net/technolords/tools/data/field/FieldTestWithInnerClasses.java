@@ -1,4 +1,4 @@
-package net.technolords.tools.data;
+package net.technolords.tools.data.field;
 
 import java.util.concurrent.ConcurrentHashMap;
 
