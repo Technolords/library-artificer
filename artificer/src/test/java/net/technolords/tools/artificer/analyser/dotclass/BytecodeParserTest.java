@@ -7,6 +7,7 @@ import net.technolords.tools.data.FieldTestWithAnnotations;
 import net.technolords.tools.data.FieldTestWithConstants;
 import net.technolords.tools.data.FieldTestWithInnerClasses;
 import net.technolords.tools.data.FieldTestWithRegularFields;
+import net.technolords.tools.data.FieldTestWithTypeAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
@@ -44,10 +45,11 @@ public class BytecodeParserTest extends TestSupport {
         expectedReferencedClassesWithRegularFields.add("java/lang/Object");
 
         return new Object[][] {
-            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
+//            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithTypeAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
         };
     }
 

@@ -1,4 +1,4 @@
-package net.technolords.tools.artificer.analyser.dotclass.bytecode;
+package net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
@@ -84,7 +84,7 @@ public class AnnotationsParser {
         extractElementValuePairs(dataInputStream, numberOfElementValuePairs, resource);
     }
 
-    protected static void extractElementValuePairs(DataInputStream dataInputStream, int numberOfElementValuePairs, Resource resource) throws IOException {
+    public static void extractElementValuePairs(DataInputStream dataInputStream, int numberOfElementValuePairs, Resource resource) throws IOException {
         LOGGER.debug("Number of element-value pairs: " + numberOfElementValuePairs);
         for(int index = 0; index < numberOfElementValuePairs; index++) {
             extractElementValuePair(dataInputStream, index, resource);
@@ -325,7 +325,7 @@ public class AnnotationsParser {
                 break;
 
             default:
-                buffer.append(", but tag is unsupported: " + tag);
+                buffer.append(", but tag is unsupported: ").append(tag);
                 LOGGER.warn(buffer.toString());
         }
     }

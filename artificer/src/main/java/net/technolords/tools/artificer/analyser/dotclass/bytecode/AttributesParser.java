@@ -2,6 +2,8 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.AnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.TypeAnnotationsParser;
 import net.technolords.tools.artificer.domain.dotclass.Constant;
 import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
 import net.technolords.tools.artificer.domain.resource.Resource;
@@ -158,12 +160,12 @@ public class AttributesParser {
         switch (attributeName) {
 
             case "ConstantValue":
-                // u2               constantvalue_index
+                // u2                       constantvalue_index;
                 //
-                // constantvalue_index:
-                //  The value of the 'constantvalue_index' must be a valid index in the 'constant_pool' table. The
-                //  'constant_pool' entry at that index gives the constant value represented by this attribute. The
-                //  'constant_pool' entry must be of a type appropriate to the field as specified in:
+                // - constantvalue_index:
+                //      The value of the 'constantvalue_index' must be a valid index in the 'constant_pool' table. The
+                //      'constant_pool' entry at that index gives the constant value represented by this attribute. The
+                //      'constant_pool' entry must be of a type appropriate to the field as specified in:
                 //
                 //      Field type                      Entry type
                 //      long                            CONSTANT_Long
@@ -206,14 +208,14 @@ public class AttributesParser {
                 break;
 
             case "RuntimeInvisibleAnnotations":     // [location: ClassFile, field_info, method_info]
-                // u2               num_annotations
-                // annotation       annotations[num_annotations]
+                // u2                       num_annotations;
+                // annotation               annotations[num_annotations];
                 //
-                // num_annotations:
-                //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
-                //  by the structure.
-                // annotation:
-                //  Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
+                // - num_annotations:
+                //      The value of 'num_annotations' item gives the number of run-time visible annotations represented
+                //      by the structure.
+                // - annotation[]:
+                //      Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
 
                 // Read number of annotations
                 int numberOfRuntimeInvisibleAnnotations = dataInputStream.readUnsignedShort();
@@ -222,18 +224,18 @@ public class AttributesParser {
                 break;
 
             case "RuntimeInvisibleTypeAnnotations": // [location: ClassFile, field_info, method_info, Code]
-                // u2               num_annotations
-                // type_annotation  annotations[num_annotations]
+                // u2                       num_annotations
+                // type_annotation          annotations[num_annotations]
 
-                // TODO: implement TypeAnnotationParser, but for now swallow...
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Read number of invisible type annotations
+                int numberOfInvisibleTypeAnnotations = dataInputStream.readUnsignedShort();
+                LOGGER.debug("Total type annotations: " + numberOfInvisibleTypeAnnotations);
+                TypeAnnotationsParser.extractTypeAnnotations(dataInputStream, numberOfInvisibleTypeAnnotations, resource);
                 break;
 
             case "RuntimeVisibleAnnotations":       // [location: ClassFile, field_info, method_info]
-                // u2               num_annotations
-                // annotation       annotations[num_annotations]
+                // u2                       num_annotations
+                // annotation               annotations[num_annotations]
                 //
                 // num_annotations:
                 //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
@@ -248,17 +250,25 @@ public class AttributesParser {
                 break;
 
             case "RuntimeVisibleTypeAnnotations":   // [location: ClassFile, field_info, method_info, Code]
-                // u2               num_annotations
-                // type_annotation  annotations[num_annotations]
+                // u2                       num_annotations;
+                // type_annotation          annotations[num_annotations];
+                //
+                // - num_annotations:
+                //      The value of the 'num_annotations' item gives the number of run-time visible type annotations
+                //      represented by the structure.
+                // - annotations[]:
+                //      Each entry in the 'annotations' table represents a single run-time visible annotation on a
+                //      type used in a declaration or expression. The 'type_annotation' structure has the following
+                //      format:
 
-                // TODO: implement TypeAnnotationParser, but for now swallow...
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Read number of invisible type annotations
+                int numberOfVisibleTypeAnnotations = dataInputStream.readUnsignedShort();
+                LOGGER.debug("Total type annotations: " + numberOfVisibleTypeAnnotations);
+                TypeAnnotationsParser.extractTypeAnnotations(dataInputStream, numberOfVisibleTypeAnnotations, resource);
                 break;
 
             case "Signature":                       // [location: ClassFile, field_info, method_info]
-                // u2               signature_index
+                // u2                       signature_index
                 //
                 // signature_index:
                 //  The value of the 'signature_index' must be a valid index in the 'constant_pool' table.
