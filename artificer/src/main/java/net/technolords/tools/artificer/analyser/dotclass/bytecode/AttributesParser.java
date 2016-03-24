@@ -4,6 +4,7 @@ import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.TypeAnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsAttributeParser;
 import net.technolords.tools.artificer.domain.dotclass.Constant;
 import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
 import net.technolords.tools.artificer.domain.resource.Resource;
@@ -213,7 +214,12 @@ public class AttributesParser {
                 break;
 
             // EnclosingMethod                       [location: ClassFile]
-            // Exceptions                            [location: method_info]
+
+            case "Exceptions":                      // [location: method_info]
+                // Parse the exceptions (delegated)
+                ExceptionsAttributeParser.extractExceptions(dataInputStream, resource);
+                break;
+
             // InnerClasses                          [location: ClassFile]
             // LineNumberTable                       [location: Code]
             // LocalVariableTable                    [location: Code]
