@@ -159,7 +159,10 @@ public class AttributesParser {
         // Proceed by attribute name (sorted by alphabet)
         switch (attributeName) {
 
-            case "ConstantValue":
+            // AnnotationDefault                     [location: method_info]
+            // BootstrapMethods                      [location: ClassFile]
+
+            case "ConstantValue":                   // [location: field_info]
                 // u2                       constantvalue_index;
                 //
                 // - constantvalue_index:
@@ -203,9 +206,19 @@ public class AttributesParser {
                 LOGGER.debug(bufferForConstant.toString());
                 break;
 
+            // Code                                  [location: method_info]
+
             case "Deprecated":                      // [location: ClassFile, field_info, method_info]
                 // Nothing to do, as it is a marker attribute for the Java Compiler
                 break;
+
+            // EnclosingMethod                       [location: ClassFile]
+            // Exceptions                            [location: method_info]
+            // InnerClasses                          [location: ClassFile]
+            // LineNumberTable                       [location: Code]
+            // LocalVariableTable                    [location: Code]
+            // LocalVariableTypeTable                [location: Code]
+            // MethodParameters                      [location: method_info]
 
             case "RuntimeInvisibleAnnotations":     // [location: ClassFile, field_info, method_info]
                 // u2                       num_annotations;
@@ -222,6 +235,8 @@ public class AttributesParser {
                 LOGGER.debug("Total annotations: " + numberOfRuntimeInvisibleAnnotations);
                 AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeInvisibleAnnotations, resource);
                 break;
+
+            // RuntimeInvisibleParameterAnnotations  [location: method_info]
 
             case "RuntimeInvisibleTypeAnnotations": // [location: ClassFile, field_info, method_info, Code]
                 // u2                       num_annotations
@@ -248,6 +263,8 @@ public class AttributesParser {
                 LOGGER.debug("Total annotations: " + numberOfRuntimeVisibleAnnotations);
                 AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeVisibleAnnotations, resource);
                 break;
+
+            // RuntimeVisibleParameterAnnotations    [location: method_info]
 
             case "RuntimeVisibleTypeAnnotations":   // [location: ClassFile, field_info, method_info, Code]
                 // u2                       num_annotations;
@@ -285,6 +302,10 @@ public class AttributesParser {
                 // Add signature (when applicable) to the referenced classes
                 SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), signature);
                 break;
+
+            // SourceDebugExtension                  [location: ClassFile]
+            // SourceFile                            [location: ClassFile]
+            // StackMapTable                         [location: Code]
 
             case "Synthetic":                       // [location: ClassFile, field_info, method_info]
                 // Nothing to do, as it is a marker attribute for the Java Compiler

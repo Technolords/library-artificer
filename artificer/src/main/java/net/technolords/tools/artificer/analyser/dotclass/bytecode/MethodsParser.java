@@ -1,6 +1,7 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,8 @@ public class MethodsParser {
         String descriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), descriptorIndex);
         buffer.append(", with descriptor (index: ").append(descriptorIndex).append("): ").append(descriptor);
 
-        // TODO: add possible descriptor
+        // Add signature (when applicable) to the referenced classes
+        SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
 
         // Read attributes count
         int attributesCount = dataInputStream.readUnsignedShort();

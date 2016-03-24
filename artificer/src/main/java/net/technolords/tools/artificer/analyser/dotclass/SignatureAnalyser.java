@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class SignatureAnalyser {
     private static Logger LOGGER = LoggerFactory.getLogger(SignatureAnalyser.class);
 
-    private static String regexForClassReference = "L(.*);";
+    private static String regexForClassReference = "\\(?L(.*);\\)?.*";
     private static String regexForCollections = "([a-zA-Z/]*)<(.*)>";
 
     private static Pattern patternForClassReference = Pattern.compile(regexForClassReference);

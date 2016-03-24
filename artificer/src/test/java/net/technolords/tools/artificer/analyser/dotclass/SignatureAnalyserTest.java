@@ -41,10 +41,14 @@ public class SignatureAnalyserTest {
         Set<String> expectedReferencedClassesForEntry3 = new HashSet<>();
         expectedReferencedClassesForEntry3.add("java/util/List");
 
+        Set<String> expectedReferencedClassesForEntry4 = new HashSet<>();
+        expectedReferencedClassesForEntry4.add("java/nio/file/Path");
+
         return new Object[][] {
             { "Ljava/util/List<Ljava/util/Set<Ljava/util/Map<**>;>;>;", 3, expectedReferencedClassesForEntry1 },
             { "Ljava/util/List<Ljava/lang/Integer;>;", 2, expectedReferencedClassesForEntry2 },
             { "Ljava/util/List;", 1, expectedReferencedClassesForEntry3 },
+            { "(Ljava/nio/file/Path;)V", 1, expectedReferencedClassesForEntry4 },
         };
     }
 

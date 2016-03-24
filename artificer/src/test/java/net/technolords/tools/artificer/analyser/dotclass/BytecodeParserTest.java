@@ -54,7 +54,7 @@ public class BytecodeParserTest extends TestSupport {
         StringBuilder buffer = new StringBuilder();
         buffer.append(File.separator).append("test-classes");
         buffer.append(File.separator).append("net").append(File.separator).append("technolords").append(File.separator).append("tools");
-        buffer.append(File.separator).append("data").append(File.separator).append(className.getSimpleName());
+        buffer.append(File.separator).append("data").append(File.separator).append("field").append(File.separator).append(className.getSimpleName());
         buffer.append(".class");
 
         Path pathToDataSample = FileSystems.getDefault().getPath(super.getPathToTargetFolder().toAbsolutePath() + buffer.toString());
