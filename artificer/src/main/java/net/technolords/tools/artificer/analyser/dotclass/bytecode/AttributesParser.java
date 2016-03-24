@@ -4,6 +4,7 @@ import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.TypeAnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueAttributeParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsAttributeParser;
 import net.technolords.tools.artificer.domain.dotclass.Constant;
 import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
@@ -164,47 +165,8 @@ public class AttributesParser {
             // BootstrapMethods                      [location: ClassFile]
 
             case "ConstantValue":                   // [location: field_info]
-                // u2                       constantvalue_index;
-                //
-                // - constantvalue_index:
-                //      The value of the 'constantvalue_index' must be a valid index in the 'constant_pool' table. The
-                //      'constant_pool' entry at that index gives the constant value represented by this attribute. The
-                //      'constant_pool' entry must be of a type appropriate to the field as specified in:
-                //
-                //      Field type                      Entry type
-                //      long                            CONSTANT_Long
-                //      float                           CONSTANT_Float
-                //      double                          CONSTANT_Double
-                //      int,short,char,byte,boolean     CONSTANT_Integer
-                //      String                          CONSTANT_String
-                int constantValueIndex = dataInputStream.readUnsignedShort();
-                Constant constant = ConstantPoolAnalyser.findConstantByIndex(resource.getConstantPool(), constantValueIndex);
-                ConstantInfo constantInfo = constant.getConstantInfoList().get(0);
-                StringBuilder bufferForConstant = new StringBuilder();
-                bufferForConstant.append("Attribute (index: ").append(index).append(")");
-                bufferForConstant.append(", is a constant (of type: ").append(constant.getType()).append(") with value: ");
-                switch (constant.getType()) {
-                    case "Double":
-                        bufferForConstant.append(constantInfo.getDoubleValue());
-                        break;
-                    case "Float":
-                        bufferForConstant.append(constantInfo.getFloatValue());
-                        break;
-                    case "Integer":
-                        bufferForConstant.append(constantInfo.getIntValue());
-                        break;
-                    case "Long":
-                        bufferForConstant.append(constantInfo.getLongValue());
-                        break;
-                    case "String":
-                        int stringIndex = constantInfo.getIntValue();
-                        String stringValue = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), stringIndex);
-                        bufferForConstant.append(stringValue);
-                        break;
-                    default:
-                        bufferForConstant.append("TODO: extract value...");
-                }
-                LOGGER.debug(bufferForConstant.toString());
+                // Parse the constant (delegated)
+                ConstantValueAttributeParser.extractConstantValue(dataInputStream, resource);
                 break;
 
             // Code                                  [location: method_info]
