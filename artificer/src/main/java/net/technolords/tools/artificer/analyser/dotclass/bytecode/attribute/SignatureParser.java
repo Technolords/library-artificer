@@ -11,6 +11,12 @@ import java.io.IOException;
 
 /**
  * Created by Technolords on 2016-Mar-29.
+ *
+ * Legend:
+ * u1: java: readUnsignedByte
+ * u2: java: readUnsignedShort
+ * u4: java, readInt + readFloat
+ * u8: java, readLong + readDouble
  */
 public class SignatureParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(SignatureParser.class);

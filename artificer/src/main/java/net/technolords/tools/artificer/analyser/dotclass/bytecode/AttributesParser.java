@@ -3,6 +3,7 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsParser;
@@ -155,7 +156,7 @@ public class AttributesParser {
      * v RuntimeVisibleTypeAnnotations         [location: ClassFile, field_info, method_info, Code]
      * v Signature                             [location: ClassFile, field_info, method_info]
      * - SourceDebugExtension                  [location: ClassFile]
-     * - SourceFile                            [location: ClassFile]
+     * v SourceFile                            [location: ClassFile]
      * - StackMapTable                         [location: Code]
      * v Synthetic                             [location: ClassFile, field_info, method_info]
      *
@@ -323,11 +324,8 @@ public class AttributesParser {
                 break;
 
             case SOURCE_FILE:                               // [location: ClassFile]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the source file (delegated)
+                SourceFileParser.extractSourceFile(dataInputStream, resource);
                 break;
 
             case STACK_MAP_TABLE:                           // [location: Code]
