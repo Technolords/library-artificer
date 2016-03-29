@@ -7,6 +7,7 @@ import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpeci
 import net.technolords.tools.artificer.domain.dotclass.Constant;
 import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
 import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
+import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +25,18 @@ import java.util.Optional;
  */
 public class ConstantPoolParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConstantPoolParser.class);
+    private static final String READ_UNSIGNED_BYTE = "readUnsignedByte";
+    private static final String READ_INT = "readInt";
+    private static final String READ_FLOAT = "readFloat";
+    private static final String READ_LONG = "readLong";
+    private static final String READ_DOUBLE = "readDouble";
+    private static final String READ_UTF = "readUTF";
+    private static final String READ_UNSIGNED_SHORT = "readUnsignedShort";
 
     /**
-     * An auxiliary method to extract the constant pool from the byte stream. Based on the detected
-     * JVM version, the associated specification is fetched to construct the constant pool. The
-     * constant pool returned consists of a number of constants.
+     * An auxiliary method to extract the constant pool from the byte stream. Based on the detected JVM version,
+     * the associated specification is fetched to construct the constant pool. The constant pool consists of
+     * a number of constants.
      *
      * Auxiliary method to extract the minor and major version associated to the resource. From the 'ClassFile'
      * structure, which has the following format:
@@ -60,30 +68,28 @@ public class ConstantPoolParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the constant pool extraction.
-     * @param compiledVersion
-     *  The compiled version associated with the resource (aka .class file).
      * @param lookupMap
      *  The lookup map associated with the constant pool extraction.
-     * @return
-     *  The extracted constant pool.
+     * @param resource
+     *  The resource associated with the attribute.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static ConstantPool extractConstantPool(DataInputStream dataInputStream, String compiledVersion, Map<String, JavaSpecification> lookupMap) throws IOException {
+    public static void extractConstantPool(DataInputStream dataInputStream, Map<String, JavaSpecification> lookupMap, Resource resource) throws IOException {
         int constantPoolSize = dataInputStream.readUnsignedShort();
-        LOGGER.debug("constantPoolSize: " + constantPoolSize);
+        LOGGER.debug("ConstantPool count: " + constantPoolSize);
         ConstantPool constantPool = new ConstantPool();
 
         // Extract the constants
         for(int i = 1; i < constantPoolSize; i++) {
-            Constant constant = extractConstant(dataInputStream, i, compiledVersion, lookupMap);
+            Constant constant = extractConstant(dataInputStream, i, resource.getCompiledVersion(), lookupMap);
             constant.setConstantPoolIndex(i);
             if(constant.getType().equals("Long") || constant.getType().equals("Double")) {
                 i++;
             }
             constantPool.getConstants().add(constant);
         }
-        return constantPool;
+        resource.setConstantPool(constantPool);
     }
 
     /**
@@ -206,35 +212,46 @@ public class ConstantPoolParser {
      *  When reading bytes from the stream fails.
      */
     protected static void readInfoSize(DataInputStream dataInputStream, ConstantInfo constantInfo, ConstantPoolInfoFragment infoFragment) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Info fragment size: ").append(infoFragment.getSize());
+        buffer.append(", description: ").append(infoFragment.getDescription());
+        buffer.append(", value: ");
         switch(infoFragment.getSize()) {
-            case "readUnsignedByte" :
+            case READ_UNSIGNED_BYTE:
                 constantInfo.setIntValue(dataInputStream.readUnsignedByte());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
+                buffer.append(constantInfo.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
-            case "readInt" :
+            case READ_INT:
                 constantInfo.setIntValue(dataInputStream.readInt());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
+                buffer.append(constantInfo.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
-            case "readFloat" :
+            case READ_FLOAT:
                 constantInfo.setFloatValue(dataInputStream.readFloat());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getFloatValue());
+                buffer.append(constantInfo.getFloatValue());
+                LOGGER.debug(buffer.toString());
                 break;
-            case "readLong" :
+            case READ_LONG:
                 constantInfo.setLongValue(dataInputStream.readLong());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getLongValue());
+                buffer.append(constantInfo.getLongValue());
+                LOGGER.debug(buffer.toString());
                 break;
-            case "readDouble" :
+            case READ_DOUBLE:
                 constantInfo.setDoubleValue(dataInputStream.readDouble());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getDoubleValue());
+                buffer.append(constantInfo.getDoubleValue());
+                LOGGER.debug(buffer.toString());
                 break;
-            case "readUTF":
+            case READ_UTF:
                 constantInfo.setStringValue(dataInputStream.readUTF());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getStringValue());
+                buffer.append(constantInfo.getStringValue());
+                LOGGER.debug(buffer.toString());
                 break;
-            case "readUnsignedShort" :
+            case READ_UNSIGNED_SHORT:
             default:
                 constantInfo.setIntValue(dataInputStream.readUnsignedShort());
-                LOGGER.debug("Info fragment size: " + infoFragment.getSize() + ", description: " + infoFragment.getDescription() + ", value: " + constantInfo.getIntValue());
+                buffer.append(constantInfo.getIntValue());
+                LOGGER.debug(buffer.toString());
                 break;
         }
     }

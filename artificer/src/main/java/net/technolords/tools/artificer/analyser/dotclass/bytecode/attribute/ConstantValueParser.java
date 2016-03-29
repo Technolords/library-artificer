@@ -14,8 +14,8 @@ import java.util.List;
 /**
  * Created by Technolords on 2016-Mar-24.
  */
-public class ConstantValueAttributeParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConstantValueAttributeParser.class);
+public class ConstantValueParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConstantValueParser.class);
     private static final String DOUBLE = "Double";
     private static final String FLOAT = "Float";
     private static final String INTEGER = "Integer";

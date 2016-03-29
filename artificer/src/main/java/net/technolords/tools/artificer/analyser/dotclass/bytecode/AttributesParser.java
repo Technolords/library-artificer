@@ -1,13 +1,11 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
-import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.AnnotationsParser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation.TypeAnnotationsParser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueAttributeParser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsAttributeParser;
-import net.technolords.tools.artificer.domain.dotclass.Constant;
-import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsParser;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +22,29 @@ import java.io.IOException;
  */
 public class AttributesParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(AttributesParser.class);
+    private static final String ANNOTATION_DEFAULT = "AnnotationDefault";
+    private static final String BOOTSTRAP_METHODS = "BootstrapMethods";
+    private static final String CONSTANT_VALUE = "ConstantValue";
+    private static final String CODE = "Code";
+    private static final String DEPRECATED = "Deprecated";
+    private static final String ENCLOSING_METHOD = "EnclosingMethod";
+    private static final String EXCEPTIONS = "Exceptions";
+    private static final String INNER_CLASSES = "InnerClasses";
+    private static final String LINE_NUMBER_TABLE = "LineNumberTable";
+    private static final String LOCAL_VARIABLE_TABLE = "LocalVariableTable";
+    private static final String LOCAL_VARIABLE_TYPE_TABLE = "LocalVariableTypeTable";
+    private static final String METHOD_PARAMETERS = "MethodParameters";
+    private static final String RUNTIME_INVISIBLE_ANNOTATIONS = "RuntimeInvisibleAnnotations";
+    private static final String RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS = "RuntimeInvisibleParameterAnnotations";
+    private static final String RUNTIME_INVISIBLE_TYPE_ANNOTATIONS = "RuntimeInvisibleTypeAnnotations";
+    private static final String RUNTIME_VISIBLE_ANNOTATIONS = "RuntimeVisibleAnnotations";
+    private static final String RUNTIME_VISIBLE_PARAMETER_ANNOTATIONS = "RuntimeVisibleParameterAnnotations";
+    private static final String RUNTIME_VISIBLE_TYPE_ANNOTATIONS = "RuntimeVisibleTypeAnnotations";
+    private static final String SIGNATURE = "Signature";
+    private static final String SOURCE_DEBUG_EXTENSION = "SourceDebugExtension";
+    private static final String SOURCE_FILE = "SourceFile";
+    private static final String STACK_MAP_TABLE = "StackMapTable";
+    private static final String SYNTHETIC = "Synthetic";
 
     /**
      * An attribute can have a different location, namely:
@@ -38,6 +59,12 @@ public class AttributesParser {
     public static final String LOCATION_FIELD_INFO = "LOCATION_FIELD_INFO";
     public static final String LOCATION_METHOD_INFO = "LOCATION_METHOD_INFO";
     public static final String LOCATION_CODE = "LOCATION_CODE";
+
+    public static void extractAttributesFromClassFile(DataInputStream dataInputStream, Resource resource) throws IOException {
+        int attributesCount = dataInputStream.readUnsignedShort();
+        LOGGER.debug("Attributes count (ClassFile): " + attributesCount);
+        extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_CLASS_FILE);
+    }
 
     /**
      * Attributes occur in the following four structures:
@@ -107,7 +134,6 @@ public class AttributesParser {
      *      The value of the 'attribute_length' item indicates the length of the subsequent information in bytes. The
      *      length does not include the initial six bytes the 'attribute_name_index' and 'attribute_length' items.
      *
-     * TODO: implement, field, method and then ClassFile and lastly Code?
      * This specification has 23 predefined attributes (sorted by alphabet):
      * - AnnotationDefault                     [location: method_info]
      * - BootstrapMethods                      [location: ClassFile]
@@ -115,7 +141,7 @@ public class AttributesParser {
      * - Code                                  [location: method_info]
      * v Deprecated                            [location: ClassFile, field_info, method_info]
      * - EnclosingMethod                       [location: ClassFile]
-     * - Exceptions                            [location: method_info]
+     * v Exceptions                            [location: method_info]
      * - InnerClasses                          [location: ClassFile]
      * - LineNumberTable                       [location: Code]
      * - LocalVariableTable                    [location: Code]
@@ -161,121 +187,158 @@ public class AttributesParser {
         // Proceed by attribute name (sorted by alphabet)
         switch (attributeName) {
 
-            // AnnotationDefault                     [location: method_info]
-            // BootstrapMethods                      [location: ClassFile]
-
-            case "ConstantValue":                   // [location: field_info]
-                // Parse the constant (delegated)
-                ConstantValueAttributeParser.extractConstantValue(dataInputStream, resource);
+            case ANNOTATION_DEFAULT:                        // [location: method_info]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
                 break;
 
-            // Code                                  [location: method_info]
+            case BOOTSTRAP_METHODS:                         // [location: ClassFile]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
 
-            case "Deprecated":                      // [location: ClassFile, field_info, method_info]
+            case CONSTANT_VALUE:                            // [location: field_info]
+                // Parse the constant (delegated)
+                ConstantValueParser.extractConstantValue(dataInputStream, resource);
+                break;
+
+            case CODE:                                      // [location: method_info]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
+            case DEPRECATED:                                // [location: ClassFile, field_info, method_info]
                 // Nothing to do, as it is a marker attribute for the Java Compiler
                 break;
 
-            // EnclosingMethod                       [location: ClassFile]
+            case ENCLOSING_METHOD:                          // [location: ClassFile]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
 
-            case "Exceptions":                      // [location: method_info]
+            case EXCEPTIONS:                                // [location: method_info]
                 // Parse the exceptions (delegated)
-                ExceptionsAttributeParser.extractExceptions(dataInputStream, resource);
+                ExceptionsParser.extractExceptions(dataInputStream, resource);
                 break;
 
-            // InnerClasses                          [location: ClassFile]
-            // LineNumberTable                       [location: Code]
-            // LocalVariableTable                    [location: Code]
-            // LocalVariableTypeTable                [location: Code]
-            // MethodParameters                      [location: method_info]
-
-            case "RuntimeInvisibleAnnotations":     // [location: ClassFile, field_info, method_info]
-                // u2                       num_annotations;
-                // annotation               annotations[num_annotations];
-                //
-                // - num_annotations:
-                //      The value of 'num_annotations' item gives the number of run-time visible annotations represented
-                //      by the structure.
-                // - annotation[]:
-                //      Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
-
-                // Read number of annotations
-                int numberOfRuntimeInvisibleAnnotations = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Total annotations: " + numberOfRuntimeInvisibleAnnotations);
-                AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeInvisibleAnnotations, resource);
+            case INNER_CLASSES:                             // [location: ClassFile]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
                 break;
 
-            // RuntimeInvisibleParameterAnnotations  [location: method_info]
-
-            case "RuntimeInvisibleTypeAnnotations": // [location: ClassFile, field_info, method_info, Code]
-                // u2                       num_annotations
-                // type_annotation          annotations[num_annotations]
-
-                // Read number of invisible type annotations
-                int numberOfInvisibleTypeAnnotations = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Total type annotations: " + numberOfInvisibleTypeAnnotations);
-                TypeAnnotationsParser.extractTypeAnnotations(dataInputStream, numberOfInvisibleTypeAnnotations, resource);
+            case LINE_NUMBER_TABLE:                         // [location: Code]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
                 break;
 
-            case "RuntimeVisibleAnnotations":       // [location: ClassFile, field_info, method_info]
-                // u2                       num_annotations
-                // annotation               annotations[num_annotations]
-                //
-                // num_annotations:
-                //  The value of 'num_annotations' item gives the number of run-time visible annotations represented
-                //  by the structure.
-                // annotation:
-                //  Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
-
-                // Read number of annotations
-                int numberOfRuntimeVisibleAnnotations = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Total annotations: " + numberOfRuntimeVisibleAnnotations);
-                AnnotationsParser.extractAnnotations(dataInputStream, numberOfRuntimeVisibleAnnotations, resource);
+            case LOCAL_VARIABLE_TABLE:                      // [location: Code]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
                 break;
 
-            // RuntimeVisibleParameterAnnotations    [location: method_info]
-
-            case "RuntimeVisibleTypeAnnotations":   // [location: ClassFile, field_info, method_info, Code]
-                // u2                       num_annotations;
-                // type_annotation          annotations[num_annotations];
-                //
-                // - num_annotations:
-                //      The value of the 'num_annotations' item gives the number of run-time visible type annotations
-                //      represented by the structure.
-                // - annotations[]:
-                //      Each entry in the 'annotations' table represents a single run-time visible annotation on a
-                //      type used in a declaration or expression. The 'type_annotation' structure has the following
-                //      format:
-
-                // Read number of invisible type annotations
-                int numberOfVisibleTypeAnnotations = dataInputStream.readUnsignedShort();
-                LOGGER.debug("Total type annotations: " + numberOfVisibleTypeAnnotations);
-                TypeAnnotationsParser.extractTypeAnnotations(dataInputStream, numberOfVisibleTypeAnnotations, resource);
+            case LOCAL_VARIABLE_TYPE_TABLE:                 // [location: Code]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
                 break;
 
-            case "Signature":                       // [location: ClassFile, field_info, method_info]
-                // u2                       signature_index
-                //
-                // signature_index:
-                //  The value of the 'signature_index' must be a valid index in the 'constant_pool' table.
-                //  The 'constant_pool' entry at that index must be a 'CONSTANT_Utf8_info' structure representing
-                //  a class signature if this 'Signature' is an attribute of a 'ClassFile' structure. It is a
-                //  method signature of this 'Signature' is an attribute of a 'method_info' structure. It is a
-                //  field signature otherwise.
-
-                // Read signature index
-                int signatureIndex = dataInputStream.readUnsignedShort();
-                String signature = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), signatureIndex);
-                LOGGER.debug("Class signature: " + signature + " (location: " + location + ")");
-
-                // Add signature (when applicable) to the referenced classes
-                SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), signature);
+            case METHOD_PARAMETERS:                         // [location: method_info]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
                 break;
 
-            // SourceDebugExtension                  [location: ClassFile]
-            // SourceFile                            [location: ClassFile]
-            // StackMapTable                         [location: Code]
+            case RUNTIME_INVISIBLE_ANNOTATIONS:             // [location: ClassFile, field_info, method_info]
+                // Parse the annotations (delegated)
+                AnnotationsParser.extractAnnotations(dataInputStream, resource);
+                break;
 
-            case "Synthetic":                       // [location: ClassFile, field_info, method_info]
+            case RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS:   // [location: method_info]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
+            case RUNTIME_INVISIBLE_TYPE_ANNOTATIONS:        // [location: ClassFile, field_info, method_info, Code]
+                // Parse the type annotations (delegated)
+                TypeAnnotationsParser.extractTypeAnnotations(dataInputStream, resource);
+                break;
+
+            case RUNTIME_VISIBLE_ANNOTATIONS:               // [location: ClassFile, field_info, method_info]
+                // Parse the annotations (delegated)
+                AnnotationsParser.extractAnnotations(dataInputStream, resource);
+                break;
+
+            case RUNTIME_VISIBLE_PARAMETER_ANNOTATIONS:     // [location: method_info]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
+            case RUNTIME_VISIBLE_TYPE_ANNOTATIONS:          // [location: ClassFile, field_info, method_info, Code]
+                // Parse the type annotations (delegated)
+                TypeAnnotationsParser.extractTypeAnnotations(dataInputStream, resource);
+                break;
+
+            case SIGNATURE:                                 // [location: ClassFile, field_info, method_info]
+                // Parse the signature (delegated)
+                SignatureParser.extractSignature(dataInputStream, location, resource);
+                break;
+
+            case SOURCE_DEBUG_EXTENSION:                    // [location: ClassFile]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
+            case SOURCE_FILE:                               // [location: ClassFile]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
+            case STACK_MAP_TABLE:                           // [location: Code]
+                // TODO
+                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+                for(int i = 0; i < attributeLength; i++) {
+                    dataInputStream.readUnsignedByte();
+                }
+                break;
+
+            case SYNTHETIC:                                 // [location: ClassFile, field_info, method_info]
                 // Nothing to do, as it is a marker attribute for the Java Compiler
                 break;
 

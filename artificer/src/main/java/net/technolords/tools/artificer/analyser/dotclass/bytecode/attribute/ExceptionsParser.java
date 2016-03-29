@@ -14,8 +14,8 @@ import java.util.List;
 /**
  * Created by Technolords on 2016-Mar-24.
  */
-public class ExceptionsAttributeParser {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionsAttributeParser.class);
+public class ExceptionsParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionsParser.class);
 
     /**
      * Auxiliary method to extract the exceptions associated with the resource. This is fetched from the

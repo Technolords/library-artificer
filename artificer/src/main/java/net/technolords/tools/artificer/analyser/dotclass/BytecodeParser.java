@@ -9,14 +9,8 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.InterfaceParse
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.MagicNumberParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.MethodsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.MinorAndMajorVersionParser;
-import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstant;
-import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstants;
-import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolInfoFragment;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecifications;
-import net.technolords.tools.artificer.domain.dotclass.Constant;
-import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
-import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.artificer.exception.ArtificerException;
 import org.slf4j.Logger;
@@ -31,7 +25,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by Technolords on 2015-Nov-25.
@@ -135,8 +128,7 @@ public class BytecodeParser {
             // Extract the minor and major version
             MinorAndMajorVersionParser.extractMinorAndMajorVersion(dataInputStream);
             // Extract the constant pool
-            ConstantPool constantPool = ConstantPoolParser.extractConstantPool(dataInputStream, resource.getCompiledVersion(), this.lookupMap);
-            resource.setConstantPool(constantPool);
+            ConstantPoolParser.extractConstantPool(dataInputStream, this.lookupMap, resource);
             // Extract the access flags
             AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_CLASS_FILE);
             // Extract the 'this' class reference
@@ -150,7 +142,7 @@ public class BytecodeParser {
             // Extract the methods
             MethodsParser.extractMethods(dataInputStream, resource);
             // Extract the attributes
-//            AttributesParser.extractAttributes(dataInputStream);
+            AttributesParser.extractAttributesFromClassFile(dataInputStream, resource);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
         } catch (ArtificerException e) {

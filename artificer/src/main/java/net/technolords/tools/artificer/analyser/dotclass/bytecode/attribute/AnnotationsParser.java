@@ -1,4 +1,4 @@
-package net.technolords.tools.artificer.analyser.dotclass.bytecode.annotation;
+package net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
@@ -24,16 +24,42 @@ public class AnnotationsParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationsParser.class);
 
     /**
+     * Auxiliary method to extract the annotations associated with the resource. This is fetched from the
+     * 'RuntimeVisibleAnnotations_attribute' as well as the 'RuntimeInvisibleAnnotations_attribute' structure, which
+     * has the following format:
+     *
+     * [java 8]
+     * RuntimeVisibleAnnotations_attribute {
+     *      u2         attribute_name_index;
+     *      u4         attribute_length;
+     *      u2         num_annotations;
+     *      annotation annotations[num_annotations];
+     * }
+     *
+     * RuntimeInvisibleAnnotations_attribute {
+     *      u2         attribute_name_index;
+     *      u4         attribute_length;
+     *      u2         num_annotations;
+     *      annotation annotations[num_annotations];
+     * }
+     *
+     * - num_annotations:
+     *      The value of 'num_annotations' item gives the number of run-time visible annotations represented by
+     *      the structure.
+     * - annotations[]:
+     *      Each entry in the 'annotation' table represents a single run-time visible annotation on a declaration.
+     *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
-     * @param annotationsCount
-     *  The number of annotations.
      * @param resource
      *  The resource associated with the attribute.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractAnnotations(DataInputStream dataInputStream, int annotationsCount, Resource resource) throws IOException {
+    public static void extractAnnotations(DataInputStream dataInputStream, Resource resource) throws IOException {
+        int annotationsCount = dataInputStream.readUnsignedShort();
+        LOGGER.debug("Total annotations: " + annotationsCount);
+
         for(int index = 0; index < annotationsCount; index++) {
             extractAnnotation(dataInputStream, index, resource);
         }

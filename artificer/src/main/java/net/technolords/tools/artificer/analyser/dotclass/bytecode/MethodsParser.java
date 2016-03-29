@@ -90,13 +90,14 @@ public class MethodsParser {
         String descriptor = ConstantPoolAnalyser.extractStringValueByConstantPoolIndex(resource.getConstantPool(), descriptorIndex);
         buffer.append(", with descriptor (index: ").append(descriptorIndex).append("): ").append(descriptor);
 
-        // Add signature (when applicable) to the referenced classes
-        SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
-
         // Read attributes count
         int attributesCount = dataInputStream.readUnsignedShort();
         buffer.append(" and total attributes: ").append(attributesCount);
         LOGGER.debug(buffer.toString());
-        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_CLASS_FILE);
+
+        // Add signature (when applicable) to the referenced classes
+        SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
+
+        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_METHOD_INFO);
     }
 }
