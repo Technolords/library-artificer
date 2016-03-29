@@ -83,8 +83,8 @@ public class MethodsParser {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Method (index: ").append(index).append(")");
 
-        // Read access flags
-        int accessFlags = dataInputStream.readUnsignedShort();
+        // Read the access flags
+        AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_METHOD_INFO);
 
         // Read name index
         int nameIndex = dataInputStream.readUnsignedShort();

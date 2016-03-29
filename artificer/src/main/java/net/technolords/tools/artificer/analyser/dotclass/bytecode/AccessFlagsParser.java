@@ -30,7 +30,11 @@ public class AccessFlagsParser {
     public static final String LOCATION_METHOD_INFO = "LOCATION_METHOD_INFO";
 
     public static void extractAccessFlags(DataInputStream dataInputStream, String location) throws IOException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("AccessFlags (for: ").append(location).append("): ");
+
         int accessFlags = dataInputStream.readUnsignedShort();
-        LOGGER.debug("AccessFlags: " + accessFlags);
+        buffer.append(accessFlags);
+        LOGGER.debug(buffer.toString());
     }
 }

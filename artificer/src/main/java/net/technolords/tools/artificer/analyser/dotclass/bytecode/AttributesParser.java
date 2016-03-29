@@ -2,6 +2,7 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
@@ -143,7 +144,7 @@ public class AttributesParser {
      * v Deprecated                            [location: ClassFile, field_info, method_info]
      * - EnclosingMethod                       [location: ClassFile]
      * v Exceptions                            [location: method_info]
-     * - InnerClasses                          [location: ClassFile]
+     * v InnerClasses                          [location: ClassFile]
      * - LineNumberTable                       [location: Code]
      * - LocalVariableTable                    [location: Code]
      * - LocalVariableTypeTable                [location: Code]
@@ -235,11 +236,8 @@ public class AttributesParser {
                 break;
 
             case INNER_CLASSES:                             // [location: ClassFile]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the inner classes (delegated)
+                InnerClassesParser.extractInnerClasses(dataInputStream, resource);
                 break;
 
             case LINE_NUMBER_TABLE:                         // [location: Code]
