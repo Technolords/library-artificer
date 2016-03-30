@@ -88,6 +88,18 @@ public class InnerClassesParser {
         }
     }
 
+    /**
+     * Auxiliary method to extract an inner class associated with the resource.
+     *
+     * @param dataInputStream
+     *  The byte stream associated with the resource (aka .class file).
+     * @param index
+     *  The attribute index, used for precise data logging.
+     * @param resource
+     *  The resource associated with the attribute.
+     * @throws IOException
+     *  When reading bytes from the stream fails.
+     */
     public static void extractInnerClass(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Inner class (index: ").append(index).append(")");
@@ -107,4 +119,5 @@ public class InnerClassesParser {
         // Read the access flags
         AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_NESTED_CLASS_FILE);
     }
+
 }

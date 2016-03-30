@@ -10,6 +10,15 @@
 
 v test with simple class with nested instantion of another class and see if bytecodemanager picks this up
 
+- test with generics
+public static <T> ArrayList<T> createArrayList(T ... elements) {
+        ArrayList<T> list = new ArrayList<T>();
+        for (T element : elements) {
+            list.add(element);
+        }
+        return list;
+    }
+
 - test with static initializer blocks
 
 - compile list of se classes and ee classes

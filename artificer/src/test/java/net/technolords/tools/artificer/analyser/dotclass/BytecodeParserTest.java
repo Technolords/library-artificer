@@ -3,9 +3,11 @@ package net.technolords.tools.artificer.analyser.dotclass;
 import junit.framework.Assert;
 import net.technolords.tools.artificer.TestSupport;
 import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.data.field.FieldTestWithAnnotations;
 import net.technolords.tools.data.field.FieldTestWithConstants;
 import net.technolords.tools.data.field.FieldTestWithInnerClasses;
 import net.technolords.tools.data.field.FieldTestWithRegularFields;
+import net.technolords.tools.data.field.FieldTestWithTypeAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
@@ -45,9 +47,9 @@ public class BytecodeParserTest extends TestSupport {
         return new Object[][] {
 //            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
-            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
+//            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
-//            { FieldTestWithTypeAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithTypeAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
         };
     }
 
