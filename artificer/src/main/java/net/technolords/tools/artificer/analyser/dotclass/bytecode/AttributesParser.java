@@ -154,7 +154,7 @@ public class AttributesParser {
      * v RuntimeInvisibleParameterAnnotations  [location: method_info]
      * v RuntimeInvisibleTypeAnnotations       [location: ClassFile, field_info, method_info, Code]
      * v RuntimeVisibleAnnotations             [location: ClassFile, field_info, method_info]
-     * - RuntimeVisibleParameterAnnotations    [location: method_info]
+     * v RuntimeVisibleParameterAnnotations    [location: method_info]
      * v RuntimeVisibleTypeAnnotations         [location: ClassFile, field_info, method_info, Code]
      * v Signature                             [location: ClassFile, field_info, method_info]
      * - SourceDebugExtension                  [location: ClassFile]
@@ -294,11 +294,8 @@ public class AttributesParser {
                 break;
 
             case RUNTIME_VISIBLE_PARAMETER_ANNOTATIONS:     // [location: method_info]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the parameter annotations (delegated)
+                ParameterAnnotationsParser.extractParameterAnnotations(dataInputStream, resource);
                 break;
 
             case RUNTIME_VISIBLE_TYPE_ANNOTATIONS:          // [location: ClassFile, field_info, method_info, Code]

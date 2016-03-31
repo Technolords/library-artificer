@@ -22,11 +22,21 @@ public class ParameterAnnotationsParser {
 
     /**
      * Auxiliary method to extract the annotations associated with the resource. This is fetched from the
-     * 'RuntimeVisibleAnnotations_attribute' as well as the 'RuntimeInvisibleAnnotations_attribute' structure, which
-     * has the following format:
+     * 'RuntimeInvisibleParameterAnnotations_attribute' as well as the 'RuntimeVisibleParameterAnnotations_attribute'
+     * structure, which has the following format:
      *
      * [java 8]
      * RuntimeInvisibleParameterAnnotations_attribute {
+     *      u2                  attribute_name_index;
+     *      u4                  attribute_length;
+     *      u1                  num_parameters;
+     *      {
+     *          u2              num_annotations;
+     *          annotation      annotations[num_annotations];
+     *      } parameter_annotations[num_parameters];
+     * }
+     *
+     * RuntimeVisibleParameterAnnotations_attribute {
      *      u2                  attribute_name_index;
      *      u4                  attribute_length;
      *      u1                  num_parameters;

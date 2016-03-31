@@ -10,4 +10,6 @@ public class MethodTestWithRegularMethods {
     public void singleParameter(String param1) { }
 
     public void dualParameters(String param1, int param2) { }
+
+    public void multiParameters(String... first) { }
 }
