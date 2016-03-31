@@ -8,7 +8,9 @@
        - reference_kind                                 -> value 1 to 9
     - expose method on main interface to retrieve list of referenced classes??
 
-v test with simple class with nested instantion of another class and see if bytecodemanager picks this up
+v test with simple class with nested instantiation of another class and see if bytecodemanager picks this up
+
+- use samples from: http://classfileanalyzer.javaseiten.de/index.html
 
 - test with generics
 public static <T> ArrayList<T> createArrayList(T ... elements) {
@@ -18,6 +20,24 @@ public static <T> ArrayList<T> createArrayList(T ... elements) {
         }
         return list;
     }
+
+public <T> T max(List<T> list, Comparator<T> comp) {
+   T biggestSoFar = list.get(0);
+   for ( T t : list ) {
+       if (comp.compare(t, biggestSoFar) > 0) {
+          biggestSoFar = t;
+       }
+   }
+   return biggestSoFar;
+}
+
+public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
+    return Collectors.toMap((e) -> (e).getKey(), (e) -> (e).getValue());
+}
+
+public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
+    return Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue());
+}
 
 - test with static initializer blocks
 

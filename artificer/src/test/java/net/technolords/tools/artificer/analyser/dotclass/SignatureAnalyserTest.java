@@ -45,6 +45,8 @@ public class SignatureAnalyserTest {
         expectedReferencedClassesForEntry4.add("java/nio/file/Path");
 
         return new Object[][] {
+                // <T:Ljava/lang/Object;>([TT;)Ljava/util/ArrayList<TT;>;
+                // ([Ljava/lang/Object;)Ljava/util/ArrayList;
             { "Ljava/util/List<Ljava/util/Set<Ljava/util/Map<**>;>;>;", 3, expectedReferencedClassesForEntry1 },
             { "Ljava/util/List<Ljava/lang/Integer;>;", 2, expectedReferencedClassesForEntry2 },
             { "Ljava/util/List;", 1, expectedReferencedClassesForEntry3 },

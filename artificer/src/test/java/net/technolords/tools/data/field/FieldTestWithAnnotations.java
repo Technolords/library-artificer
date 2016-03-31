@@ -6,6 +6,7 @@ import net.technolords.tools.data.annotation.AnnotationUsingBoolean;
 import net.technolords.tools.data.annotation.AnnotationUsingByte;
 import net.technolords.tools.data.annotation.AnnotationUsingChar;
 import net.technolords.tools.data.annotation.AnnotationUsingClass;
+import net.technolords.tools.data.annotation.AnnotationUsingDefault;
 import net.technolords.tools.data.annotation.AnnotationUsingEnum;
 import net.technolords.tools.data.annotation.AnnotationUsingInteger;
 
@@ -44,14 +45,17 @@ public class FieldTestWithAnnotations {
     @AnnotationUsingEnum(description = "Annotation using an enum", value = AnnotationUsingEnum.Priority.HIGH)
     private String annotation8;
 
-    // TODO: float
+    // TODO 9: float
 
     @AnnotationUsingInteger(description = "Annotation using an integer", value = 100)
     private String annotation10;
 
-    // TODO: long
-    // TODO: short
-    // TODO: double
-    // TODO: String
+    // TODO 11: long
+    // TODO 12: short
+    // TODO 13: double
+    // TODO 14: String
+
+    @AnnotationUsingDefault(description = "Annotation using a default")
+    private String annotation15;
 
 }

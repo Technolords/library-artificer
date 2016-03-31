@@ -8,6 +8,9 @@ import net.technolords.tools.data.field.FieldTestWithConstants;
 import net.technolords.tools.data.field.FieldTestWithInnerClasses;
 import net.technolords.tools.data.field.FieldTestWithRegularFields;
 import net.technolords.tools.data.field.FieldTestWithTypeAnnotations;
+import net.technolords.tools.data.method.MethodTestWithAnnotations;
+import net.technolords.tools.data.method.MethodTestWithRegularMethods;
+import net.technolords.tools.data.method.MethodTestWithStaticMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
@@ -39,7 +42,7 @@ public class BytecodeParserTest extends TestSupport {
      * @return
      *  The data set.
      */
-    @DataProvider (name = "dataSetWithFields", parallel = true)
+    @DataProvider (name = "dataSetWithFields", parallel = false)
     public Object[][] dataSet() {
         Set<String> expectedReferencedClassesWithRegularFields = new HashSet<>();
         expectedReferencedClassesWithRegularFields.add("java/lang/Object");
@@ -80,6 +83,39 @@ public class BytecodeParserTest extends TestSupport {
             LOGGER.debug("Found referenced class: " + referencedClass);
         }
         // Add resource.referencedClasses to the total (which is the entire jar)
+    }
+
+
+    @DataProvider (name = "dataSetWithMethods", parallel = false)
+    public Object[][] dataSetWithMethods() {
+        return new Object[][] {
+//            { MethodTestWithRegularMethods.class, null },
+//            { MethodTestWithStaticMethods.class, null },
+            { MethodTestWithAnnotations.class, null},
+        };
+    }
+
+    @Test (dataProvider = "dataSetWithMethods")
+    public void testWithMethodTest(Class className, Set<String> expectedReferencedClasses) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(File.separator).append("test-classes");
+        buffer.append(File.separator).append("net").append(File.separator).append("technolords").append(File.separator).append("tools");
+        buffer.append(File.separator).append("data").append(File.separator).append("method").append(File.separator).append(className.getSimpleName());
+        buffer.append(".class");
+
+        Path pathToDataSample = FileSystems.getDefault().getPath(super.getPathToTargetFolder().toAbsolutePath() + buffer.toString());
+        LOGGER.debug("Path towards the class file exists: " + Files.exists(pathToDataSample));
+        Assert.assertTrue("Expected the test class to exist...", Files.exists(pathToDataSample));
+
+        // Create a resource reference linking to the file
+        Resource resource = new Resource();
+        resource.setPath(pathToDataSample);
+        resource.setName(className.getSimpleName());
+        resource.setCompiledVersion("1.8");
+
+        BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
+        bytecodeParser.analyseBytecode(resource);
+        LOGGER.debug("Done...");
     }
 
     @Test

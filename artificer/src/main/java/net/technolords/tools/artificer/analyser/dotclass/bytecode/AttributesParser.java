@@ -3,6 +3,7 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
@@ -150,7 +151,7 @@ public class AttributesParser {
      * - LocalVariableTypeTable                [location: Code]
      * - MethodParameters                      [location: method_info]
      * v RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
-     * - RuntimeInvisibleParameterAnnotations  [location: method_info]
+     * v RuntimeInvisibleParameterAnnotations  [location: method_info]
      * v RuntimeInvisibleTypeAnnotations       [location: ClassFile, field_info, method_info, Code]
      * v RuntimeVisibleAnnotations             [location: ClassFile, field_info, method_info]
      * - RuntimeVisibleParameterAnnotations    [location: method_info]
@@ -278,11 +279,8 @@ public class AttributesParser {
                 break;
 
             case RUNTIME_INVISIBLE_PARAMETER_ANNOTATIONS:   // [location: method_info]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the parameter annotations (delegated)
+                ParameterAnnotationsParser.extractParameterAnnotations(dataInputStream, resource);
                 break;
 
             case RUNTIME_INVISIBLE_TYPE_ANNOTATIONS:        // [location: ClassFile, field_info, method_info, Code]
