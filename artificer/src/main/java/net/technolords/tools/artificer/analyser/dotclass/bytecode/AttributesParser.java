@@ -4,6 +4,7 @@ import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationDefaultParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.MethodParametersParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
@@ -264,11 +265,8 @@ public class AttributesParser {
                 break;
 
             case METHOD_PARAMETERS:                         // [location: method_info]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the method parameters (delegated)
+                MethodParametersParser.extractMethodParameters(dataInputStream, resource);
                 break;
 
             case RUNTIME_INVISIBLE_ANNOTATIONS:             // [location: ClassFile, field_info, method_info]

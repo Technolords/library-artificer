@@ -79,5 +79,18 @@ public class MethodParametersParser {
      */
     public static void extractMethodParameters(DataInputStream dataInputStream, Resource resource) throws IOException {
 
+        // Read number of parameters
+        int parametersCount = dataInputStream.readUnsignedByte();
+        LOGGER.debug("Total parameters: " + parametersCount);
+
+        for(int index = 0; index < parametersCount; index++) {
+            extractMethodParameter(dataInputStream, index, resource);
+        }
+    }
+
+    protected static void extractMethodParameter(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
+        int nameIndex = dataInputStream.readUnsignedShort();
+        int accessFlags = dataInputStream.readUnsignedShort();
+        // Note that the values are read and that's it
     }
 }
