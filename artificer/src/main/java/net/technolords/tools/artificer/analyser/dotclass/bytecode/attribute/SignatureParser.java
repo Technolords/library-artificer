@@ -23,7 +23,7 @@ public class SignatureParser {
 
     /**
      * Auxiliary method to extract the signature associated with the resource. This is fetched from the
-     * 'Exceptions_attribute' structure, which has the following format:
+     * 'Signature_attribute' structure, which has the following format:
      *
      * [java 8]
      * Signature_attribute {

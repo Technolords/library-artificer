@@ -181,9 +181,13 @@ public class TypeAnnotationsParser {
      *  }
      *
      * @param dataInputStream
+     *  The byte stream associated with the resource (aka .class file).
      * @param index
+     *  The index associated with the type annotation.
      * @param resource
+     *  The resource associated with the attribute.
      * @throws IOException
+     *  When reading bytes from the stream fails.
      */
     protected static void extractTypeAnnotation(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
         // Read target_type (tag)

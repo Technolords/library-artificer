@@ -21,11 +21,11 @@ public class SourceFileParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceFileParser.class);
 
     /**
-     * Auxiliary method to extract the exceptions associated with the resource. This is fetched from the
-     * 'Exceptions_attribute' structure, which has the following format:
+     * Auxiliary method to extract the source file associated with the resource. This is fetched from the
+     * 'SourceFile_attribute' structure, which has the following format:
      *
      * [java 8]
-     * Exceptions_attribute {
+     * SourceFile_attribute {
      *      u2          attribute_name_index;
      *      u4          attribute_length;
      *      u2          sourcefile_index;

@@ -203,7 +203,7 @@ public class AnnotationsParser {
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    protected static void extractElementValue(DataInputStream dataInputStream, StringBuilder buffer, Resource resource) throws IOException {
+    public static void extractElementValue(DataInputStream dataInputStream, StringBuilder buffer, Resource resource) throws IOException {
         // Read the tag
         int tag = dataInputStream.readUnsignedByte();
 

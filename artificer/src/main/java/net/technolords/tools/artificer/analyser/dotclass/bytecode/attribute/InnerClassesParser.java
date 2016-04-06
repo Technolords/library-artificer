@@ -23,7 +23,7 @@ public class InnerClassesParser {
 
     /**
      * Auxiliary method to extract the inner classes associated with the resource. This is fetched from the
-     * 'Exceptions_attribute' structure, which has the following format:
+     * 'InnerClasses_attribute' structure, which has the following format:
      *
      * [java 8]
      * InnerClasses_attribute {

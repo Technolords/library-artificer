@@ -1,6 +1,7 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationDefaultParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
@@ -138,7 +139,7 @@ public class AttributesParser {
      *      length does not include the initial six bytes the 'attribute_name_index' and 'attribute_length' items.
      *
      * This specification has 23 predefined attributes (sorted by alphabet):
-     * - AnnotationDefault                     [location: method_info]
+     * v AnnotationDefault                     [location: method_info]
      * - BootstrapMethods                      [location: ClassFile]
      * v ConstantValue                         [location: field_info]
      * - Code                                  [location: method_info]
@@ -191,11 +192,8 @@ public class AttributesParser {
         switch (attributeName) {
 
             case ANNOTATION_DEFAULT:                        // [location: method_info]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the annotation default (delegated(
+                AnnotationDefaultParser.extractAnnotationDefault(dataInputStream, resource);
                 break;
 
             case BOOTSTRAP_METHODS:                         // [location: ClassFile]

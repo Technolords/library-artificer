@@ -29,8 +29,8 @@ public class ConstantValueParser {
     private static final String STRING = "String";
 
     /**
-     * Auxiliary method to extract the exceptions associated with the resource. This is fetched from the
-     * 'Exceptions_attribute' structure, which has the following format:
+     * Auxiliary method to extract the constant value associated with the resource. This is fetched from the
+     * 'ConstantValue_attribute' structure, which has the following format:
      *
      * [java 8]
      * ConstantValue_attribute {
