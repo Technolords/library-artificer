@@ -24,7 +24,7 @@ public class BootstrapMethodsParser {
      * 'BootstrapMethods_attribute' structure, which has the following format:
      *
      * [java 8]
-     * AnnotationDefault_attribute {
+     * BootstrapMethods_attribute {
      *      u2          attribute_name_index;
      *      u4          attribute_length;
      *      u2          num_bootstrap_methods;

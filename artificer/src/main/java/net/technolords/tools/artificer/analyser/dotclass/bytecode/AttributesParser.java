@@ -8,6 +8,7 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.Inne
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.MethodParametersParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceDebugExtensionParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
@@ -303,11 +304,8 @@ public class AttributesParser {
                 break;
 
             case SOURCE_DEBUG_EXTENSION:                    // [location: ClassFile]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the source debug extension (delegated)
+                SourceDebugExtensionParser.extractSourceDebugExtension(dataInputStream, attributeLength, resource);
                 break;
 
             case SOURCE_FILE:                               // [location: ClassFile]
