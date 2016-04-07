@@ -4,6 +4,7 @@ import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationDefaultParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.BootstrapMethodsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.EnclosingMethodParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.MethodParametersParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
@@ -143,17 +144,17 @@ public class AttributesParser {
      *
      * This specification has 23 predefined attributes (sorted by alphabet):
      * v AnnotationDefault                     [location: method_info]
-     * - BootstrapMethods                      [location: ClassFile]
+     * v BootstrapMethods                      [location: ClassFile]
      * v ConstantValue                         [location: field_info]
      * - Code                                  [location: method_info]
      * v Deprecated                            [location: ClassFile, field_info, method_info]
-     * - EnclosingMethod                       [location: ClassFile]
+     * v EnclosingMethod                       [location: ClassFile]
      * v Exceptions                            [location: method_info]
      * v InnerClasses                          [location: ClassFile]
      * - LineNumberTable                       [location: Code]
      * - LocalVariableTable                    [location: Code]
      * - LocalVariableTypeTable                [location: Code]
-     * - MethodParameters                      [location: method_info]
+     * v MethodParameters                      [location: method_info]
      * v RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
      * v RuntimeInvisibleParameterAnnotations  [location: method_info]
      * v RuntimeInvisibleTypeAnnotations       [location: ClassFile, field_info, method_info, Code]
@@ -161,7 +162,7 @@ public class AttributesParser {
      * v RuntimeVisibleParameterAnnotations    [location: method_info]
      * v RuntimeVisibleTypeAnnotations         [location: ClassFile, field_info, method_info, Code]
      * v Signature                             [location: ClassFile, field_info, method_info]
-     * - SourceDebugExtension                  [location: ClassFile]
+     * v SourceDebugExtension                  [location: ClassFile]
      * v SourceFile                            [location: ClassFile]
      * - StackMapTable                         [location: Code]
      * v Synthetic                             [location: ClassFile, field_info, method_info]
@@ -222,11 +223,8 @@ public class AttributesParser {
                 break;
 
             case ENCLOSING_METHOD:                          // [location: ClassFile]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the enclosing method (delegated)
+                EnclosingMethodParser.extractEnclosingMethod(dataInputStream, resource);
                 break;
 
             case EXCEPTIONS:                                // [location: method_info]
