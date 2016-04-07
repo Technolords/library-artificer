@@ -3,6 +3,7 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationDefaultParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.BootstrapMethodsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.MethodParametersParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
@@ -193,16 +194,13 @@ public class AttributesParser {
         switch (attributeName) {
 
             case ANNOTATION_DEFAULT:                        // [location: method_info]
-                // Parse the annotation default (delegated(
+                // Parse the annotation default (delegated)
                 AnnotationDefaultParser.extractAnnotationDefault(dataInputStream, resource);
                 break;
 
             case BOOTSTRAP_METHODS:                         // [location: ClassFile]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the bootstrap arguments (delegated)
+                BootstrapMethodsParser.extractBootstrapMethods(dataInputStream, resource);
                 break;
 
             case CONSTANT_VALUE:                            // [location: field_info]
