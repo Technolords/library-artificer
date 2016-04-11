@@ -7,6 +7,7 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.Boot
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.CodeParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.EnclosingMethodParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.LineNumberTableParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.MethodParametersParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
@@ -236,11 +237,12 @@ public class AttributesParser {
                 break;
 
             case LINE_NUMBER_TABLE:                         // [location: Code]
+                LineNumberTableParser.extractLineNumberTable(dataInputStream, resource);
                 // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+//                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
+//                for(int i = 0; i < attributeLength; i++) {
+//                    dataInputStream.readUnsignedByte();
+//                }
                 break;
 
             case LOCAL_VARIABLE_TABLE:                      // [location: Code]
