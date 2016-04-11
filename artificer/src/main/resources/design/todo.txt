@@ -10,6 +10,8 @@
 
 v test with simple class with nested instantiation of another class and see if bytecodemanager picks this up
 
+- fix signatureAnalyzer
+
 - use samples from: http://classfileanalyzer.javaseiten.de/index.html
 - read invoke dynamic: http://www.javaworld.com/article/2860079/learn-java/invokedynamic-101.html
 

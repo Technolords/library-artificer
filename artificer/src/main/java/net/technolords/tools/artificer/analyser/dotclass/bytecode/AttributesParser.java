@@ -149,13 +149,13 @@ public class AttributesParser {
      * v AnnotationDefault                     [location: method_info]
      * v BootstrapMethods                      [location: ClassFile]
      * v ConstantValue                         [location: field_info]
-     * - Code                                  [location: method_info]
+     * v Code                                  [location: method_info]
      * v Deprecated                            [location: ClassFile, field_info, method_info]
      * v EnclosingMethod                       [location: ClassFile]
      * v Exceptions                            [location: method_info]
      * v InnerClasses                          [location: ClassFile]
-     * - LineNumberTable                       [location: Code]
-     * - LocalVariableTable                    [location: Code]
+     * v LineNumberTable                       [location: Code]
+     * v LocalVariableTable                    [location: Code]
      * - LocalVariableTypeTable                [location: Code]
      * v MethodParameters                      [location: method_info]
      * v RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
@@ -238,19 +238,18 @@ public class AttributesParser {
                 break;
 
             case LINE_NUMBER_TABLE:                         // [location: Code]
+                // Parse the line number table (delegated)
                 LineNumberTableParser.extractLineNumberTable(dataInputStream, resource);
                 break;
 
             case LOCAL_VARIABLE_TABLE:                      // [location: Code]
+                // Parse the local variable table (delegated)
                 LocalVariableTableParser.extractLocalVariableTable(dataInputStream, resource);
                 break;
 
             case LOCAL_VARIABLE_TYPE_TABLE:                 // [location: Code]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                // Parse the local variable type table (delegated)
+                LocalVariableTableParser.extractLocalVariableTypeTable(dataInputStream, resource);
                 break;
 
             case METHOD_PARAMETERS:                         // [location: method_info]
