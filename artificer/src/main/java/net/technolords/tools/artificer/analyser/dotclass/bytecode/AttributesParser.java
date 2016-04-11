@@ -8,6 +8,7 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.Code
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.EnclosingMethodParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.LineNumberTableParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.LocalVariableTableParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.MethodParametersParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ParameterAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
@@ -238,19 +239,10 @@ public class AttributesParser {
 
             case LINE_NUMBER_TABLE:                         // [location: Code]
                 LineNumberTableParser.extractLineNumberTable(dataInputStream, resource);
-                // TODO
-//                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-//                for(int i = 0; i < attributeLength; i++) {
-//                    dataInputStream.readUnsignedByte();
-//                }
                 break;
 
             case LOCAL_VARIABLE_TABLE:                      // [location: Code]
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                LocalVariableTableParser.extractLocalVariableTable(dataInputStream, resource);
                 break;
 
             case LOCAL_VARIABLE_TYPE_TABLE:                 // [location: Code]
