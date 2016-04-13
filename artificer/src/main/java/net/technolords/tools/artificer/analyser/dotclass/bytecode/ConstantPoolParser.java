@@ -68,21 +68,21 @@ public class ConstantPoolParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the constant pool extraction.
-     * @param lookupMap
-     *  The lookup map associated with the constant pool extraction.
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the attribute.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractConstantPool(DataInputStream dataInputStream, Map<String, JavaSpecification> lookupMap, Resource resource) throws IOException {
+    public static void extractConstantPool(DataInputStream dataInputStream, JavaSpecification javaSpecification, Resource resource) throws IOException {
         int constantPoolSize = dataInputStream.readUnsignedShort();
         LOGGER.debug("ConstantPool count: " + constantPoolSize);
         ConstantPool constantPool = new ConstantPool();
 
         // Extract the constants
         for(int i = 1; i < constantPoolSize; i++) {
-            Constant constant = extractConstant(dataInputStream, i, resource.getCompiledVersion(), lookupMap);
+            Constant constant = extractConstant(dataInputStream, i, javaSpecification);
             constant.setConstantPoolIndex(i);
             if(constant.getType().equals("Long") || constant.getType().equals("Double")) {
                 i++;
@@ -122,20 +122,18 @@ public class ConstantPoolParser {
      *  The byte stream associated with the constant extraction.
      * @param constantPoolIndex
      *  The passed constant pool index, for logging and tracking purposes.
-     * @param compiledVersion
-     *  The compiled version associated with the resource (aka .class file).
-     * @param lookupMap
-     *  The lookup map associated with the constant pool extraction.
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @return
      *  The extracted constant.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    protected static Constant extractConstant(DataInputStream dataInputStream, int constantPoolIndex, String compiledVersion, Map<String, JavaSpecification> lookupMap) throws IOException {
+    protected static Constant extractConstant(DataInputStream dataInputStream, int constantPoolIndex, JavaSpecification javaSpecification) throws IOException {
         // Read tag
         int tag = dataInputStream.readUnsignedByte();
         // Find associated constant pool constant
-        ConstantPoolConstant constantPoolConstant = findConstantPoolConstantByValue(tag, compiledVersion, lookupMap);
+        ConstantPoolConstant constantPoolConstant = findConstantPoolConstantByValue(tag, javaSpecification);
         // Instantiate constant
         Constant constant = new Constant();
         constant.setConstantPoolIndex(constantPoolIndex);
@@ -153,17 +151,14 @@ public class ConstantPoolParser {
      *
      * @param tag
      *  The tag associated with the constant pool constant.
-     * @param compiledVersion
-     *  The compiled version, used to lookup for the correct JVM specification.
-     * @param lookupMap
-     *  The lookup map associated with the constant pool extraction.
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @return
      *  The constant pool constant.
      */
-    protected static ConstantPoolConstant findConstantPoolConstantByValue(int tag, String compiledVersion, Map<String, JavaSpecification> lookupMap) {
+    protected static ConstantPoolConstant findConstantPoolConstantByValue(int tag, JavaSpecification javaSpecification) {
         Optional<ConstantPoolConstant> optionalConstantPoolConstant = Optional.ofNullable(null);
 
-        JavaSpecification javaSpecification = lookupMap.get(compiledVersion);
         if(javaSpecification != null) {
             ConstantPoolConstants constantPoolConstants = javaSpecification.getConstantPoolConstants();
             if(constantPoolConstants != null) {

@@ -17,6 +17,7 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.Sour
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsParser;
+import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,10 +72,10 @@ public class AttributesParser {
     public static final String LOCATION_METHOD_INFO = "LOCATION_METHOD_INFO";
     public static final String LOCATION_CODE = "LOCATION_CODE";
 
-    public static void extractAttributesFromClassFile(DataInputStream dataInputStream, Resource resource) throws IOException {
+    public static void extractAttributesFromClassFile(DataInputStream dataInputStream, JavaSpecification javaSpecification, Resource resource) throws IOException {
         int attributesCount = dataInputStream.readUnsignedShort();
         LOGGER.debug("Attributes count (ClassFile): " + attributesCount);
-        extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_CLASS_FILE);
+        extractAttributes(dataInputStream, attributesCount, javaSpecification, resource, AttributesParser.LOCATION_CLASS_FILE);
     }
 
     /**
@@ -108,12 +109,18 @@ public class AttributesParser {
      * }
      *
      * [java 8]
-     * TODO: Code
+     * Code_attribute {
+     *      ...
+     *      u2                  attributes_count;
+     *      attributes_info     attributes[attributes_count];
+     * }
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
      * @param attributesCount
      *  The total attributes to parse.
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the attributes.
      * @param location
@@ -121,9 +128,9 @@ public class AttributesParser {
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractAttributes(DataInputStream dataInputStream, int attributesCount, Resource resource, String location) throws IOException {
+    public static void extractAttributes(DataInputStream dataInputStream, int attributesCount, JavaSpecification javaSpecification, Resource resource, String location) throws IOException {
         for(int index = 0; index < attributesCount; index++) {
-            extractAttributeByName(dataInputStream, index, resource, location);
+            extractAttributeByName(dataInputStream, index, javaSpecification, resource, location);
         }
     }
 
@@ -156,7 +163,7 @@ public class AttributesParser {
      * v InnerClasses                          [location: ClassFile]
      * v LineNumberTable                       [location: Code]
      * v LocalVariableTable                    [location: Code]
-     * - LocalVariableTypeTable                [location: Code]
+     * v LocalVariableTypeTable                [location: Code]
      * v MethodParameters                      [location: method_info]
      * v RuntimeInvisibleAnnotations           [location: ClassFile, field_info, method_info]
      * v RuntimeInvisibleParameterAnnotations  [location: method_info]
@@ -174,6 +181,8 @@ public class AttributesParser {
      *  The byte stream associated with the resource (aka .class file).
      * @param index
      *  The attribute index, used for precise data logging.
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the attribute.
      * @param location
@@ -181,7 +190,7 @@ public class AttributesParser {
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    protected static void extractAttributeByName(DataInputStream dataInputStream, int index, Resource resource, String location) throws IOException {
+    protected static void extractAttributeByName(DataInputStream dataInputStream, int index, JavaSpecification javaSpecification, Resource resource, String location) throws IOException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Attribute (index: ").append(index).append(")");
 
@@ -215,7 +224,7 @@ public class AttributesParser {
 
             case CODE:                                      // [location: method_info]
                 // Parse the code (delegated)
-                CodeParser.extractCode(dataInputStream, resource);
+                CodeParser.extractCode(dataInputStream, javaSpecification, resource);
                 break;
 
             case DEPRECATED:                                // [location: ClassFile, field_info, method_info]

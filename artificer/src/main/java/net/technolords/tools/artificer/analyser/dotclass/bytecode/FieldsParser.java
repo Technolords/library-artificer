@@ -2,6 +2,7 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,18 +43,20 @@ public class FieldsParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated woth the fields.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractFields(DataInputStream dataInputStream, Resource resource) throws IOException {
+    public static void extractFields(DataInputStream dataInputStream, JavaSpecification javaSpecification, Resource resource) throws IOException {
         // Read the number of fields
         int fieldsCount = dataInputStream.readUnsignedShort();
         LOGGER.debug("Total fields: " + fieldsCount);
         if(fieldsCount != 0) {
             for(int index = 0; index < fieldsCount; index++) {
-                extractField(dataInputStream, index, resource);
+                extractField(dataInputStream, index, javaSpecification, resource);
             }
         }
     }
@@ -106,12 +109,14 @@ public class FieldsParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the field.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    protected static void extractField(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
+    protected static void extractField(DataInputStream dataInputStream, int index, JavaSpecification javaSpecification, Resource resource) throws IOException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Field (index: ").append(index).append(")");
 
@@ -137,7 +142,7 @@ public class FieldsParser {
         SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
 
         // Read the attributes
-        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_FIELD_INFO);
+        AttributesParser.extractAttributes(dataInputStream, attributesCount, javaSpecification, resource, AttributesParser.LOCATION_FIELD_INFO);
     }
 
 }

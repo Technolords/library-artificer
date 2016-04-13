@@ -1,12 +1,15 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute;
 
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.AttributesParser;
+import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
+import net.technolords.tools.artificer.analyser.dotclass.specification.Mnemonic;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Technolords on 2016-Apr-07.
@@ -19,6 +22,7 @@ import java.io.IOException;
  */
 public class CodeParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(CodeParser.class);
+    private static final String MNEMONIC_NOT_FOUND = "Mnemonic not found!";
 
     /**
      * Auxiliary method to extract the code associated with the resource. This is fetched from the
@@ -103,12 +107,14 @@ public class CodeParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the attribute.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractCode(DataInputStream dataInputStream, Resource resource) throws IOException {
+    public static void extractCode(DataInputStream dataInputStream, JavaSpecification javaSpecification, Resource resource) throws IOException {
         int maxStack = dataInputStream.readUnsignedShort();
         int maxLocals = dataInputStream.readUnsignedShort();
         int codelength = dataInputStream.readInt();
@@ -116,7 +122,8 @@ public class CodeParser {
 
         // u1              code[code_length];
         for(int codeIndex = 0; codeIndex < codelength; codeIndex++) {
-            dataInputStream.readUnsignedByte();
+            int opcode = dataInputStream.readUnsignedByte();
+            LOGGER.debug("Opcode (index: " + codeIndex + "): " + opcode + ", with mnemonic: " + extractMnemonic(opcode, javaSpecification.getMnemonics().getMnemonics()));
         }
 
         int exceptionTableLength = dataInputStream.readUnsignedShort();
@@ -128,6 +135,15 @@ public class CodeParser {
             int catchType = dataInputStream.readUnsignedShort();
         }
         int attributesCount = dataInputStream.readUnsignedShort();
-        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_CODE);
+        AttributesParser.extractAttributes(dataInputStream, attributesCount, javaSpecification, resource, AttributesParser.LOCATION_CODE);
+    }
+
+    protected static String extractMnemonic(int opcode, List<Mnemonic> mnemonics) {
+        for(Mnemonic mnemonic : mnemonics) {
+            if(String.valueOf(opcode).equals(mnemonic.getOpcode())) {
+                return mnemonic.getId();
+            }
+        }
+        return MNEMONIC_NOT_FOUND;
     }
 }

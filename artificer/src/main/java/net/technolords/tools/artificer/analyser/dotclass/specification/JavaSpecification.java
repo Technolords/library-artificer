@@ -10,6 +10,7 @@ public class JavaSpecification {
     private String magicNumber;
     private String version;
     private ConstantPoolConstants constantPoolConstants;
+    private Mnemonics mnemonics;
 
     @XmlAttribute(name = "magic-number")
     public String getMagicNumber() {
@@ -36,5 +37,14 @@ public class JavaSpecification {
 
     public void setConstantPoolConstants(ConstantPoolConstants constantPoolConstants) {
         this.constantPoolConstants = constantPoolConstants;
+    }
+
+    @XmlElement(name = "mnemonics")
+    public Mnemonics getMnemonics() {
+        return mnemonics;
+    }
+
+    public void setMnemonics(Mnemonics mnemonics) {
+        this.mnemonics = mnemonics;
     }
 }

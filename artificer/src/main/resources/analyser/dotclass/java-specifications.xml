@@ -56,188 +56,50 @@
             -->
         <constant-pool-constants>
             <constant type="Class" tag="7">
-                <!--+
-                    | The value of name_index item must be a valid index to the constant pool table. The
-                    | constant_pool entry at that index must be a CONSTANT_Utf8_info structure representing
-                    | a valid binary class or interface name encoded in internal form.
-                    +-->
                 <info-fragment size="readUnsignedShort" description="name_index"/>
             </constant>
             <constant type="Fieldref" tag="9">
-                <!--+
-                    | Fields, methods, and interface methods are represented by similar structures. The value
-                    | of class_index must be a valid index in the constant pool table. The constant pool entry
-                    | at that index must be a CONSTANT_Class_info structure representing either a class type or
-                    | an interface type.
-                    | The value of name_and_type_index must be a valid index in the constant pool table. The
-                    | constant pool entry must be a CONSTANT_NameAndType_info structure. This constant pool entry
-                    | indicates the name and descriptor of the field.
-                    -->
                 <info-fragment size="readUnsignedShort" description="class_index"/>
                 <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
             <constant type="Methodref" tag="10">
-                <!--+
-                    | Fields, methods, and interface methods are represented by similar structures. The value
-                    | of class_index must be a valid index in the constant pool table. The constant pool entry
-                    | at that index must be a CONSTANT_Class_info structure representing a class type, not
-                    | an interface type.
-                    | The value of name_and_type_index must be a valid index in the constant pool table. The
-                    | constant pool entry must be a CONSTANT_NameAndType_info structure. This constant pool entry
-                    | indicates the name and descriptor of the method.
-                    | If the name of the method CONSTANT_Methodref_info structure begins with a '<' ('\u003c'),
-                    | then the name must be the special name <init>, representing an instance initialization
-                    | method. The return type of such method must be void.
-                    -->
                 <info-fragment size="readUnsignedShort" description="class_index"/>
                 <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
             <constant type="IterfaceMethodref" tag="11">
-                <!--+
-                    | Fields, methods, and interface methods are represented by similar structures. The value
-                    | of class_index must be a valid index in the constant pool table. The constant pool entry
-                    | at that index must be a CONSTANT_Class_info structure representing an interface type,
-                    | not a class type.
-                    | The value of name_and_type_index must be a valid index in the constant pool table. The
-                    | constant pool entry must be a CONSTANT_NameAndType_info structure. This constant pool entry
-                    | indicates the name and descriptor of the method.
-                    -->
                 <info-fragment size="readUnsignedShort" description="class_index"/>
                 <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
             <constant type="String" tag="8">
-                <!--+
-                    | The CONSTANT_String_info structure is used to represent constant objects of the type String.
-                    | The value of the string_index item must be a valid index in the constant pool table. The
-                    | constant pool entry at that index must be a CONSTANT_Utf8_info structure representing the
-                    | sequence of Unicode code points to which the String object is to be initialized.
-                    +-->
                 <info-fragment size="readUnsignedShort" description="string_index"/>
             </constant>
             <constant type="Integer" tag="3">
-                <!--+
-                    | The CONSTANT_Integer_info and CONSTANT_Float_info structures represent 4-byte numeric
-                    | (int and float) constants. The bytes of the CONSTANT_Integer_info structure represents the
-                    | value of the int constant. The bytes of the value are stored in big-endian (high byte first)
-                    | order.
-                    +-->
                 <info-fragment size="readInt" description="int_value"/>
             </constant>
             <constant type="Float" tag="4">
-                <!--+
-                    | The CONSTANT_Integer_info and CONSTANT_Float_info structures represent 4-byte numeric
-                    | (int and float) constants. The bytes of the CONSTANT_Float_info structure represents the
-                    | value of the float constant in IEEE 754 floating-point single format. The bytes of the single
-                    | format representation are stored in big-endian (high byte first) order. The value
-                    | represented by the CONSTANT_Float_info structure is determined as follows. The bytes of the
-                    | value are first converted into an intconstant bits. Then:
-                    | - if bits is 0x7f80 0000, the float value will be positive infinity.
-                    | - if bits is 0xff80 0000, the float value will be negative infinity.
-                    | - if bits is in the range 0x7f80 0001 through 0x7fff ffff the float value will be NaN
-                    | - if bits is in the range 0xff80 0001 through 0xffff ffff the float value will be NaN
-                    +-->
                 <info-fragment size="readFloat" description="float_value"/>
             </constant>
             <constant type="Long" tag="5">
-                <!--+
-                    | The CONSTANT_Long_info and CONSTANT_Double_info represent 8-byte numeric (long and double
-                    | constants). All 8-byte constants take up two entries in the constant_pool table of the class file.
-                    | The unsigned high_bytes and low_bytes items of the CONSTANT_Long_info structure together represent
-                    | the value of the long constant where they are stored in big-endian (high byte first) order.
-                    +-->
                 <info-fragment size="readLong" description="long_value"/>
             </constant>
             <constant type="Double" tag="6">
-                <!--+
-                   | The CONSTANT_Long_info and CONSTANT_Double_info represent 8-byte numeric (long and double
-                   | constants). All 8-byte constants take up two entries in the constant_pool table of the class file.
-                   | The value represented by CONSTANT_Double_info structure is determined as follows. The high_bytes
-                   | and low_bytes are converted into the long constant bits.
-                   | If bits is 0xff00 0000 0000 0000L, the double value will be positive infinity.
-                   | If bits is 0xfff0 0000 0000 0000L, the double value will be negative infinity.
-                   | If bits is in the range 0x7ff0 0000 0000 0001L through 0x7fff ffff ffff ffffL the double value will be NaN
-                   | If bits is in the range 0xfff0 0000 0000 0001L through 0xffff ffff ffff ffffL the double value will be NaN
-                   +-->
                 <info-fragment size="readDouble" description="double_value"/>
             </constant>
             <constant type="NameAndType" tag="12">
-                <!--+
-                    | The CONSTANT_NameAndType_info structure is used to represent a field or method, without indicating
-                    | which class or interface type it belongs to.
-                    | The value of the name_index must be a valid index in the constant pool table. The constant pool
-                    | entry must be a CONSTANT_Utf8_info structure representing either the special method name <init> or
-                    | a valid unqualified name denoting a field or method.
-                    | The value of the descriptor_index item must be a valid index in the constant pool table. The
-                    | constant pool entry must be a CONSTANT_Utf8_info structure representing a valid field descriptor
-                    | or method descriptor.
-                    +-->
                 <info-fragment size="readUnsignedShort" description="name_index"/>
                 <info-fragment size="readUnsignedShort" description="descriptor_index"/>
             </constant>
             <constant type="Utf8" tag="1">
-                <!--+
-                    | The CONSTANT_Utf8_info structure is used to represent constant string values. Note that strings
-                    | have a maximum length of 64k characters. The bytes of multibyte characters are stored in the class
-                    | file in big-endian (high byte first) order. There are two differences between this (modified UTF-8)
-                    | format and the 'standard' UTF-8 format. First, the null character (char)0 is encoded using the
-                    | 2-byte format rather than the 1-byte format, so that modified UTF-8 strings never have embedded
-                    | nulls. Second, only the 1-byte, 2-byte and 3-byte formats of standard UTF-8 are used. The JVM does
-                    | not recognize the four-byte format of standard UTF-8; it uses its own two-times-three-byte format
-                    | instead.
-                    +-->
                 <info-fragment size="readUTF" description="string_value"/>
             </constant>
             <constant type="MethodHandle" tag="15">
-                <!--+
-                    | The CONSTANT_MethodHandle_info structure is used to represent a method handle.
-                    | The value of the reference_kind item must be in the range 1 to 9. The value denotes the kind
-                    | of this method handle, which characterizes its bytecode behavior.
-                    | The value of the reference_index item must be a valid index in the constant pool table. The
-                    | constant pool entry at that index must be as follows:
-                    | - if the value of the reference kind is 1 (REF_getField), 2 (REF_getStatic), 3 (REF_putField) or
-                    |   4 (REF_putStatic), then the constant pool entry at that index must be a CONSTANT_Fieldref_info
-                    |   structure representing a field for which a method handle is to be created.
-                    | - if the value of the reference kind is 5 (REF_invokeVirtual) or 8 (REF_newInvokeSpecial), then
-                    |   the constant pool entry at that index must be a CONSTANT_Methodref_info structure representing
-                    |   a class's method or constructor for which a method handle is to be created.
-                    | - if the value of the reference kind is 6 (REF_invokeStatic) or 7 (REF_invokeSpecial), then if
-                    |   the class file version number is less than 52.0, the constant pool entry at that index must be
-                    |   a CONSTANT_Methodref_info_structure representing a class's method for which a method handle is to
-                    |   be created; if the class file version is 52.0 or above, the constant pool entry at that index
-                    |   must be either a CONSTANT_Methodref_info_structure or a CONSTANT_InterfaceMethodref_info structure
-                    |   representing a class's or interface's method for which a method handle is to be created.
-                    | - if the value of the reference kind is 9 (REF_invokeInterface), then the constant pool entry at
-                    |   that index must be a CONSTANT_InterfaceMethodref_info structure representing an interface's
-                    |   method for which a method handle is to be created.
-                    | If the value of reference kind item is 5, 6, 7 or 9, the name of the method represented by a
-                    | CONSTANT_Methodref_info structure or a CONSTANT_InterfaceMethodref_info structure must not be
-                    | <init> or <cinit>.
-                    | If the value is 8, the name of the method represented by a CONSTANT_Methodref_info structure must
-                    | be <init>.
-                    +-->
                 <info-fragment size="readUnsignedByte" description="reference_kind"/>
                 <info-fragment size="readUnsignedShort" description="reference_index"/>
             </constant>
             <constant type="MethodType" tag="16">
-                <!--+
-                    | The CONSTANT_MethodType_info structure is used to represent a method type.
-                    | The value of the descriptor index item must be a valid index in the constant pool table. The
-                    | constant pool entry at that index must be a CONSTANT_Utf8_info structure representing a method
-                    | descriptor.
-                    +-->
                 <info-fragment size="readUnsignedShort" description="descriptor_index"/>
             </constant>
             <constant type="InvokeDynamic" tag="18">
-                <!--+
-                    | The CONSTANT_InvokeDynamic_info structure is used by an invokedynamic instruction to specify a
-                    | bootstrap method, the dynamic invocation name, the argument and return types of the call, and
-                    | optionally, a sequence of additional constants called static arguments to the bootstrap method.
-                    | The value of the bootstrap_method_attr_index item must be a valid index of the bootstrap_methods
-                    | array of the bootstrap method table of this class file.
-                    | The value of the name_and_type_index item must be a valid index in the constant pool table. The
-                    | constant pool entry at that index must be a CONSTANT_NameAndType_info structure representing a
-                    | method name and method descriptor.
-                    +-->
                 <info-fragment size="readUnsignedShort" description="bootstrap_method_attr_index"/>
                 <info-fragment size="readUnsignedShort" description="name_and_type_index"/>
             </constant>
@@ -289,5 +151,212 @@
             -->
         <attribute-info>
         </attribute-info>
+        <mnemonics>
+            <mnemonic id="aaload" opcode="50" operation="Load reference from array" />
+            <mnemonic id="aastore" opcode="83" operation="Store into reference array" />
+            <mnemonic id="aconst_null" opcode="1" operation="Push null" />
+            <mnemonic id="aload" opcode="25" operation="Load reference from local variable" />
+            <mnemonic id="aload_0" opcode="42" operation="Load reference from local variable" />
+            <mnemonic id="aload_1" opcode="43" operation="Load reference from local variable" />
+            <mnemonic id="aload_2" opcode="44" operation="Load reference from local variable" />
+            <mnemonic id="aload_3" opcode="45" operation="Load reference from local variable" />
+            <mnemonic id="anewarray" opcode="189" operation="Create new array of reference" />
+            <mnemonic id="areturn" opcode="176" operation="return reference from method" />
+            <mnemonic id="arraylength" opcode="190" operation="Get length of array" />
+            <mnemonic id="astore" opcode="58" operation="Store reference into local variable" />
+            <mnemonic id="astore_0" opcode="75" operation="Store reference into local variable" />
+            <mnemonic id="astore_1" opcode="76" operation="Store reference into local variable" />
+            <mnemonic id="astore_2" opcode="77" operation="Store reference into local variable" />
+            <mnemonic id="astore_3" opcode="78" operation="Store reference into local variable" />
+            <mnemonic id="athrow" opcode="191" operation="Throw exception or error" />
+            <mnemonic id="baload" opcode="51" operation="Load byte or boolean from array" />
+            <mnemonic id="bstore" opcode="84" operation="Store into byte or boolean array" />
+            <mnemonic id="bipush" opcode="16" operation="Push byte" />
+            <mnemonic id="breakpoint" opcode="202" operation="Reserved opcode, supporting debuggers" />
+            <mnemonic id="caload" opcode="52" operation="Load char from array" />
+            <mnemonic id="castore" opcode="85" operation="Store into char array" />
+            <mnemonic id="checkcast" opcode="192" operation="Check whether object is of given type" />
+            <mnemonic id="d2f" opcode="144" operation="Convert double to float" />
+            <mnemonic id="d2i" opcode="142" operation="Convert double to int" />
+            <mnemonic id="d2l" opcode="143" operation="Convert double to long" />
+            <mnemonic id="dadd" opcode="99" operation="Add double" />
+            <mnemonic id="daload" opcode="49" operation="Load double from array" />
+            <mnemonic id="dastore" opcode="82" operation="Store into double array" />
+            <mnemonic id="dcmpg" opcode="152" operation="Compare double" />
+            <mnemonic id="dcmpl" opcode="151" operation="Compare double" />
+            <mnemonic id="dconst_0" opcode="14" operation="Push double" />
+            <mnemonic id="dconst_1" opcode="15" operation="Push double" />
+            <mnemonic id="ddiv" opcode="111" operation="Divide double" />
+            <mnemonic id="dload" opcode="24" operation="Load double from local variable" />
+            <mnemonic id="dload_0" opcode="38" operation="Load double from local variable" />
+            <mnemonic id="dload_1" opcode="39" operation="Load double from local variable" />
+            <mnemonic id="dload_2" opcode="40" operation="Load double from local variable" />
+            <mnemonic id="dload_3" opcode="41" operation="Load double from local variable" />
+            <mnemonic id="dmul" opcode="107" operation="Multiply double" />
+            <mnemonic id="dneg" opcode="119" operation="Negate double" />
+            <mnemonic id="drem" opcode="115" operation="Remainder double" />
+            <mnemonic id="dreturn" opcode="175" operation="Return double from method" />
+            <mnemonic id="dstore" opcode="57" operation="Store double into local variable" />
+            <mnemonic id="dstore_0" opcode="71" operation="Store double into local variable" />
+            <mnemonic id="dstore_1" opcode="72" operation="Store double into local variable" />
+            <mnemonic id="dstore_2" opcode="73" operation="Store double into local variable" />
+            <mnemonic id="dstore_3" opcode="74" operation="Store double into local variable" />
+            <mnemonic id="dsub" opcode="103" operation="Subtract double" />
+            <mnemonic id="dup" opcode="89" operation="Duplicate the top operand stack value" />
+            <mnemonic id="dup_x1" opcode="90" operation="Duplicate the top operand stack value and insert two values down" />
+            <mnemonic id="dup_x2" opcode="91" operation="Duplicate the top operand stack value and insert two or three values down" />
+            <mnemonic id="dup2" opcode="92" operation="Duplicate the top one or two operand stack values" />
+            <mnemonic id="dup2_x1" opcode="93" operation="Duplicate the top one or two operand stack values and insert two or three values down" />
+            <mnemonic id="dup2_x2" opcode="94" operation="Duplicate the top one or two operand stack values and insert two, three or four values down" />
+            <mnemonic id="f2d" opcode="141" operation="Convert float into double" />
+            <mnemonic id="f2i" opcode="139" operation="Convert float into int" />
+            <mnemonic id="f2l" opcode="140" operation="Convert float into long" />
+            <mnemonic id="fadd" opcode="98" operation="Add float" />
+            <mnemonic id="faload" opcode="48" operation="Load float from array" />
+            <mnemonic id="fastore" opcode="81" operation="Store into float array" />
+            <mnemonic id="fcmpg" opcode="150" operation="Compare float" />
+            <mnemonic id="fcmpl" opcode="149" operation="Compare float" />
+            <mnemonic id="fconst_0" opcode="11" operation="Push float" />
+            <mnemonic id="fconst_1" opcode="12" operation="Push float" />
+            <mnemonic id="fconst_2" opcode="13" operation="Push float" />
+            <mnemonic id="fdiv" opcode="110" operation="Divide float" />
+            <mnemonic id="fload" opcode="23" operation="Load float into local variable" />
+            <mnemonic id="fload_0" opcode="34" operation="Load float into local variable" />
+            <mnemonic id="fload_1" opcode="35" operation="Load float into local variable" />
+            <mnemonic id="fload_2" opcode="36" operation="Load float into local variable" />
+            <mnemonic id="fload_3" opcode="37" operation="Load float into local variable" />
+            <mnemonic id="fmul" opcode="106" operation="Multiply float" />
+            <mnemonic id="fneg" opcode="118" operation="Negate float" />
+            <mnemonic id="frem" opcode="114" operation="Remainder float" />
+            <mnemonic id="freturn" opcode="174" operation="Return float from method" />
+            <mnemonic id="fstore" opcode="56" operation="Store float into local variable" />
+            <mnemonic id="fstore_0" opcode="67" operation="Store float into local variable" />
+            <mnemonic id="fstore_1" opcode="68" operation="Store float into local variable" />
+            <mnemonic id="fstore_2" opcode="69" operation="Store float into local variable" />
+            <mnemonic id="fstore_3" opcode="70" operation="Store float into local variable" />
+            <mnemonic id="fsub" opcode="102" operation="Subtract float" />
+            <mnemonic id="getfield" opcode="180" operation="Fetch field from object" />
+            <mnemonic id="getstatic" opcode="178" operation="Get static field from class" />
+            <mnemonic id="goto" opcode="167" operation="Branch always" />
+            <mnemonic id="goto_w" opcode="200" operation="Branch always (wide index)" />
+            <mnemonic id="i2b" opcode="145" operation="Convert int to byte" />
+            <mnemonic id="i2c" opcode="146" operation="Convert int to char" />
+            <mnemonic id="i2d" opcode="135" operation="Convert int to double" />
+            <mnemonic id="i2f" opcode="134" operation="Convert int to float" />
+            <mnemonic id="i2l" opcode="133" operation="Convert int to long" />
+            <mnemonic id="i2s" opcode="147" operation="Convert int to short" />
+            <mnemonic id="iadd" opcode="96" operation="Add int" />
+            <mnemonic id="iaload" opcode="46" operation="Load int from array" />
+            <mnemonic id="iand" opcode="126" operation="Boolean AND int" />
+            <mnemonic id="iastore" opcode="79" operation="Store into int array" />
+            <mnemonic id="iconst_m1" opcode="2" operation="Push int constant" />
+            <mnemonic id="iconst_0" opcode="3" operation="Push int constant" />
+            <mnemonic id="iconst_1" opcode="4" operation="Push int constant" />
+            <mnemonic id="iconst_2" opcode="5" operation="Push int constant" />
+            <mnemonic id="iconst_3" opcode="6" operation="Push int constant" />
+            <mnemonic id="iconst_4" opcode="7" operation="Push int constant" />
+            <mnemonic id="iconst_5" opcode="8" operation="Push int constant" />
+            <mnemonic id="idiv" opcode="108" operation="Divide int" />
+            <mnemonic id="if_acmpeq" opcode="165" operation="Branch if reference comparison succeeds" />
+            <mnemonic id="if_acmpne" opcode="166" operation="Branch if reference comparison succeeds" />
+            <mnemonic id="if_icmpeq" opcode="159" operation="Branch if int comparison succeeds" />
+            <mnemonic id="if_icmpne" opcode="160" operation="Branch if int comparison succeeds" />
+            <mnemonic id="if_icmplt" opcode="161" operation="Branch if int comparison succeeds" />
+            <mnemonic id="if_icmpge" opcode="162" operation="Branch if int comparison succeeds" />
+            <mnemonic id="if_icmpgt" opcode="163" operation="Branch if int comparison succeeds" />
+            <mnemonic id="if_icmple" opcode="164" operation="Branch if int comparison succeeds" />
+            <mnemonic id="ifeq" opcode="153" operation="Branch if int comparison with zero succeeds" />
+            <mnemonic id="ifne" opcode="154" operation="Branch if int comparison with zero succeeds" />
+            <mnemonic id="iflt" opcode="155" operation="Branch if int comparison with zero succeeds" />
+            <mnemonic id="ifge" opcode="156" operation="Branch if int comparison with zero succeeds" />
+            <mnemonic id="ifgt" opcode="157" operation="Branch if int comparison with zero succeeds" />
+            <mnemonic id="ifle" opcode="158" operation="Branch if int comparison with zero succeeds" /> <!-- TODO: fix operation -->
+            <mnemonic id="ifnonnull" opcode="199" operation="Branch if reference not null" />
+            <mnemonic id="ifnull" opcode="198" operation="Branch if reference null" />
+            <mnemonic id="iinc" opcode="132" operation="Increment local variable by constant" />
+            <mnemonic id="iload" opcode="21" operation="Load int from local variable" />
+            <mnemonic id="iload_0" opcode="26" operation="Load int from local variable" />
+            <mnemonic id="iload_1" opcode="27" operation="Load int from local variable" />
+            <mnemonic id="iload_2" opcode="28" operation="Load int from local variable" />
+            <mnemonic id="iload_3" opcode="29" operation="Load int from local variable" />
+            <mnemonic id="imul" opcode="104" operation="Multiply int" />
+            <mnemonic id="impdep1" opcode="254" operation="Reserved opcode, supporting backdoor" />
+            <mnemonic id="impdep2" opcode="255" operation="Reserved opcode, supporting backdoor" />
+            <mnemonic id="ineg" opcode="116" operation="Negate int" />
+            <mnemonic id="instanceof" opcode="193" operation="Determine if object is of given type" />
+            <mnemonic id="invokedynamic" opcode="186" operation="Invoke dynamic method" />
+            <mnemonic id="invokeinterface" opcode="185" operation="Invoke interface method" />
+            <mnemonic id="invokespecial" opcode="183" operation="Invoke instance method; special handling for superclass, private, and instance initialization method invocations" />
+            <mnemonic id="invokestatic" opcode="184" operation="Invoke a class (static) method" />
+            <mnemonic id="invokevirtual" opcode="182" operation="Invoke instance method; dispatch based on class" />
+            <mnemonic id="ior" opcode="128" operation="Boolean OR int" />
+            <mnemonic id="irem" opcode="112" operation="Remainder int" />
+            <mnemonic id="ireturn" opcode="172" operation="Return int from method" />
+            <mnemonic id="ishl" opcode="120" operation="Shift left int" />
+            <mnemonic id="ishr" opcode="122" operation="Arithmetic shift right int" />
+            <mnemonic id="istore" opcode="54" operation="Store int into local variable" />
+            <mnemonic id="istore_0" opcode="59" operation="Store int into local variable" />
+            <mnemonic id="istore_1" opcode="60" operation="Store int into local variable" />
+            <mnemonic id="istore_2" opcode="61" operation="Store int into local variable" />
+            <mnemonic id="istore_3" opcode="62" operation="Store int into local variable" />
+            <mnemonic id="isub" opcode="100" operation="Subtract int" />
+            <mnemonic id="iushr" opcode="124" operation="Logical shift right int" />
+            <mnemonic id="ixor" opcode="130" operation="Boolean XOR int" />
+            <mnemonic id="jsr" opcode="168" operation="Jump subroutine" />
+            <mnemonic id="jsr_w" opcode="201" operation="Jump subroutine (wide index)" />
+            <mnemonic id="l2d" opcode="138" operation="Convert long to double" />
+            <mnemonic id="l2f" opcode="137" operation="Convert long to float" />
+            <mnemonic id="l2i" opcode="136" operation="Convert long to int" />
+            <mnemonic id="ladd" opcode="97" operation="Add long" />
+            <mnemonic id="laload" opcode="47" operation="Load long from array" />
+            <mnemonic id="land" opcode="127" operation="Boolean AND long" />
+            <mnemonic id="lastore" opcode="80" operation="Store into long array" />
+            <mnemonic id="lcmp" opcode="148" operation="Compare long" />
+            <mnemonic id="lconst_0" opcode="9" operation="Push long constant" />
+            <mnemonic id="lconst_1" opcode="10" operation="Push long constant" />
+            <mnemonic id="ldc" opcode="18" operation="Push item from run-time constant pool" />
+            <mnemonic id="ldc_w" opcode="19" operation="Push item from run-time constant pool (wide index)" />
+            <mnemonic id="ldc2_w" opcode="20" operation="Push long or double from run-time constant pool (wide index)" />
+            <mnemonic id="ldiv" opcode="109" operation="Divide long" />
+            <mnemonic id="lload" opcode="22" operation="Load long from local variable" />
+            <mnemonic id="lload_0" opcode="30" operation="Load long from local variable" />
+            <mnemonic id="lload_1" opcode="31" operation="Load long from local variable" />
+            <mnemonic id="lload_2" opcode="32" operation="Load long from local variable" />
+            <mnemonic id="lload_3" opcode="33" operation="Load long from local variable" />
+            <mnemonic id="lmul" opcode="105" operation="Multiply long" />
+            <mnemonic id="lneg" opcode="117" operation="Negate long" />
+            <mnemonic id="lookupswitch" opcode="171" operation="Access jump table by key match and jump" />
+            <mnemonic id="lor" opcode="129" operation="Boolean OR long" />
+            <mnemonic id="lrem" opcode="113" operation="Remainder long" />
+            <mnemonic id="lreturn" opcode="173" operation="Return long from method" />
+            <mnemonic id="lshl" opcode="121" operation="Shift left long" />
+            <mnemonic id="lshr" opcode="123" operation="Arithmetic shift right long" />
+            <mnemonic id="lstore" opcode="55" operation="Store long into local variable" />
+            <mnemonic id="lstore_0" opcode="63" operation="Store long into local variable" />
+            <mnemonic id="lstore_1" opcode="64" operation="Store long into local variable" />
+            <mnemonic id="lstore_2" opcode="65" operation="Store long into local variable" />
+            <mnemonic id="lstore_3" opcode="66" operation="Store long into local variable" />
+            <mnemonic id="lsub" opcode="101" operation="Substract long" />
+            <mnemonic id="lushr" opcode="125" operation="Logical shift right long" />
+            <mnemonic id="lxor" opcode="131" operation="Boolean XOR long" />
+            <mnemonic id="monitorenter" opcode="194" operation="Enter monitor for object" />
+            <mnemonic id="monitorexit" opcode="195" operation="Exit monitor for object" />
+            <mnemonic id="multianewarray" opcode="197" operation="Create new multidimensional array" />
+            <mnemonic id="new" opcode="187" operation="Create new object" />
+            <mnemonic id="newarray" opcode="188" operation="Create new array" />
+            <mnemonic id="nop" opcode="0" operation="Do nothing" />
+            <mnemonic id="pop" opcode="87" operation="Pop the top operand stack value" />
+            <mnemonic id="pop2" opcode="88" operation="Pop the top one or two operand stack values" />
+            <mnemonic id="putfield" opcode="181" operation="Set field in object" />
+            <mnemonic id="putstatic" opcode="179" operation="Set static field in class" />
+            <mnemonic id="ret" opcode="169" operation="Return from subroutine" />
+            <mnemonic id="return" opcode="177" operation="Return void from method" />
+            <mnemonic id="saload" opcode="53" operation="Load short from array" />
+            <mnemonic id="sastore" opcode="86" operation="Store into short array" />
+            <mnemonic id="sipush" opcode="17" operation="Push short" />
+            <mnemonic id="swap" opcode="95" operation="Swap the top two operand stack values" />
+            <mnemonic id="tableswitch" opcode="170" operation="Access jump table by index and jump" />
+            <mnemonic id="wide" opcode="196" operation="Extend local variable index by additional bytes" />
+        </mnemonics>
     </java-specification>
 </java-specifications>

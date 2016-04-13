@@ -121,14 +121,19 @@ public class BytecodeParser {
                 this.lookupMap = new HashMap<>();
                 this.initializeSpecifications();
             }
-            LOGGER.info("About to analyse byte code of: " + resource.getName() + ", for JVM spec: " + resource.getCompiledVersion());
+            JavaSpecification javaSpecification = this.lookupMap.get(resource.getCompiledVersion());
+            StringBuilder buffer = new StringBuilder();
+            buffer.append("About to analyse byte code of: ").append(resource.getName());
+            buffer.append(", for JVM spec: ").append((javaSpecification == null ? "None found" : javaSpecification.getVersion()));
+            buffer.append(", with total mnemonics: ").append((javaSpecification == null ? "None" : javaSpecification.getMnemonics().getMnemonics().size()));
+            LOGGER.info(buffer.toString());
             DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
             // Extract the magic number
             MagicNumberParser.extractMagicNumber(dataInputStream);
             // Extract the minor and major version
             MinorAndMajorVersionParser.extractMinorAndMajorVersion(dataInputStream);
             // Extract the constant pool
-            ConstantPoolParser.extractConstantPool(dataInputStream, this.lookupMap, resource);
+            ConstantPoolParser.extractConstantPool(dataInputStream, javaSpecification, resource);
             // Extract the access flags
             AccessFlagsParser.extractAccessFlags(dataInputStream, AccessFlagsParser.LOCATION_CLASS_FILE);
             // Extract the 'this' class reference
@@ -138,11 +143,11 @@ public class BytecodeParser {
             // Extract the interfaces
             InterfaceParser.extractInterfaces(dataInputStream);
             // Extract the fields
-            FieldsParser.extractFields(dataInputStream, resource);
+            FieldsParser.extractFields(dataInputStream, javaSpecification, resource);
             // Extract the methods
-            MethodsParser.extractMethods(dataInputStream, resource);
+            MethodsParser.extractMethods(dataInputStream, javaSpecification, resource);
             // Extract the attributes
-            AttributesParser.extractAttributesFromClassFile(dataInputStream, resource);
+            AttributesParser.extractAttributesFromClassFile(dataInputStream, javaSpecification, resource);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
         } catch (ArtificerException e) {

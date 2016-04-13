@@ -2,6 +2,7 @@ package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,16 +49,18 @@ public class MethodsParser {
      *
      * @param dataInputStream
      *  The byte stream associated with the resource (aka .class file).
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the attribute.
      * @throws IOException
      *  When reading bytes from the stream fails.
      */
-    public static void extractMethods(DataInputStream dataInputStream, Resource resource) throws IOException {
+    public static void extractMethods(DataInputStream dataInputStream, JavaSpecification javaSpecification, Resource resource) throws IOException {
         int methodsCount = dataInputStream.readUnsignedShort();
         LOGGER.debug("MethodsCount: " + methodsCount);
         for(int index = 0; index < methodsCount; index++) {
-            extractMethod(dataInputStream, index, resource);
+            extractMethod(dataInputStream, index, javaSpecification, resource);
         }
     }
 
@@ -75,11 +78,13 @@ public class MethodsParser {
      *  The byte stream associated with the resource (aka .class file).
      * @param index
      *  The attribute index, used for precise data logging.
+     * @param javaSpecification
+     *  The Java specification associated with the compiled version associated with the resource (aka .class file).
      * @param resource
      *  The resource associated with the attribute.
      * @throws IOException
      */
-    protected static void extractMethod(DataInputStream dataInputStream, int index, Resource resource) throws IOException {
+    protected static void extractMethod(DataInputStream dataInputStream, int index, JavaSpecification javaSpecification, Resource resource) throws IOException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("Method (index: ").append(index).append(")");
 
@@ -104,6 +109,6 @@ public class MethodsParser {
         // Add signature (when applicable) to the referenced classes
         SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), descriptor);
 
-        AttributesParser.extractAttributes(dataInputStream, attributesCount, resource, AttributesParser.LOCATION_METHOD_INFO);
+        AttributesParser.extractAttributes(dataInputStream, attributesCount, javaSpecification, resource, AttributesParser.LOCATION_METHOD_INFO);
     }
 }

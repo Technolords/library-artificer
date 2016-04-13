@@ -84,7 +84,7 @@ public class JavaSpecificationManagerTest extends TestSupport {
     @Test (dataProvider = "dataSetWithMagicNumbersAndJavaVersions")
     public void testLookupJavaVersionsWithDataSet(final String magicNumber, final String expectedVersion) throws ArtificerException {
         // Instantiate javaSpecificationManager only once, so it is shared for each entry in the data set
-        JavaSpecificationManager  javaSpecificationManager = null;
+        JavaSpecificationManager javaSpecificationManager = null;
         if(javaSpecificationManager == null) {
             javaSpecificationManager = new JavaSpecificationManager(KNOWN_JAVA_VERSIONS_REFERENCE_FILE);
         }
