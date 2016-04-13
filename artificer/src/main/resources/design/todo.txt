@@ -1,48 +1,42 @@
-- implement ClassReferenceAnalyser:
-    - create method that extracts a 'normalized' class (x/y/z)
-       - name_index                                     -> index constant pool (utf8)
-       - class_index                                    -> index constant pool (field, method, interfacemethod)
-       - name_and_type_index                            -> index constant pool (name_and_type)
-       - string_index                                   -> index constant pool (utf8)
-       - descriptor_index                               -> index constant pool (utf8)
-       - reference_kind                                 -> value 1 to 9
-    - expose method on main interface to retrieve list of referenced classes??
+- Implement STACK_MAP_TABLE attribute parser (see AttributesParser.java class)
 
-v test with simple class with nested instantiation of another class and see if bytecodemanager picks this up
-
-- fix signatureAnalyzer
-
-- use samples from: http://classfileanalyzer.javaseiten.de/index.html
-- read invoke dynamic: http://www.javaworld.com/article/2860079/learn-java/invokedynamic-101.html
-
-- test with generics
-public static <T> ArrayList<T> createArrayList(T ... elements) {
-        ArrayList<T> list = new ArrayList<T>();
-        for (T element : elements) {
-            list.add(element);
+- Implement test cases for various situations:
+    use samples from: http://classfileanalyzer.javaseiten.de/index.html
+    read invoke dynamic: http://www.javaworld.com/article/2860079/learn-java/invokedynamic-101.html
+    test with static initializer blocks
+    test with generics:
+        public static <T> ArrayList<T> createArrayList(T ... elements) {
+            ArrayList<T> list = new ArrayList<T>();
+            for (T element : elements) {
+                list.add(element);
+            }
+            return list;
         }
-        return list;
-    }
 
-public <T> T max(List<T> list, Comparator<T> comp) {
-   T biggestSoFar = list.get(0);
-   for ( T t : list ) {
-       if (comp.compare(t, biggestSoFar) > 0) {
-          biggestSoFar = t;
-       }
-   }
-   return biggestSoFar;
-}
+        public <T> T max(List<T> list, Comparator<T> comp) {
+           T biggestSoFar = list.get(0);
+           for ( T t : list ) {
+               if (comp.compare(t, biggestSoFar) > 0) {
+                  biggestSoFar = t;
+               }
+           }
+           return biggestSoFar;
+        }
 
-public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
-    return Collectors.toMap((e) -> (e).getKey(), (e) -> (e).getValue());
-}
+    test with lambda's
+        public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
+            return Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue());
+        }
 
-public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
-    return Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue());
-}
+        public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
+            return Collectors.toMap((e) -> (e).getKey(), (e) -> (e).getValue());
+        }
 
-- test with static initializer blocks
+- Implement all cases for the SignatureAnalyser
+
+- Implement combination of all referenced resources per resource (kind of finalize?)
+
+-------------------------
 
 - compile list of se classes and ee classes
     - decide which class keeps this state
@@ -54,6 +48,8 @@ public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
         artificer-camel-route                           -> generates presentation
 
 - keep track of annotations??
+
+- keep track of invoked methods?? -> derive sequence diagrams
 
 - other stuf
     /analysis/dotxml
