@@ -155,15 +155,28 @@
             <mnemonic id="aaload" opcode="50" operation="Load reference from array" />
             <mnemonic id="aastore" opcode="83" operation="Store into reference array" />
             <mnemonic id="aconst_null" opcode="1" operation="Push null" />
-            <mnemonic id="aload" opcode="25" operation="Load reference from local variable" />
+            <mnemonic id="aload" opcode="25" operation="Load reference from local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="aload_0" opcode="42" operation="Load reference from local variable" />
             <mnemonic id="aload_1" opcode="43" operation="Load reference from local variable" />
             <mnemonic id="aload_2" opcode="44" operation="Load reference from local variable" />
             <mnemonic id="aload_3" opcode="45" operation="Load reference from local variable" />
-            <mnemonic id="anewarray" opcode="189" operation="Create new array of reference" />
+            <mnemonic id="anewarray" opcode="189" operation="Create new array of reference" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getClassName(constIndex);
+                -->
+            </mnemonic>
             <mnemonic id="areturn" opcode="176" operation="return reference from method" />
             <mnemonic id="arraylength" opcode="190" operation="Get length of array" />
-            <mnemonic id="astore" opcode="58" operation="Store reference into local variable" />
+            <mnemonic id="astore" opcode="58" operation="Store reference into local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="astore_0" opcode="75" operation="Store reference into local variable" />
             <mnemonic id="astore_1" opcode="76" operation="Store reference into local variable" />
             <mnemonic id="astore_2" opcode="77" operation="Store reference into local variable" />
@@ -171,11 +184,20 @@
             <mnemonic id="athrow" opcode="191" operation="Throw exception or error" />
             <mnemonic id="baload" opcode="51" operation="Load byte or boolean from array" />
             <mnemonic id="bstore" opcode="84" operation="Store into byte or boolean array" />
-            <mnemonic id="bipush" opcode="16" operation="Push byte" />
+            <mnemonic id="bipush" opcode="16" operation="Push byte" >
+                <!--
+                    operands = Integer.toString(code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="breakpoint" opcode="202" operation="Reserved opcode, supporting debuggers" />
             <mnemonic id="caload" opcode="52" operation="Load char from array" />
             <mnemonic id="castore" opcode="85" operation="Store into char array" />
-            <mnemonic id="checkcast" opcode="192" operation="Check whether object is of given type" />
+            <mnemonic id="checkcast" opcode="192" operation="Check whether object is of given type" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getClassName(constIndex);
+                -->
+            </mnemonic>
             <mnemonic id="d2f" opcode="144" operation="Convert double to float" />
             <mnemonic id="d2i" opcode="142" operation="Convert double to int" />
             <mnemonic id="d2l" opcode="143" operation="Convert double to long" />
@@ -187,7 +209,11 @@
             <mnemonic id="dconst_0" opcode="14" operation="Push double" />
             <mnemonic id="dconst_1" opcode="15" operation="Push double" />
             <mnemonic id="ddiv" opcode="111" operation="Divide double" />
-            <mnemonic id="dload" opcode="24" operation="Load double from local variable" />
+            <mnemonic id="dload" opcode="24" operation="Load double from local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="dload_0" opcode="38" operation="Load double from local variable" />
             <mnemonic id="dload_1" opcode="39" operation="Load double from local variable" />
             <mnemonic id="dload_2" opcode="40" operation="Load double from local variable" />
@@ -196,7 +222,11 @@
             <mnemonic id="dneg" opcode="119" operation="Negate double" />
             <mnemonic id="drem" opcode="115" operation="Remainder double" />
             <mnemonic id="dreturn" opcode="175" operation="Return double from method" />
-            <mnemonic id="dstore" opcode="57" operation="Store double into local variable" />
+            <mnemonic id="dstore" opcode="57" operation="Store double into local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="dstore_0" opcode="71" operation="Store double into local variable" />
             <mnemonic id="dstore_1" opcode="72" operation="Store double into local variable" />
             <mnemonic id="dstore_2" opcode="73" operation="Store double into local variable" />
@@ -220,7 +250,11 @@
             <mnemonic id="fconst_1" opcode="12" operation="Push float" />
             <mnemonic id="fconst_2" opcode="13" operation="Push float" />
             <mnemonic id="fdiv" opcode="110" operation="Divide float" />
-            <mnemonic id="fload" opcode="23" operation="Load float into local variable" />
+            <mnemonic id="fload" opcode="23" operation="Load float into local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="fload_0" opcode="34" operation="Load float into local variable" />
             <mnemonic id="fload_1" opcode="35" operation="Load float into local variable" />
             <mnemonic id="fload_2" opcode="36" operation="Load float into local variable" />
@@ -229,16 +263,40 @@
             <mnemonic id="fneg" opcode="118" operation="Negate float" />
             <mnemonic id="frem" opcode="114" operation="Remainder float" />
             <mnemonic id="freturn" opcode="174" operation="Return float from method" />
-            <mnemonic id="fstore" opcode="56" operation="Store float into local variable" />
+            <mnemonic id="fstore" opcode="56" operation="Store float into local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="fstore_0" opcode="67" operation="Store float into local variable" />
             <mnemonic id="fstore_1" opcode="68" operation="Store float into local variable" />
             <mnemonic id="fstore_2" opcode="69" operation="Store float into local variable" />
             <mnemonic id="fstore_3" opcode="70" operation="Store float into local variable" />
             <mnemonic id="fsub" opcode="102" operation="Subtract float" />
-            <mnemonic id="getfield" opcode="180" operation="Fetch field from object" />
-            <mnemonic id="getstatic" opcode="178" operation="Get static field from class" />
-            <mnemonic id="goto" opcode="167" operation="Branch always" />
-            <mnemonic id="goto_w" opcode="200" operation="Branch always (wide index)" />
+            <mnemonic id="getfield" opcode="180" operation="Fetch field from object" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getFieldNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="getstatic" opcode="178" operation="Get static field from class" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getFieldNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="goto" opcode="167" operation="Branch always" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="goto_w" opcode="200" operation="Branch always (wide index)" >
+                <!--
+                    branchOffset = getU4(code, offset+1);
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
             <mnemonic id="i2b" opcode="145" operation="Convert int to byte" />
             <mnemonic id="i2c" opcode="146" operation="Convert int to char" />
             <mnemonic id="i2d" opcode="135" operation="Convert int to double" />
@@ -257,24 +315,113 @@
             <mnemonic id="iconst_4" opcode="7" operation="Push int constant" />
             <mnemonic id="iconst_5" opcode="8" operation="Push int constant" />
             <mnemonic id="idiv" opcode="108" operation="Divide int" />
-            <mnemonic id="if_acmpeq" opcode="165" operation="Branch if reference comparison succeeds" />
-            <mnemonic id="if_acmpne" opcode="166" operation="Branch if reference comparison succeeds" />
-            <mnemonic id="if_icmpeq" opcode="159" operation="Branch if int comparison succeeds" />
-            <mnemonic id="if_icmpne" opcode="160" operation="Branch if int comparison succeeds" />
-            <mnemonic id="if_icmplt" opcode="161" operation="Branch if int comparison succeeds" />
-            <mnemonic id="if_icmpge" opcode="162" operation="Branch if int comparison succeeds" />
-            <mnemonic id="if_icmpgt" opcode="163" operation="Branch if int comparison succeeds" />
-            <mnemonic id="if_icmple" opcode="164" operation="Branch if int comparison succeeds" />
-            <mnemonic id="ifeq" opcode="153" operation="Branch if int comparison with zero succeeds" />
-            <mnemonic id="ifne" opcode="154" operation="Branch if int comparison with zero succeeds" />
-            <mnemonic id="iflt" opcode="155" operation="Branch if int comparison with zero succeeds" />
-            <mnemonic id="ifge" opcode="156" operation="Branch if int comparison with zero succeeds" />
-            <mnemonic id="ifgt" opcode="157" operation="Branch if int comparison with zero succeeds" />
-            <mnemonic id="ifle" opcode="158" operation="Branch if int comparison with zero succeeds" /> <!-- TODO: fix operation -->
-            <mnemonic id="ifnonnull" opcode="199" operation="Branch if reference not null" />
-            <mnemonic id="ifnull" opcode="198" operation="Branch if reference null" />
-            <mnemonic id="iinc" opcode="132" operation="Increment local variable by constant" />
-            <mnemonic id="iload" opcode="21" operation="Load int from local variable" />
+            <mnemonic id="if_acmpeq" opcode="165" operation="Branch if reference comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_acmpne" opcode="166" operation="Branch if reference comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_icmpeq" opcode="159" operation="Branch if int comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_icmpne" opcode="160" operation="Branch if int comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_icmplt" opcode="161" operation="Branch if int comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_icmpge" opcode="162" operation="Branch if int comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_icmpgt" opcode="163" operation="Branch if int comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="if_icmple" opcode="164" operation="Branch if int comparison succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="ifeq" opcode="153" operation="Branch if int comparison with zero succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="ifne" opcode="154" operation="Branch if int comparison with zero succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="iflt" opcode="155" operation="Branch if int comparison with zero succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="ifge" opcode="156" operation="Branch if int comparison with zero succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="ifgt" opcode="157" operation="Branch if int comparison with zero succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <!-- TODO: fix operation -->
+            <mnemonic id="ifle" opcode="158" operation="Branch if int comparison with zero succeeds" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="ifnonnull" opcode="199" operation="Branch if reference not null" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="ifnull" opcode="198" operation="Branch if reference null" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="iinc" opcode="132" operation="Increment local variable by constant" >
+                <!--
+                    operands = Integer.toString(code[offset+1] & 0x00FF) + "," + Integer.toString(code[offset+2]);
+                -->
+            </mnemonic>
+            <mnemonic id="iload" opcode="21" operation="Load int from local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="iload_0" opcode="26" operation="Load int from local variable" />
             <mnemonic id="iload_1" opcode="27" operation="Load int from local variable" />
             <mnemonic id="iload_2" opcode="28" operation="Load int from local variable" />
@@ -283,18 +430,47 @@
             <mnemonic id="impdep1" opcode="254" operation="Reserved opcode, supporting backdoor" />
             <mnemonic id="impdep2" opcode="255" operation="Reserved opcode, supporting backdoor" />
             <mnemonic id="ineg" opcode="116" operation="Negate int" />
-            <mnemonic id="instanceof" opcode="193" operation="Determine if object is of given type" />
+            <mnemonic id="instanceof" opcode="193" operation="Determine if object is of given type" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getClassName(constIndex);
+                -->
+            </mnemonic>
             <mnemonic id="invokedynamic" opcode="186" operation="Invoke dynamic method" />
-            <mnemonic id="invokeinterface" opcode="185" operation="Invoke interface method" />
-            <mnemonic id="invokespecial" opcode="183" operation="Invoke instance method; special handling for superclass, private, and instance initialization method invocations" />
-            <mnemonic id="invokestatic" opcode="184" operation="Invoke a class (static) method" />
-            <mnemonic id="invokevirtual" opcode="182" operation="Invoke instance method; dispatch based on class" />
+            <mnemonic id="invokeinterface" opcode="185" operation="Invoke interface method" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = Integer.toString(code[offset+3] & 0x00FF) + "," + getMethodNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="invokespecial" opcode="183" operation="Invoke instance method; special handling for superclass, private, and instance initialization method invocations" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getMethodNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="invokestatic" opcode="184" operation="Invoke a class (static) method" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getMethodNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="invokevirtual" opcode="182" operation="Invoke instance method; dispatch based on class" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getMethodNames(constIndex);
+                -->
+            </mnemonic>
             <mnemonic id="ior" opcode="128" operation="Boolean OR int" />
             <mnemonic id="irem" opcode="112" operation="Remainder int" />
             <mnemonic id="ireturn" opcode="172" operation="Return int from method" />
             <mnemonic id="ishl" opcode="120" operation="Shift left int" />
             <mnemonic id="ishr" opcode="122" operation="Arithmetic shift right int" />
-            <mnemonic id="istore" opcode="54" operation="Store int into local variable" />
+            <mnemonic id="istore" opcode="54" operation="Store int into local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="istore_0" opcode="59" operation="Store int into local variable" />
             <mnemonic id="istore_1" opcode="60" operation="Store int into local variable" />
             <mnemonic id="istore_2" opcode="61" operation="Store int into local variable" />
@@ -302,8 +478,18 @@
             <mnemonic id="isub" opcode="100" operation="Subtract int" />
             <mnemonic id="iushr" opcode="124" operation="Logical shift right int" />
             <mnemonic id="ixor" opcode="130" operation="Boolean XOR int" />
-            <mnemonic id="jsr" opcode="168" operation="Jump subroutine" />
-            <mnemonic id="jsr_w" opcode="201" operation="Jump subroutine (wide index)" />
+            <mnemonic id="jsr" opcode="168" operation="Jump subroutine" >
+                <!--
+                    branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
+            <mnemonic id="jsr_w" opcode="201" operation="Jump subroutine (wide index)" >
+                <!--
+                    branchOffset = getU4(code, offset+1);
+                    operands = Integer.toString(offset + branchOffset);
+                -->
+            </mnemonic>
             <mnemonic id="l2d" opcode="138" operation="Convert long to double" />
             <mnemonic id="l2f" opcode="137" operation="Convert long to float" />
             <mnemonic id="l2i" opcode="136" operation="Convert long to int" />
@@ -314,11 +500,30 @@
             <mnemonic id="lcmp" opcode="148" operation="Compare long" />
             <mnemonic id="lconst_0" opcode="9" operation="Push long constant" />
             <mnemonic id="lconst_1" opcode="10" operation="Push long constant" />
-            <mnemonic id="ldc" opcode="18" operation="Push item from run-time constant pool" />
-            <mnemonic id="ldc_w" opcode="19" operation="Push item from run-time constant pool (wide index)" />
-            <mnemonic id="ldc2_w" opcode="20" operation="Push long or double from run-time constant pool (wide index)" />
+            <mnemonic id="ldc" opcode="18" operation="Push item from run-time constant pool" >
+                <!--
+                    constIndex = 0x00FF & code[offset+1];
+                    operands = Integer.toString(constIndex) + " " + constant_pool[constIndex].toString();
+                -->
+            </mnemonic>
+            <mnemonic id="ldc_w" opcode="19" operation="Push item from run-time constant pool (wide index)" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = Integer.toString(constIndex) + " " + constant_pool[constIndex].toString();
+                -->
+            </mnemonic>
+            <mnemonic id="ldc2_w" opcode="20" operation="Push long or double from run-time constant pool (wide index)" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = Integer.toString(constIndex) + " " + constant_pool[constIndex].toString();
+                -->
+            </mnemonic>
             <mnemonic id="ldiv" opcode="109" operation="Divide long" />
-            <mnemonic id="lload" opcode="22" operation="Load long from local variable" />
+            <mnemonic id="lload" opcode="22" operation="Load long from local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="lload_0" opcode="30" operation="Load long from local variable" />
             <mnemonic id="lload_1" opcode="31" operation="Load long from local variable" />
             <mnemonic id="lload_2" opcode="32" operation="Load long from local variable" />
@@ -331,7 +536,11 @@
             <mnemonic id="lreturn" opcode="173" operation="Return long from method" />
             <mnemonic id="lshl" opcode="121" operation="Shift left long" />
             <mnemonic id="lshr" opcode="123" operation="Arithmetic shift right long" />
-            <mnemonic id="lstore" opcode="55" operation="Store long into local variable" />
+            <mnemonic id="lstore" opcode="55" operation="Store long into local variable" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="lstore_0" opcode="63" operation="Store long into local variable" />
             <mnemonic id="lstore_1" opcode="64" operation="Store long into local variable" />
             <mnemonic id="lstore_2" opcode="65" operation="Store long into local variable" />
@@ -341,22 +550,79 @@
             <mnemonic id="lxor" opcode="131" operation="Boolean XOR long" />
             <mnemonic id="monitorenter" opcode="194" operation="Enter monitor for object" />
             <mnemonic id="monitorexit" opcode="195" operation="Exit monitor for object" />
-            <mnemonic id="multianewarray" opcode="197" operation="Create new multidimensional array" />
-            <mnemonic id="new" opcode="187" operation="Create new object" />
+            <mnemonic id="multianewarray" opcode="197" operation="Create new multidimensional array" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = Integer.toString(code[offset+3] & 0x00FF) + "," + getClassName(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="new" opcode="187" operation="Create new object" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getClassName(constIndex);
+                -->
+            </mnemonic>
             <mnemonic id="newarray" opcode="188" operation="Create new array" />
             <mnemonic id="nop" opcode="0" operation="Do nothing" />
             <mnemonic id="pop" opcode="87" operation="Pop the top operand stack value" />
             <mnemonic id="pop2" opcode="88" operation="Pop the top one or two operand stack values" />
-            <mnemonic id="putfield" opcode="181" operation="Set field in object" />
-            <mnemonic id="putstatic" opcode="179" operation="Set static field in class" />
-            <mnemonic id="ret" opcode="169" operation="Return from subroutine" />
+            <mnemonic id="putfield" opcode="181" operation="Set field in object" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getFieldNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="putstatic" opcode="179" operation="Set static field in class" >
+                <!--
+                    constIndex = getU2(code, offset+1);
+                    operands = getFieldNames(constIndex);
+                -->
+            </mnemonic>
+            <mnemonic id="ret" opcode="169" operation="Return from subroutine" >
+                <!--
+                    operands = Integer.toString(0x00FF & code[offset+1]);
+                -->
+            </mnemonic>
             <mnemonic id="return" opcode="177" operation="Return void from method" />
             <mnemonic id="saload" opcode="53" operation="Load short from array" />
             <mnemonic id="sastore" opcode="86" operation="Store into short array" />
-            <mnemonic id="sipush" opcode="17" operation="Push short" />
+            <mnemonic id="sipush" opcode="17" operation="Push short" >
+                <!--
+                    operands = Integer.toString((short) getU2(code, offset+1));
+                -->
+            </mnemonic>
             <mnemonic id="swap" opcode="95" operation="Swap the top two operand stack values" />
             <mnemonic id="tableswitch" opcode="170" operation="Access jump table by index and jump" />
-            <mnemonic id="wide" opcode="196" operation="Extend local variable index by additional bytes" />
+            <mnemonic id="wide" opcode="196" operation="Extend local variable index by additional bytes" >
+                <!--
+                    switch (code[offset+1] & 0x00FF) {
+                        case 21:  // iload
+                        case 23:  // fload
+                        case 25:  // aload
+                        case 22:  // lload
+                        case 24:  // dload
+                        case 54:  // istore
+                        case 56:  // fstore
+                        case 58:  // astore
+                        case 55:  // lstore
+                        case 57:  // dstore
+                        case 169:  // ret
+                            operands = Integer.toString(getU2(code, offset+2));
+                            break;
+                        case 132:  // iinc
+                            operands = Integer.toString(getU2(code, offset+2)) + "," +
+                                        Integer.toString(getU2(code, offset+2));
+                -->
+            </mnemonic>
+            <!--
+                int getU2(byte[] bytes, int offset) {
+                    return 0x0000FFFF & (bytes[offset] << 8) | (0x00FF & bytes[offset+1]);
+                }
+
+                int getU4(byte[] bytes, int offset) {
+                    return (getU2(bytes, offset) << 16) | getU2(bytes, offset+2);
+                }
+            -->
         </mnemonics>
     </java-specification>
 </java-specifications>

@@ -89,6 +89,7 @@ public class ArtifactManager {
                     // For each resource, fetch referenced classes from constant pool
                     // Create unique list and update model (XML)
                 }
+                // TODO: update aggregated set of resources (part of Analysis)
             }
             // TODO: chart packages and classes into visual groups using graphviz/gephi
 

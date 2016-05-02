@@ -3,6 +3,9 @@ package net.technolords.tools.data.method;
 import net.technolords.tools.data.annotation.AnnotationUsingBoolean;
 import net.technolords.tools.data.annotation.AnnotationUsingDefault;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Created by Technolords on 2016-Mar-31.
  */
@@ -13,6 +16,7 @@ public class MethodTestWithAnnotations {
         if(value != null) {
             value.concat(" added content");
         }
+        Map<String, ?> stuff = new ConcurrentHashMap<>();
     }
 
     @Override

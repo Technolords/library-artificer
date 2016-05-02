@@ -50,9 +50,9 @@ public class BytecodeParserTest extends TestSupport {
         return new Object[][] {
 //            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
-            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
+//            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
 //            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
-//            { FieldTestWithTypeAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithTypeAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
         };
     }
 
@@ -115,6 +115,8 @@ public class BytecodeParserTest extends TestSupport {
 
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
         bytecodeParser.analyseBytecode(resource);
+        ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
+        Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
         LOGGER.debug("Done...");
     }
 
