@@ -14,6 +14,7 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.Para
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SignatureParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceDebugExtensionParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.StackMapTableParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsParser;
@@ -312,6 +313,8 @@ public class AttributesParser {
                 break;
 
             case STACK_MAP_TABLE:                           // [location: Code]
+                // Parse the stack map table (delegated)
+//                StackMapTableParser.extractStackMapTable(dataInputStream, resource);
                 // TODO
                 LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
                 for(int i = 0; i < attributeLength; i++) {

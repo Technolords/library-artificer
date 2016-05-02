@@ -90,8 +90,8 @@ public class BytecodeParserTest extends TestSupport {
     public Object[][] dataSetWithMethods() {
         return new Object[][] {
 //            { MethodTestWithRegularMethods.class, null },
-//            { MethodTestWithStaticMethods.class, null },
-            { MethodTestWithAnnotations.class, null},
+            { MethodTestWithStaticMethods.class, null },
+//            { MethodTestWithAnnotations.class, null},
         };
     }
 
