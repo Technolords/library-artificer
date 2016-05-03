@@ -7,24 +7,24 @@ import java.util.List;
  */
 public class MethodTestWithRegularMethods {
 
-//    public void simple() { }
+    public void simple() { }
 
-//    public void singleParameter(final String param1) { }
+    public void singleParameter(final String param1) { }
 
-//    public void dualParameters(String param1, int param2) { }
+    public void dualParameters(String param1, int param2) { }
 
-//    public int multiParameters(String... parameters) {
-//        int totalCharlength = 0;
-//        for(String parameter : parameters) {
-//            totalCharlength += parameter.length();
-//        }
-//        return totalCharlength;
-//    }
+    public int multiParameters(String... parameters) {
+        int totalCharlength = 0;
+        for(String parameter : parameters) {
+            totalCharlength += parameter.length();
+        }
+        return totalCharlength;
+    }
 
-//    public static void main(String[] args) {
-//        MethodTestWithRegularMethods m = new MethodTestWithRegularMethods();
-//        m.multiParameters("a", "bb", "ccc");
-//    }
+    public static void main(String[] args) {
+        MethodTestWithRegularMethods m = new MethodTestWithRegularMethods();
+        m.multiParameters("a", "bb", "ccc");
+    }
 
     void totalFuel(List<? super MethodTestWithRegularMethods> list) { }
 

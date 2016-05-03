@@ -1,18 +1,10 @@
-- Implement STACK_MAP_TABLE attribute parser (see AttributesParser.java class)
+
 
 - Implement test cases for various situations:
     use samples from: http://classfileanalyzer.javaseiten.de/index.html
     read invoke dynamic: http://www.javaworld.com/article/2860079/learn-java/invokedynamic-101.html
     test with static initializer blocks
     test with generics:
-        public static <T> ArrayList<T> createArrayList(T ... elements) {
-            ArrayList<T> list = new ArrayList<T>();
-            for (T element : elements) {
-                list.add(element);
-            }
-            return list;
-        }
-
         public <T> T max(List<T> list, Comparator<T> comp) {
            T biggestSoFar = list.get(0);
            for ( T t : list ) {

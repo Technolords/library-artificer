@@ -245,7 +245,10 @@ public class StackMapTableParser {
         // 252 - 254    frame type: append_frame
         if(tag >= 252 && tag <= 254) {
             offsetDelta = dataInputStream.readUnsignedShort();
-            extractVerificationType(dataInputStream, resource);
+            int appendedLocals = tag - 251;
+            for(int appendedLocalIndex = 0; appendedLocalIndex < appendedLocals; appendedLocalIndex++) {
+                extractVerificationType(dataInputStream, resource);
+            }
             return;
         }
         // 255          frame type: full_frame

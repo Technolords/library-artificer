@@ -9,6 +9,7 @@ import net.technolords.tools.data.field.FieldTestWithInnerClasses;
 import net.technolords.tools.data.field.FieldTestWithRegularFields;
 import net.technolords.tools.data.field.FieldTestWithTypeAnnotations;
 import net.technolords.tools.data.method.MethodTestWithAnnotations;
+import net.technolords.tools.data.method.MethodTestWithGenericMethods;
 import net.technolords.tools.data.method.MethodTestWithRegularMethods;
 import net.technolords.tools.data.method.MethodTestWithStaticMethods;
 import org.slf4j.Logger;
@@ -91,7 +92,8 @@ public class BytecodeParserTest extends TestSupport {
         return new Object[][] {
             { MethodTestWithRegularMethods.class, null },
             { MethodTestWithStaticMethods.class, null },
-            { MethodTestWithAnnotations.class, null},
+            { MethodTestWithAnnotations.class, null },
+            { MethodTestWithGenericMethods.class, null },
         };
     }
 
