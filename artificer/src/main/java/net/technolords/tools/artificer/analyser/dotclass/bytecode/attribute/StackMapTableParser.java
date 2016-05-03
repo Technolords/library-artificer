@@ -10,6 +10,51 @@ import java.io.IOException;
 /**
  * Created by Technolords on 2016-Apr-11.
  *
+ * Java requires all classes that are loaded to be verified, in order to maintain the security of the sandbox and
+ * ensure that the code is safe to optimize. Note that this is done on the bytecode level, so the verification does
+ * not verify invariants of the Java language, it merely verifies that the bytecode makes sense according to the
+ * rules for bytecode.
+ *
+ * Among other, things bytecode verification makes sure that instructions are well formed, that all the jumps are
+ * to valid instructions within the method, and that all instructions operate on values of the correct type. The
+ * last one is where the stack map comes in.
+ *
+ * The thing is that bytecode by itself contains no explicit type information. Types are determined implicitly
+ * through dataflow analysis. For example, an iconst instruction creates an integer value. If you store it in slot 1,
+ * that slot now has an int. If control flow merges from code which stores a float there instead, the slot is now
+ * considered to have invalid type, meaning that you can't do anything more with that value until overwriting it.
+ *
+ * Historically, the bytecode verifier inferred all the types using these dataflow rules. Unfortunately, it is
+ * impossible to infer all the types in a single linear pass through the bytecode because a backwards jump might
+ * invalidate already inferred types. The classic verifier solved this by iterating through the code until
+ * everything stopped changing, potentially requiring multiple passes.
+ *
+ * However, verification makes class loading slow in Java. Oracle decided to solve this issue by adding a new, faster
+ * verifier, that can verify bytecode in a single pass. To do this, they required all new classes starting in Java 7
+ * (with Java 6 in a transitional state) to carry metadata about their types, so that the bytecode can be verified in
+ * a single pass. Since the bytecode format itself can't be changed, this type information is stored separately
+ * in an attribute called StackMapTable.
+ *
+ * Simply storing the type for every single value at every single point in the code would obviously take up a lot of
+ * space and be very wasteful. In order to make the metadata smaller and more efficient, they decided to have it only
+ * list the types at positions which are targets of jumps. If you think about it, this is the only time you need the
+ * extra information to do a single pass verification. In between jump targets, all control flow is linear, so you
+ * can infer the types at in between positions using the old inference rules.
+ *
+ * Each position where types are explicitly listed is known as a stack map frame. The StackMapTable attribute contains
+ * a list of frames in order, though they are usually expressed as a difference from the previous frame in order to
+ * reduce data size. If there are no frames in the method, which occurs when control flow never joins
+ * (i.e. the CFG is a tree), then the StackMapTable attribute can be omitted entirely.
+ *
+ * So this is the basic idea of how StackMapTable works and why it was added. The last question is how the implicit
+ * initial frame is created. The answer of course is that at the beginning of the method, the operand stack is empty
+ * and the local variable slots have the types given by the types of the method parameters, which are determined
+ * from the method descriptor.
+ *
+ * If you're used to Java, there are a few minor differences to how method parameter types work at the bytecode level.
+ * First off, virtual methods have an implicit this as first parameter. Second, boolean, byte, char, and short do not
+ * exist at the bytecode level. Instead, they are all implemented as ints behind the scenes.
+ *
  * Legend:
  * u1: java: readUnsignedByte
  * u2: java: readUnsignedShort
@@ -211,7 +256,7 @@ public class StackMapTableParser {
                 extractVerificationType(dataInputStream, resource);
             }
             int numberOfStackItems = dataInputStream.readUnsignedShort();
-            for(int numberOfStackIndex = 0; numberOfStackIndex < numberOfLocals; numberOfStackIndex++) {
+            for(int numberOfStackIndex = 0; numberOfStackIndex < numberOfStackItems; numberOfStackIndex++) {
                 extractVerificationType(dataInputStream, resource);
             }
             return;

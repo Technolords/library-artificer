@@ -48,10 +48,10 @@ public class BytecodeParserTest extends TestSupport {
         expectedReferencedClassesWithRegularFields.add("java/lang/Object");
 
         return new Object[][] {
-//            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
-//            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
-//            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
-//            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithConstants.class, 3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithRegularFields.class, 3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithInnerClasses.class,  3, expectedReferencedClassesWithRegularFields },
+            { FieldTestWithAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
             { FieldTestWithTypeAnnotations.class,   3, expectedReferencedClassesWithRegularFields },
         };
     }
@@ -89,9 +89,9 @@ public class BytecodeParserTest extends TestSupport {
     @DataProvider (name = "dataSetWithMethods", parallel = false)
     public Object[][] dataSetWithMethods() {
         return new Object[][] {
-//            { MethodTestWithRegularMethods.class, null },
+            { MethodTestWithRegularMethods.class, null },
             { MethodTestWithStaticMethods.class, null },
-//            { MethodTestWithAnnotations.class, null},
+            { MethodTestWithAnnotations.class, null},
         };
     }
 

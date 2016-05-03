@@ -314,12 +314,7 @@ public class AttributesParser {
 
             case STACK_MAP_TABLE:                           // [location: Code]
                 // Parse the stack map table (delegated)
-//                StackMapTableParser.extractStackMapTable(dataInputStream, resource);
-                // TODO
-                LOGGER.debug("TODO: extract attribute details of name: " + attributeName + " for now absorbing bytes...");
-                for(int i = 0; i < attributeLength; i++) {
-                    dataInputStream.readUnsignedByte();
-                }
+                StackMapTableParser.extractStackMapTable(dataInputStream, resource);
                 break;
 
             case SYNTHETIC:                                 // [location: ClassFile, field_info, method_info]
