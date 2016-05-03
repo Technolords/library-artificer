@@ -135,6 +135,7 @@ public class CodeParser {
             int catchType = dataInputStream.readUnsignedShort();
         }
         int attributesCount = dataInputStream.readUnsignedShort();
+        LOGGER.debug("Code has total attributes: " + attributesCount);
         AttributesParser.extractAttributes(dataInputStream, attributesCount, javaSpecification, resource, AttributesParser.LOCATION_CODE);
     }
 

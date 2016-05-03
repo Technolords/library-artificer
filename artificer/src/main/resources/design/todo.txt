@@ -1,19 +1,11 @@
+- Discover how sequence diagrams can be extracted (i.e. what stateful data must be preserved)
 
+- Discover how to source all attributes from XML
 
 - Implement test cases for various situations:
     use samples from: http://classfileanalyzer.javaseiten.de/index.html
     read invoke dynamic: http://www.javaworld.com/article/2860079/learn-java/invokedynamic-101.html
     test with static initializer blocks
-    test with generics:
-        public <T> T max(List<T> list, Comparator<T> comp) {
-           T biggestSoFar = list.get(0);
-           for ( T t : list ) {
-               if (comp.compare(t, biggestSoFar) > 0) {
-                  biggestSoFar = t;
-               }
-           }
-           return biggestSoFar;
-        }
 
     test with lambda's
         public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
