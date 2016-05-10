@@ -74,10 +74,12 @@ public class ArtifactManager {
             if (javaResourceGroup != null) {
                 for (Resource resource : javaResourceGroup.getResources()) {
                     // Determine the compiled version of the resource, and register it
+                    // TODO: move spec manager 'behind' the bytecodeParser (avoid double parsing of xml?)
                     this.javaSpecificationManager.registerCompiledVersion(analysis.getMeta(), resource);
 
                     // Determine the references classes by the resource
                     this.bytecodeParser.analyseBytecode(resource);
+
                     /**
                      * Resolve three class pools:
                      * - self contained
@@ -85,11 +87,11 @@ public class ArtifactManager {
                      *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
                      * - external
                      */
-                    this.constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
                     // For each resource, fetch referenced classes from constant pool
                     // Create unique list and update model (XML)
                 }
                 // TODO: update aggregated set of resources (part of Analysis)
+                // ReferencedClass
             }
             // TODO: chart packages and classes into visual groups using graphviz/gephi
 

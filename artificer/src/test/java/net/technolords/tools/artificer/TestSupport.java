@@ -36,15 +36,17 @@ public class TestSupport {
         buffer.append("src").append(File.separator).append("test").append(File.separator);
         buffer.append("resources").append(File.separator).append("data");
 
-        // Set path to folder containing the data, i.e. src/test/resources/data/class
+        // Set path to folder containing the data, i.e. src/test/resources/data
         Path pathToData = FileSystems.getDefault().getPath(buffer.toString());
         if(!pathToData.toAbsolutePath().toString().contains("artificer")) {
             StringBuilder pathWithPrefix = new StringBuilder();
             pathWithPrefix.append("artificer").append(File.separator).append(buffer.toString());
             pathToData = FileSystems.getDefault().getPath(pathWithPrefix.toString());
         }
+        this.pathToDataFolder = pathToData.toAbsolutePath();
+        LOGGER.debug("Data folder set: {} and exists: {}", this.pathToDataFolder.toString(), Files.exists(this.pathToDataFolder));
 
-        // Set path to Target folder to create Output
+        // Set path to Target folder to create Output, i.e. target
         Path pathToTarget = FileSystems.getDefault().getPath("target");
         if(!pathToTarget.toAbsolutePath().endsWith("artificer" + File.separator + "target")) {
             pathToTarget = FileSystems.getDefault().getPath("artificer" + File.separator + "target");
@@ -52,9 +54,7 @@ public class TestSupport {
         this.pathToTargetFolder = pathToTarget.toAbsolutePath();
         LOGGER.debug("Target folder set: {} and exists: {}", this.pathToTargetFolder.toString(), Files.exists(this.pathToTargetFolder));
 
-        this.pathToDataFolder = pathToData.toAbsolutePath();
-        LOGGER.debug("Data folder set: {} and exists: {}", this.pathToDataFolder.toString(), Files.exists(this.pathToDataFolder));
-
+        // Set path to folder containing the data, i.e. src/test/resources/data/class
         this.pathToClassFolder = FileSystems.getDefault().getPath(pathToData.toAbsolutePath() + File.separator + "class");
         LOGGER.debug("Class folder set: {} and exists: {}", this.pathToClassFolder.toString(), Files.exists(this.pathToClassFolder));
     }

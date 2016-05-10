@@ -15,7 +15,7 @@ import java.util.Set;
 public class ConstantPoolAnalyser {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConstantPoolAnalyser.class);
 
-    public Set<String> extractReferencedClasses(ConstantPool constantPool) {
+    public static Set<String> extractReferencedClasses(ConstantPool constantPool) {
         Set<String> referencedClasses = new HashSet<>();
         if(constantPool == null) {
             return referencedClasses;
@@ -57,7 +57,7 @@ public class ConstantPoolAnalyser {
      * @return
      *  The referenced class, or null when not found.
      */
-    protected String extractReferencedClassFromConstantOfTypeClass(ConstantPool constantPool, Constant constant) {
+    protected static String extractReferencedClassFromConstantOfTypeClass(ConstantPool constantPool, Constant constant) {
         ConstantInfo constantInfo = constant.getConstantInfoList().get(0);
         LOGGER.debug("ConstantInfo description: " + constantInfo.getDescription());
         if("name_index".equals(constantInfo.getDescription())) {
