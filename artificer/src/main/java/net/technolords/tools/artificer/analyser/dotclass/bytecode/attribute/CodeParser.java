@@ -126,6 +126,35 @@ public class CodeParser {
             LOGGER.debug("Opcode (index: " + codeIndex + "): " + opcode + ", with mnemonic: " + extractMnemonic(opcode, javaSpecification.getMnemonics().getMnemonics()));
         }
 
+        // Sample from main with hello world
+        // ---------------------------------
+        // Current format:
+        //  Opcode (index: 0): 42, with mnemonic: aload_0
+        //  Opcode (index: 1): 183, with mnemonic: invokespecial
+        //  Opcode (index: 2): 0, with mnemonic: nop
+        //  Opcode (index: 3): 1, with mnemonic: aconst_null
+        //  Opcode (index: 4): 177, with mnemonic: return
+        // Alternative format (from javap -v):
+        //  0: aload_0
+        //  1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+        //  4: return
+        //
+        // Current format:
+        //  Opcode (index: 0): 178, with mnemonic: getstatic
+        //  Opcode (index: 1): 0, with mnemonic: nop
+        //  Opcode (index: 2): 2, with mnemonic: iconst_m1
+        //  Opcode (index: 3): 18, with mnemonic: ldc
+        //  Opcode (index: 4): 3, with mnemonic: iconst_0
+        //  Opcode (index: 5): 182, with mnemonic: invokevirtual
+        //  Opcode (index: 6): 0, with mnemonic: nop
+        //  Opcode (index: 7): 4, with mnemonic: iconst_1
+        //  Opcode (index: 8): 177, with mnemonic: return
+        // Alternative format (from javap -v):
+        //  0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        //  3: ldc           #3                  // String Hello World!
+        //  5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        //  8: return
+
         int exceptionTableLength = dataInputStream.readUnsignedShort();
         LOGGER.debug("Exceptions table length: " + exceptionTableLength);
         for(int exceptionIndex = 0; exceptionIndex < exceptionTableLength; exceptionIndex++) {

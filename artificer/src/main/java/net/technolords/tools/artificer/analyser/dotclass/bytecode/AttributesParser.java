@@ -175,7 +175,7 @@ public class AttributesParser {
      * v Signature                             [location: ClassFile, field_info, method_info]
      * v SourceDebugExtension                  [location: ClassFile]
      * v SourceFile                            [location: ClassFile]
-     * - StackMapTable                         [location: Code]
+     * v StackMapTable                         [location: Code]
      * v Synthetic                             [location: ClassFile, field_info, method_info]
      *
      * @param dataInputStream

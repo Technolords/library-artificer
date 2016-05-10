@@ -158,5 +158,19 @@ public class LocalVariableTableParser {
             // Add signature (when applicable) to the referenced classes
             SignatureAnalyser.referencedClasses(resource.getReferencedClasses(), signature);
         }
+
+        // Sample from main with hello world
+        // ---------------------------------
+        // Current format:
+        //  Name index: 12, descriptorIndex: 13, index:
+        // Alternative format (from javap -v):
+        //  Start   Length  Slot    Name    Signature
+        //      0        5     0    this    Lnet/technolords/tools/data/method/MethodTestWithMainMethod;
+        //
+        // Current format:
+        //  Name index: 16, descriptorIndex: 17, index: 0
+        // Alternative format (from javap -v):
+        //  Start   Length  Slot    Name    Signature
+        //      0        9     0    args    [Ljava/lang/String;
     }
 }

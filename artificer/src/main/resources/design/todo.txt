@@ -1,6 +1,61 @@
 - Discover how sequence diagrams can be extracted (i.e. what stateful data must be preserved)
 
-- Discover how to source all attributes from XML
+    compare with 'javap -v MethodTestWithMainMethod.class'
+
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
+
+    Method (index: 1), with name: main, with descriptor (index: 15): ([Ljava/lang/String;)V and total attributes: 1
+        Attribute (index: 0), with (index: 9) of type: Code, with attribute length: 55
+            MaxStack: 2, MaxLocals: 1, CodeLength: 9
+            Opcode (index: 0): 178, with mnemonic: getstatic
+            Opcode (index: 1): 0, with mnemonic: nop
+            Opcode (index: 2): 2, with mnemonic: iconst_m1
+            Opcode (index: 3): 18, with mnemonic: ldc
+            Opcode (index: 4): 3, with mnemonic: iconst_0
+            Opcode (index: 5): 182, with mnemonic: invokevirtual
+            Opcode (index: 6): 0, with mnemonic: nop
+            Opcode (index: 7): 4, with mnemonic: iconst_1
+            Opcode (index: 8): 177, with mnemonic: return
+            Exceptions table length: 0
+            Code has total attributes: 2
+                Attribute (index: 0), with (index: 10) of type: LineNumberTable, with attribute length: 10
+                    Line number table length: 2
+                    Line number: 9, start pc: 0
+                    Line number: 10, start pc: 8
+                Attribute (index: 1), with (index: 11) of type: LocalVariableTable, with attribute length: 12
+                    Local variable table length: 1
+                    Name index: 16, descriptorIndex: 17, index: 0
+
+  code[0, code_length] = code[0, 8] = 9 bytes
+    [0] = 178   -> getstatic
+
+        int constIndex = 0;         getU2(code, offset+1);
+        String operands = "";       getClassName(constIndex);
+        int branchOffset = 0;
+    [1]
+    [2]
+    [3]
+    [4]
+    [5]
+    [6]
+    [7]
+    [8]
+
+    int getU2(byte[] bytes, int offset) {
+        return 0x0000FFFF & (bytes[offset] << 8) | (0x00FF & bytes[offset+1]);
+    }
+
+    int getU4(byte[] bytes, int offset) {
+        return (getU2(bytes, offset) << 16) | getU2(bytes, offset+2);
+    }
+
+- Combine the referenced classes (from resource and constant pool)
+
+- Export these in the XML output
+
+- Discover how to source all attributes from XML spec into attribute reading
 
 - Implement test cases for various situations:
     use samples from: http://classfileanalyzer.javaseiten.de/index.html
