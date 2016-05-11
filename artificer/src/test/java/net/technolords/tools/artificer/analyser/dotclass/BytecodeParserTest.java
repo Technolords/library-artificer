@@ -10,6 +10,7 @@ import net.technolords.tools.data.field.FieldTestWithRegularFields;
 import net.technolords.tools.data.field.FieldTestWithTypeAnnotations;
 import net.technolords.tools.data.method.MethodTestWithAnnotations;
 import net.technolords.tools.data.method.MethodTestWithGenericMethods;
+import net.technolords.tools.data.method.MethodTestWithLambdaMethods;
 import net.technolords.tools.data.method.MethodTestWithMainMethod;
 import net.technolords.tools.data.method.MethodTestWithRegularMethods;
 import net.technolords.tools.data.method.MethodTestWithStaticMethods;
@@ -110,12 +111,14 @@ public class BytecodeParserTest extends TestSupport {
     @DataProvider (name = "dataSetWithMethods", parallel = false)
     public Object[][] dataSetWithMethods() {
         return new Object[][] {
-            { MethodTestWithRegularMethods.class, JAVA_8, this.todo() },
-            { MethodTestWithStaticMethods.class, JAVA_8, this.todo() },
-            { MethodTestWithAnnotations.class, JAVA_8, this.todo() },
-            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
-            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
-            { MethodTestWithMainMethod.class, JAVA_8, this.todo() },
+                // TODO: fix the test cases like the other data set
+//            { MethodTestWithRegularMethods.class, JAVA_8, this.todo() },
+//            { MethodTestWithStaticMethods.class, JAVA_8, this.todo() },
+//            { MethodTestWithAnnotations.class, JAVA_8, this.todo() },
+//            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
+//            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
+//            { MethodTestWithMainMethod.class, JAVA_8, this.todo() },
+            { MethodTestWithLambdaMethods.class, JAVA_8, this.todo() },
         };
     }
 

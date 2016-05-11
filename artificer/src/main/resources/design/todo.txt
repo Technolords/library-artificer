@@ -51,8 +51,6 @@
         return (getU2(bytes, offset) << 16) | getU2(bytes, offset+2);
     }
 
-- Combine the referenced classes (from resource and constant pool)
-
 - Export these in the XML output
 
 - Discover how to source all attributes from XML spec into attribute reading

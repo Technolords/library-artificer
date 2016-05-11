@@ -45,6 +45,7 @@ public class SignatureAnalyserTest {
         expectedReferencedClassesForEntry4.add("java/nio/file/Path");
 
         return new Object[][] {
+                // <K:Ljava/lang/Object;U:Ljava/lang/Object;>()Ljava/util/stream/Collector<Ljava/util/Map$Entry<TK;TU;>;*Ljava/util/Map<TK;TU;>;>;
                 // (Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;
                 // (Ljava/util/List<-Lnet/technolords/tools/data/method/MethodTestWithRegularMethods;>;)V
                 // <T:Ljava/lang/Object;>([TT;)Ljava/util/ArrayList<TT;>;
