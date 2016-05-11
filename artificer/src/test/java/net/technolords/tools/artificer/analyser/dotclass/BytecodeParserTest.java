@@ -13,6 +13,7 @@ import net.technolords.tools.data.method.MethodTestWithGenericMethods;
 import net.technolords.tools.data.method.MethodTestWithLambdaMethods;
 import net.technolords.tools.data.method.MethodTestWithMainMethod;
 import net.technolords.tools.data.method.MethodTestWithRegularMethods;
+import net.technolords.tools.data.method.MethodTestWithStaticInitializer;
 import net.technolords.tools.data.method.MethodTestWithStaticMethods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +119,8 @@ public class BytecodeParserTest extends TestSupport {
 //            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
 //            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
 //            { MethodTestWithMainMethod.class, JAVA_8, this.todo() },
-            { MethodTestWithLambdaMethods.class, JAVA_8, this.todo() },
+//            { MethodTestWithLambdaMethods.class, JAVA_8, this.todo() },
+            { MethodTestWithStaticInitializer.class, JAVA_8, this.todo() },
         };
     }
 

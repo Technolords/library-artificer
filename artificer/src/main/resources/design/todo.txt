@@ -60,15 +60,6 @@
     read invoke dynamic: http://www.javaworld.com/article/2860079/learn-java/invokedynamic-101.html
     test with static initializer blocks
 
-    test with lambda's
-        public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
-            return Collectors.toMap((e) -> e.getKey(), (e) -> e.getValue());
-        }
-
-        public static <K, U> Collector<Map.Entry<K, U>, ?, Map<K, U>> entriesToMap() {
-            return Collectors.toMap((e) -> (e).getKey(), (e) -> (e).getValue());
-        }
-
 - Implement all cases for the SignatureAnalyser
 
 - Implement combination of all referenced resources per resource (kind of finalize?)
