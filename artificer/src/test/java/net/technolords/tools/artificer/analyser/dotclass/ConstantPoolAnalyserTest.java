@@ -48,8 +48,8 @@ public class ConstantPoolAnalyserTest extends TestSupport {
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
         bytecodeParser.analyseBytecode(resource);
         // Analyse constant pool
-        ConstantPoolAnalyser constantPoolAnalyser = new ConstantPoolAnalyser();
-        Set<String> referencedClasses = constantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
+        // TODO: update the test and assert on the 5 referenced classes, rather than the current 3 (See also BytecodeParserTest)
+        Set<String> referencedClasses = ConstantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
         Assert.assertEquals(referencedClasses, expectedRefClasses);
     }
 }

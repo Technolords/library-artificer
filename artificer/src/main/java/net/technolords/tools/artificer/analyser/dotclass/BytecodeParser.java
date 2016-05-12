@@ -155,7 +155,7 @@ public class BytecodeParser {
         }
 
         // At this point the resource has a list of referenced classes as well as a populated constant pool.
-        // Adding the 'classes' from the consant pool to the list completes the analysis and all the
+        // Adding the 'classes' from the constant pool to the list completes the analysis and all the
         // referenced classes are identified.
         resource.getReferencedClasses().addAll(ConstantPoolAnalyser.extractReferencedClasses(resource.getConstantPool()));
         LOGGER.debug("Total referenced classes: " + resource.getReferencedClasses().size());
