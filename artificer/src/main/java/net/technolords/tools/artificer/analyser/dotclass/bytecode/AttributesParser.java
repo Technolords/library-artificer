@@ -1,11 +1,19 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationDefaultParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.AnnotationsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.BootstrapMethodsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.CodeParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.EnclosingMethodParser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.InnerClassesParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.LineNumberTableParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.LocalVariableTableParser;
@@ -16,15 +24,8 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.Sour
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.SourceFileParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.StackMapTableParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.TypeAnnotationsParser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ConstantValueParser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute.ExceptionsParser;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.domain.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataInputStream;
-import java.io.IOException;
 
 /**
  * Legend:

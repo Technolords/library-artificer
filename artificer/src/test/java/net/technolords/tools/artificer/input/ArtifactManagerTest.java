@@ -1,9 +1,10 @@
 package net.technolords.tools.artificer.input;
 
-import net.technolords.tools.artificer.TestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.technolords.tools.artificer.TestSupport;
 
 public class ArtifactManagerTest extends TestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManagerTest.class);

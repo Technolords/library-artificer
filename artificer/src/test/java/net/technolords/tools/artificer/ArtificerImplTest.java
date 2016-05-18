@@ -1,17 +1,17 @@
 package net.technolords.tools.artificer;
 
-import net.technolords.tools.artificer.exception.ArtificerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import net.technolords.tools.artificer.exception.ArtificerException;
 
 /**
  * Created by Technolords on 2015-Aug-18.

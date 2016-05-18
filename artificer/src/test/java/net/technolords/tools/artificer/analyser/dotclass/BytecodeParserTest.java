@@ -1,31 +1,23 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
-import junit.framework.Assert;
-import net.technolords.tools.artificer.TestSupport;
-import net.technolords.tools.artificer.domain.resource.Resource;
-import net.technolords.tools.data.field.FieldTestWithAnnotations;
-import net.technolords.tools.data.field.FieldTestWithConstants;
-import net.technolords.tools.data.field.FieldTestWithInnerClasses;
-import net.technolords.tools.data.field.FieldTestWithRegularFields;
-import net.technolords.tools.data.field.FieldTestWithTypeAnnotations;
-import net.technolords.tools.data.method.MethodTestWithAnnotations;
-import net.technolords.tools.data.method.MethodTestWithGenericMethods;
-import net.technolords.tools.data.method.MethodTestWithLambdaMethods;
-import net.technolords.tools.data.method.MethodTestWithMainMethod;
-import net.technolords.tools.data.method.MethodTestWithRegularMethods;
-import net.technolords.tools.data.method.MethodTestWithStaticInitializer;
-import net.technolords.tools.data.method.MethodTestWithStaticMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import junit.framework.Assert;
+import net.technolords.tools.artificer.TestSupport;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.data.field.FieldTestWithConstants;
+import net.technolords.tools.data.field.FieldTestWithRegularFields;
+import net.technolords.tools.data.method.MethodTestWithStaticInitializer;
 
 /**
  * Created by Technolords on 2015-Dec-04.

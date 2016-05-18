@@ -1,17 +1,6 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
-import net.technolords.tools.artificer.TestSupport;
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
-import net.technolords.tools.artificer.domain.meta.Meta;
-import net.technolords.tools.artificer.domain.resource.Resource;
-import net.technolords.tools.artificer.exception.ArtificerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.EOFException;
 import java.io.File;
@@ -19,7 +8,19 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
-import static org.testng.Assert.assertEquals;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+import net.technolords.tools.artificer.TestSupport;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.artificer.exception.ArtificerException;
 
 public class JavaSpecificationManagerTest extends TestSupport {
 

@@ -1,23 +1,23 @@
 package net.technolords.tools.artificer.input;
 
-import net.technolords.tools.artificer.Analyser;
-import net.technolords.tools.artificer.analyser.dotclass.BytecodeParser;
-import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
-import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.dependencies.ReferencedClass;
-import net.technolords.tools.artificer.domain.meta.Meta;
-import net.technolords.tools.artificer.domain.resource.Resource;
-import net.technolords.tools.artificer.domain.resource.ResourceGroup;
-import net.technolords.tools.artificer.analyser.dotclass.JavaSpecificationManager;
+import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.zip.ZipError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.zip.ZipError;
+import net.technolords.tools.artificer.Analyser;
+import net.technolords.tools.artificer.analyser.dotclass.BytecodeParser;
+import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.JavaSpecificationManager;
+import net.technolords.tools.artificer.domain.Analysis;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.artificer.domain.resource.ResourceGroup;
 
 /**
  * Created by Technolords on 2015-Aug-28.
@@ -87,11 +87,10 @@ public class ArtifactManager {
                      *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
                      * - external
                      */
-                    // For each resource, fetch referenced classes from constant pool
-                    // Create unique list and update model (XML)
                 }
                 // TODO: update aggregated set of resources (part of Analysis)
-                // ReferencedClass
+                // Pre-condition, know three sets (self, standard and enterprise)
+                // Then add these classes one by one to the set
             }
             // TODO: chart packages and classes into visual groups using graphviz/gephi
 

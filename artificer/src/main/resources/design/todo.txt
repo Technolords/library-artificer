@@ -1,10 +1,10 @@
-- Discover how sequence diagrams can be extracted (i.e. what stateful data must be preserved)
-
 - Export referenced classes in the XML output
 
 - Discover how to source all attributes from XML spec into attribute reading
 
 - Implement all cases for the SignatureAnalyser
+
+- Support sets of classes, i.e. self, standard, enterprise -> ClassDomain
 
 - Implement combination of all referenced resources per jar (kind of finalize?)
 
@@ -20,6 +20,8 @@
         artificer-camel-route                           -> generates presentation
 
 - keep track of annotations??
+
+- Discover how sequence diagrams can be extracted (i.e. what stateful data must be preserved)
 
 - keep track of invoked methods?? -> derive sequence diagrams
 

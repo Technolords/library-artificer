@@ -1,17 +1,5 @@
 package net.technolords.tools.artificer.output;
 
-import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.meta.Meta;
-import net.technolords.tools.artificer.exception.ArtificerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -21,12 +9,27 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Calendar;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.technolords.tools.artificer.domain.Analysis;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.exception.ArtificerException;
+
 /**
  * Created by Technolords on 2015-Sep-09.
  */
 public class OutputManager extends Marshaller.Listener {
     private static final Logger LOGGER = LoggerFactory.getLogger(OutputManager.class);
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final String UTF8 = "UTF-8";
+    private static final Charset CHARSET = Charset.forName(UTF8);
 
     private Path outputLocation;
     private XMLStreamWriter xmlStreamWriter;
@@ -53,7 +56,8 @@ public class OutputManager extends Marshaller.Listener {
             // Initialize data and a listener
             JAXBContext context = JAXBContext.newInstance(Analysis.class);
             Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, UTF8);
             marshaller.setListener(this);
 
             // Write data

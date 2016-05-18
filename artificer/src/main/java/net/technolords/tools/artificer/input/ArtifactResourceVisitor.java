@@ -1,16 +1,17 @@
 package net.technolords.tools.artificer.input;
 
-import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.resource.Resource;
-import net.technolords.tools.artificer.domain.resource.ResourceGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.technolords.tools.artificer.domain.Analysis;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.artificer.domain.resource.ResourceGroup;
 
 /**
  * Created by Technolords on 2015-Sep-04.
@@ -47,9 +48,15 @@ public class ArtifactResourceVisitor implements FileVisitor<Path> {
      * Found file: MANIFEST.MF, with path: /META-INF/MANIFEST.MF
      *
      * @param file
+     *  The file associated with the visit.
      * @param attrs
+     *  The attributes associated with the file.
+     *
      * @return
+     *  The continuation of the file visit.
+     *
      * @throws IOException
+     *  When the file visit fails.
      */
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -65,19 +72,61 @@ public class ArtifactResourceVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
+    /**
+     * Overridden method in case the file visit fails. In this case, we log a warning and proceed with visit of
+     * other files (i.e. resources in the jar file).
+     *
+     * @param file
+     *  The file associated with the failed visit.
+     * @param exception
+     *  The exception associated with the failure.
+     *
+     * @return
+     *  The continuation of the file visit.
+     *
+     * @throws IOException
+     *  When the file visit fails.
+     */
     @Override
-    public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException {
-        LOGGER.warn("File (" + file.toString() + ") visit failed, but proceeding: " + e.getMessage(), e);
+    public FileVisitResult visitFileFailed(Path file, IOException exception) throws IOException {
+        LOGGER.warn("File (" + file.toString() + ") visit failed, but proceeding: " + exception.getMessage(), exception);
         return FileVisitResult.CONTINUE;
     }
 
+    /**
+     * Overridden method in case of a pre visit of a directory.
+     *
+     * @param dir
+     *  The directory associated with the pre-visit.
+     * @param attrs
+     *  The attributes associated with the directory.
+     *
+     * @return
+     *  The continuation of the file visit.
+     *
+     * @throws IOException
+     *  When the pre-visit fails.
+     */
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         return FileVisitResult.CONTINUE;
     }
 
+    /**
+     * Overriden method in case of a post visit of a directory.
+     *
+     * @param dir
+     *  The directory associated with the post-visit.
+     * @param exception
+     *  The exception associated with the post-visit.
+     * @return
+     *  The continuation of the file visit.
+     *
+     * @throws IOException
+     *  When the post-visit fails.
+     */
     @Override
-    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+    public FileVisitResult postVisitDirectory(Path dir, IOException exception) throws IOException {
         return FileVisitResult.CONTINUE;
     }
 

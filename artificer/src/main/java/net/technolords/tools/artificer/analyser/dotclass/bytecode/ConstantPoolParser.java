@@ -1,5 +1,12 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstant;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolConstants;
 import net.technolords.tools.artificer.analyser.dotclass.specification.ConstantPoolInfoFragment;
@@ -8,13 +15,6 @@ import net.technolords.tools.artificer.domain.dotclass.Constant;
 import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
 import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
 import net.technolords.tools.artificer.domain.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Legend:

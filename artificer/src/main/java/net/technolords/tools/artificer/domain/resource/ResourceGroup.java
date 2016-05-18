@@ -1,9 +1,10 @@
 package net.technolords.tools.artificer.domain.resource;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Created by Technolords on 2015-Sep-09.
@@ -21,7 +22,7 @@ public class ResourceGroup {
         this.groupType = groupType;
     }
 
-    @XmlTransient
+    @XmlElement(name ="resource")
     public List<Resource> getResources() {
         return resources;
     }

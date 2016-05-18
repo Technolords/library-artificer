@@ -1,16 +1,21 @@
 package net.technolords.tools.artificer.domain;
 
-import net.technolords.tools.artificer.domain.dependencies.ReferencedClass;
-import net.technolords.tools.artificer.domain.meta.Meta;
-import net.technolords.tools.artificer.domain.resource.ResourceGroup;
-
-import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import net.technolords.tools.artificer.domain.dependencies.ReferencedClass;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.ResourceGroup;
 
 /**
  * This class represents the Analysis element, which is the root, and contains the following attributes:
@@ -74,8 +79,8 @@ public class Analysis {
         this.resourceGroups = resourceGroups;
     }
 
-    @XmlElementWrapper (name = "dependencies")
-    @XmlElement (name = "dependency")
+//    @XmlElementWrapper(name = "referenced-classes")
+//    @XmlElement(name ="referenced-class")
     public Set<ReferencedClass> getDependencies() {
         return dependencies;
     }
@@ -85,7 +90,7 @@ public class Analysis {
     }
 
     @XmlElementWrapper (name = "resources")
-    @XmlElement (name ="resource")
+    @XmlElement (name ="resource-group")
     public List<ResourceGroup> getResourcesAsGroups() {
         return new ArrayList(this.resourceGroups.values());
     }

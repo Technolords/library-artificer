@@ -1,14 +1,15 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.SignatureAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.domain.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataInputStream;
-import java.io.IOException;
 
 /**
  * Created by Technolords on 2016-Mar-22.

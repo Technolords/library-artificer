@@ -1,13 +1,14 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
-import junit.framework.Assert;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import junit.framework.Assert;
 
 /**
  * Created by Technolords on 2016-Mar-08.

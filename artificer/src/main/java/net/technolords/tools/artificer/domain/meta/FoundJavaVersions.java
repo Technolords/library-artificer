@@ -1,8 +1,9 @@
 package net.technolords.tools.artificer.domain.meta;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Created by Technolords on 2015-Nov-22.

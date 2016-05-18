@@ -1,10 +1,10 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.DataInputStream;
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Technolords on 2016-Mar-22.

@@ -1,24 +1,26 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
-import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
-import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecifications;
-import net.technolords.tools.artificer.domain.meta.Meta;
-import net.technolords.tools.artificer.domain.resource.Resource;
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
-import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
-import net.technolords.tools.artificer.exception.ArtificerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
+import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecifications;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersion;
+import net.technolords.tools.artificer.domain.meta.FoundJavaVersions;
+import net.technolords.tools.artificer.domain.meta.Meta;
+import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.artificer.exception.ArtificerException;
 
 /**
  * Created by Technolords on 2015-Oct-18.

@@ -1,18 +1,20 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
-import net.technolords.tools.artificer.TestSupport;
-import net.technolords.tools.artificer.domain.resource.Resource;
+import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import net.technolords.tools.artificer.TestSupport;
+import net.technolords.tools.artificer.domain.resource.Resource;
 
 /**
  * Created by Sridevi on 3-2-2016.

@@ -1,13 +1,14 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute;
 
-import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
-import net.technolords.tools.artificer.analyser.dotclass.bytecode.AccessFlagsParser;
-import net.technolords.tools.artificer.domain.resource.Resource;
+import java.io.DataInputStream;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataInputStream;
-import java.io.IOException;
+import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
+import net.technolords.tools.artificer.analyser.dotclass.bytecode.AccessFlagsParser;
+import net.technolords.tools.artificer.domain.resource.Resource;
 
 /**
  * Created by Technolords on 2016-Mar-29.

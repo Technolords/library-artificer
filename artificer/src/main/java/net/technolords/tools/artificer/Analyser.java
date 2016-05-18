@@ -1,8 +1,8 @@
 package net.technolords.tools.artificer;
 
-import net.technolords.tools.artificer.exception.ArtificerException;
-
 import java.nio.file.Path;
+
+import net.technolords.tools.artificer.exception.ArtificerException;
 
 /**
  * Created by Technolords on 2015-Aug-18.

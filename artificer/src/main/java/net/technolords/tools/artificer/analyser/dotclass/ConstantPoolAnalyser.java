@@ -1,13 +1,14 @@
 package net.technolords.tools.artificer.analyser.dotclass;
 
-import net.technolords.tools.artificer.domain.dotclass.Constant;
-import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
-import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import net.technolords.tools.artificer.domain.dotclass.Constant;
+import net.technolords.tools.artificer.domain.dotclass.ConstantInfo;
+import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
 
 /**
  * Created by Technolords on 2015-Dec-17.

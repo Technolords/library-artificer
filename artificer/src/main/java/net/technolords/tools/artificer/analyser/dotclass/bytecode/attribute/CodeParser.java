@@ -1,15 +1,16 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode.attribute;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.AttributesParser;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
 import net.technolords.tools.artificer.analyser.dotclass.specification.Mnemonic;
 import net.technolords.tools.artificer.domain.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Technolords on 2016-Apr-07.

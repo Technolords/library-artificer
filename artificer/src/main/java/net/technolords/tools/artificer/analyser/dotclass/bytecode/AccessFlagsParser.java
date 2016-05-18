@@ -1,8 +1,5 @@
 package net.technolords.tools.artificer.analyser.dotclass.bytecode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -13,6 +10,9 @@ import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Legend:

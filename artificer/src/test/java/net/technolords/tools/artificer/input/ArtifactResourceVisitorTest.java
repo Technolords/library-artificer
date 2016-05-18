@@ -1,8 +1,10 @@
 package net.technolords.tools.artificer.input;
 
-import net.technolords.tools.artificer.TestSupport;
-import net.technolords.tools.artificer.domain.Analysis;
-import net.technolords.tools.artificer.domain.resource.Resource;
+import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -10,10 +12,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import net.technolords.tools.artificer.TestSupport;
+import net.technolords.tools.artificer.domain.Analysis;
+import net.technolords.tools.artificer.domain.resource.Resource;
 
 /**
  * Created by Technolords on 2015-Dec-16.

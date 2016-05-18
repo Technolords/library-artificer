@@ -1,12 +1,13 @@
 package net.technolords.tools.artificer.domain.resource;
 
-import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
+
+import net.technolords.tools.artificer.domain.dotclass.ConstantPool;
 
 /**
  * Created by Technolords on 2015-Sep-04.
