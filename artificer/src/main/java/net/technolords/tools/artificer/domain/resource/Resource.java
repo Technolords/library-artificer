@@ -50,7 +50,7 @@ public class Resource {
         this.referencedClasses = referencedClasses;
     }
 
-    @XmlTransient
+    @XmlAttribute(name = "version", required = false)
     public String getCompiledVersion() {
         return compiledVersion;
     }
