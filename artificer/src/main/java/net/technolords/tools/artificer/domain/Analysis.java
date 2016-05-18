@@ -79,8 +79,8 @@ public class Analysis {
         this.resourceGroups = resourceGroups;
     }
 
-//    @XmlElementWrapper(name = "referenced-classes")
-//    @XmlElement(name ="referenced-class")
+    @XmlElementWrapper(name = "referenced-classes")
+    @XmlElement(name ="referenced-class")
     public Set<ReferencedClass> getDependencies() {
         return dependencies;
     }

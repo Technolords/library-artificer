@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.analyser.dotclass.BytecodeParser;
+import net.technolords.tools.artificer.analyser.dotclass.ClassDomainAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.JavaSpecificationManager;
 import net.technolords.tools.artificer.domain.Analysis;
@@ -23,13 +24,14 @@ import net.technolords.tools.artificer.domain.resource.ResourceGroup;
  * Created by Technolords on 2015-Aug-28.
  */
 public class ArtifactManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactManager.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private static final String JAVA_SPECIFICATIONS_REFERENCE = "analyser/dotclass/java-specifications.xml";
     public static final String CLASSIFICATION_UNDEFINED = "_classification_undefined_";
     public static final String CLASSIFICATION_JAVA_CLASSES = ".class";
     private JavaSpecificationManager javaSpecificationManager;
     private BytecodeParser bytecodeParser;
     private ConstantPoolAnalyser constantPoolAnalyser;
+    private ClassDomainAnalyser classDomainAnalyser;
 
     public ArtifactManager() {
     }
@@ -64,14 +66,15 @@ public class ArtifactManager {
                 this.bytecodeParser = new BytecodeParser(JAVA_SPECIFICATIONS_REFERENCE);
             }
 
-            // Initialize constant pool analyzer
+            // Initialize constant pool analyser
             if (this.constantPoolAnalyser == null) {
                 this.constantPoolAnalyser = new ConstantPoolAnalyser();
             }
 
-            // Inspect the category, with java classes
+            // Analyse the resource group representing java classes
             ResourceGroup javaResourceGroup = analysis.getResourceGroups().get(CLASSIFICATION_JAVA_CLASSES);
             if (javaResourceGroup != null) {
+                // Analyse each resource individually
                 for (Resource resource : javaResourceGroup.getResources()) {
                     // Determine the compiled version of the resource, and register it
                     // TODO: move spec manager 'behind' the bytecodeParser (avoid double parsing of xml?)
@@ -79,18 +82,19 @@ public class ArtifactManager {
 
                     // Determine the references classes by the resource
                     this.bytecodeParser.analyseBytecode(resource);
-
-                    /**
-                     * Resolve three class pools:
-                     * - self contained
-                     * - packaged by SE
-                     *  For java 8 source, scan zip file: /usr/lib/jvm/java-8-oracle/src.zip
-                     * - external
-                     */
                 }
-                // TODO: update aggregated set of resources (part of Analysis)
-                // Pre-condition, know three sets (self, standard and enterprise)
-                // Then add these classes one by one to the set
+                // Now that all java classes are analysed, the 'self' classes are known. At this point we can divide
+                // the resources in the appropriate groups. In other words: Self, Standard, Enterprise and External
+                // See also the enums in the ReferencedClass.
+
+                // Initialize class domain analyser, note that when there is no java resource group this is skipped.
+                if (this.classDomainAnalyser == null) {
+                    this.classDomainAnalyser = new ClassDomainAnalyser(javaResourceGroup);
+                }
+                for (Resource resource : javaResourceGroup.getResources()) {
+                    this.classDomainAnalyser.analyseReferencedClassForClassDomain(analysis, resource);
+                }
+
             }
             // TODO: chart packages and classes into visual groups using graphviz/gephi
 
