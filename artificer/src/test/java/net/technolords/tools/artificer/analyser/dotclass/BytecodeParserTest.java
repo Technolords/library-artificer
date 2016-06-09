@@ -46,18 +46,18 @@ public class BytecodeParserTest extends TestSupport {
      * @return
      *  The data set.
      */
+
     @DataProvider (name = "dataSetWithFields", parallel = false)
     public Object[][] dataSet() {
         return new Object[][] {
             { FieldTestWithConstants.class, JAVA_8, this.getExpectedReferencedClassesForFieldTestWithConstants() },
             { FieldTestWithRegularFields.class, JAVA_8, this.getExpectedReferencedClassesForFieldTestWithRegular() },
-                // TODO: fix the test cases outcommented
-//            { FieldTestWithInnerClasses.class, JAVA_8, this.todo() },
-//            { FieldTestWithAnnotations.class, JAVA_8, this.todo() },
-//            { FieldTestWithTypeAnnotations.class, JAVA_8, this.todo() },
+            { FieldTestWithInnerClasses.class, JAVA_8, this.getExpectedReferencedClassesForFieldTestWithInnerClasses() },
+            { FieldTestWithAnnotations.class, JAVA_8, this.getExpectedReferencedClassesForFieldTestWithAnnotations() },
+            { FieldTestWithTypeAnnotations.class, JAVA_8, this.getExpectedReferencedClassesForFieldTestWithTypeAnnotations() }
         };
     }
-
+//ToDO: fixed tests on 06-Jun-16
     private Set<String> getExpectedReferencedClassesForFieldTestWithConstants() {
         Set<String> expected = new HashSet<>();
         expected.add("java/lang/Object");
@@ -80,6 +80,48 @@ public class BytecodeParserTest extends TestSupport {
         return expected;
     }
 
+    private Set<String> getExpectedReferencedClassesForFieldTestWithInnerClasses() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Integer");
+        expected.add("java/lang/Object");
+        expected.add("net/technolords/tools/data/field/FieldTestWithInnerClasses");
+        expected.add("net/technolords/tools/data/field/FieldTestWithInnerClasses$NestedClass1");
+        expected.add("net/technolords/tools/data/field/FieldTestWithInnerClasses$NestedClass2");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForFieldTestWithAnnotations() {
+        Set<String> expected = new HashSet<>();
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingChar");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingAnnotation");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingEnum");
+        expected.add("javax/xml/bind/annotation/XmlAttribute");
+        expected.add("net/technolords/tools/data/field/FieldTestWithAnnotations");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingBoolean");
+        expected.add("java/lang/Object");
+        expected.add("java/lang/String");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingArray");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingBoolean");
+        expected.add("java/util/LinkedList");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingByte");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingInteger");
+        expected.add("java/lang/reflect/Member");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingAnnotation$Schedules");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingEnum$Priority");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingClass");
+        expected.add("java/lang/Deprecated");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingDefault");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForFieldTestWithTypeAnnotations() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("net/technolords/tools/data/field/FieldTestWithTypeAnnotations$Invisible");
+        expected.add("net/technolords/tools/data/field/FieldTestWithTypeAnnotations");
+
+        return expected;
+    }
     @Test (dataProvider = "dataSetWithFields")
     public void testWithFieldTest(Class className, String compiledVersion, Set<String> expectedReferencedClasses) {
         StringBuilder buffer = new StringBuilder();
@@ -112,20 +154,94 @@ public class BytecodeParserTest extends TestSupport {
     @DataProvider (name = "dataSetWithMethods", parallel = false)
     public Object[][] dataSetWithMethods() {
         return new Object[][] {
-                // TODO: fix the test cases like the other data set
-//            { MethodTestWithRegularMethods.class, JAVA_8, this.todo() },
-//            { MethodTestWithStaticMethods.class, JAVA_8, this.todo() },
-//            { MethodTestWithAnnotations.class, JAVA_8, this.todo() },
-//            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
-//            { MethodTestWithGenericMethods.class, JAVA_8, this.todo() },
-//            { MethodTestWithMainMethod.class, JAVA_8, this.todo() },
-//            { MethodTestWithLambdaMethods.class, JAVA_8, this.todo() },
-            { MethodTestWithStaticInitializer.class, JAVA_8, this.todo() },
+                // TODO: fix the test cases like the other data  : Done on 09-06-2016
+            { MethodTestWithRegularMethods.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithRegularMethods() },
+            { MethodTestWithStaticMethods.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithStaticMethods() },
+            { MethodTestWithAnnotations.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithAnnotations() },
+            { MethodTestWithGenericMethods.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithGenericMethods() },
+            { MethodTestWithMainMethod.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithMainMethod() },
+            { MethodTestWithLambdaMethods.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithLambdaMethods() },
+            { MethodTestWithStaticInitializer.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithStaticInitializer() }
         };
     }
 
     private Object todo() {
         return null;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithRegularMethods() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("java/lang/String");
+        expected.add("net/technolords/tools/data/method/MethodTestWithRegularMethods");
+        expected.add("[Ljava/lang/String;");
+        expected.add("java/util/List");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithStaticMethods() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("java/util/ArrayList");
+        expected.add("net/technolords/tools/data/method/MethodTestWithStaticMethods");
+        expected.add("[Ljava/lang/Object;");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithAnnotations() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("java/lang/String");
+        expected.add("java/util/concurrent/ConcurrentHashMap");
+        expected.add("net/technolords/tools/data/method/MethodTestWithAnnotations");
+        expected.add("java/util/Map");
+        expected.add("java/lang/CloneNotSupportedException");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingBoolean");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingDefault");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithGenericMethods() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/util/List;Ljava/util/Comparator;)Ljava/lang/Object");
+        expected.add("java/lang/Object");
+        expected.add("java/util/Iterator");
+        expected.add("java/util/Comparator");
+        expected.add("java/util/List");
+        expected.add("net/technolords/tools/data/method/MethodTestWithGenericMethods");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithMainMethod() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("net/technolords/tools/data/method/MethodTestWithMainMethod");
+        expected.add("java/lang/System");
+        expected.add("java/io/PrintStream");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithLambdaMethods() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("java/lang/invoke/MethodHandles$Lookup");
+        expected.add("java/util/stream/Collectors");
+        expected.add("java/lang/invoke/LambdaMetafactory");
+        expected.add("java/util/Map$Entry");
+        expected.add("java/util/Map$Entry;)Ljava/lang/Object");
+        expected.add("java/lang/invoke/MethodHandles");
+        expected.add("net/technolords/tools/data/method/MethodTestWithLambdaMethods");
+        expected.add("java/util/Map");
+        return expected;
+    }
+
+    private Set<String> getExpectedReferencedClassesForMethodTestWithStaticInitializer() {
+        Set<String> expected = new HashSet<>();
+        expected.add("java/lang/Object");
+        expected.add("java/lang/String");
+        expected.add("net/technolords/tools/data/method/MethodTestWithStaticInitializer");
+        expected.add("java/util/Date");
+        return expected;
     }
 
     @Test (dataProvider = "dataSetWithMethods")
@@ -148,6 +264,12 @@ public class BytecodeParserTest extends TestSupport {
 
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
         bytecodeParser.analyseBytecode(resource);
+
+        // Test result of analysis
+        Assert.assertEquals("Expected total referenced classes to be equal", expectedReferencedClasses.size(), resource.getReferencedClasses().size());
+        for(String referencedClass : resource.getReferencedClasses()) {
+            Assert.assertTrue("Expected class (" + referencedClass + ") to be referenced, but was not", expectedReferencedClasses.contains(referencedClass));
+        }
     }
 
 }
