@@ -15,9 +15,18 @@ import org.testng.annotations.Test;
 import junit.framework.Assert;
 import net.technolords.tools.artificer.TestSupport;
 import net.technolords.tools.artificer.domain.resource.Resource;
+import net.technolords.tools.data.field.FieldTestWithAnnotations;
 import net.technolords.tools.data.field.FieldTestWithConstants;
+import net.technolords.tools.data.field.FieldTestWithInnerClasses;
 import net.technolords.tools.data.field.FieldTestWithRegularFields;
+import net.technolords.tools.data.field.FieldTestWithTypeAnnotations;
+import net.technolords.tools.data.method.MethodTestWithAnnotations;
+import net.technolords.tools.data.method.MethodTestWithGenericMethods;
+import net.technolords.tools.data.method.MethodTestWithLambdaMethods;
+import net.technolords.tools.data.method.MethodTestWithMainMethod;
+import net.technolords.tools.data.method.MethodTestWithRegularMethods;
 import net.technolords.tools.data.method.MethodTestWithStaticInitializer;
+import net.technolords.tools.data.method.MethodTestWithStaticMethods;
 
 /**
  * Created by Technolords on 2015-Dec-04.
@@ -38,7 +47,6 @@ public class BytecodeParserTest extends TestSupport {
      * @return
      *  The data set.
      */
-
     @DataProvider (name = "dataSetWithFields", parallel = false)
     public Object[][] dataSet() {
         return new Object[][] {
@@ -49,7 +57,7 @@ public class BytecodeParserTest extends TestSupport {
             { FieldTestWithTypeAnnotations.class, JAVA_8, this.getExpectedReferencedClassesForFieldTestWithTypeAnnotations() }
         };
     }
-//ToDO: fixed tests on 06-Jun-16
+
     private Set<String> getExpectedReferencedClassesForFieldTestWithConstants() {
         Set<String> expected = new HashSet<>();
         expected.add("java/lang/Object");
@@ -84,36 +92,35 @@ public class BytecodeParserTest extends TestSupport {
 
     private Set<String> getExpectedReferencedClassesForFieldTestWithAnnotations() {
         Set<String> expected = new HashSet<>();
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingChar");
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingAnnotation");
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingEnum");
-        expected.add("javax/xml/bind/annotation/XmlAttribute");
-        expected.add("net/technolords/tools/data/field/FieldTestWithAnnotations");
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingBoolean");
+        expected.add("java/lang/Deprecated");
         expected.add("java/lang/Object");
+        expected.add("java/lang/reflect/Member");
         expected.add("java/lang/String");
+        expected.add("java/util/LinkedList");
+        expected.add("javax/xml/bind/annotation/XmlAttribute");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingAnnotation");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingAnnotation$Schedules");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingArray");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingBoolean");
-        expected.add("java/util/LinkedList");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingByte");
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingInteger");
-        expected.add("java/lang/reflect/Member");
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingAnnotation$Schedules");
-        expected.add("net/technolords/tools/data/annotation/AnnotationUsingEnum$Priority");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingChar");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingClass");
-        expected.add("java/lang/Deprecated");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingDefault");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingEnum");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingEnum$Priority");
+        expected.add("net/technolords/tools/data/annotation/AnnotationUsingInteger");
+        expected.add("net/technolords/tools/data/field/FieldTestWithAnnotations");
         return expected;
     }
 
     private Set<String> getExpectedReferencedClassesForFieldTestWithTypeAnnotations() {
         Set<String> expected = new HashSet<>();
         expected.add("java/lang/Object");
-        expected.add("net/technolords/tools/data/field/FieldTestWithTypeAnnotations$Invisible");
         expected.add("net/technolords/tools/data/field/FieldTestWithTypeAnnotations");
-
+        expected.add("net/technolords/tools/data/field/FieldTestWithTypeAnnotations$Invisible");
         return expected;
     }
+
     @Test (dataProvider = "dataSetWithFields")
     public void testWithFieldTest(Class className, String compiledVersion, Set<String> expectedReferencedClasses) {
         StringBuilder buffer = new StringBuilder();
@@ -142,11 +149,9 @@ public class BytecodeParserTest extends TestSupport {
         }
     }
 
-
     @DataProvider (name = "dataSetWithMethods", parallel = false)
     public Object[][] dataSetWithMethods() {
         return new Object[][] {
-                // TODO: fix the test cases like the other data  : Done on 09-06-2016
             { MethodTestWithRegularMethods.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithRegularMethods() },
             { MethodTestWithStaticMethods.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithStaticMethods() },
             { MethodTestWithAnnotations.class, JAVA_8, this.getExpectedReferencedClassesForMethodTestWithAnnotations() },
@@ -157,73 +162,69 @@ public class BytecodeParserTest extends TestSupport {
         };
     }
 
-    private Object todo() {
-        return null;
-    }
-
     private Set<String> getExpectedReferencedClassesForMethodTestWithRegularMethods() {
         Set<String> expected = new HashSet<>();
         expected.add("java/lang/Object");
         expected.add("java/lang/String");
-        expected.add("net/technolords/tools/data/method/MethodTestWithRegularMethods");
         expected.add("[Ljava/lang/String;");
         expected.add("java/util/List");
+        expected.add("net/technolords/tools/data/method/MethodTestWithRegularMethods");
         return expected;
     }
 
     private Set<String> getExpectedReferencedClassesForMethodTestWithStaticMethods() {
         Set<String> expected = new HashSet<>();
         expected.add("java/lang/Object");
+        expected.add("[Ljava/lang/Object;");
         expected.add("java/util/ArrayList");
         expected.add("net/technolords/tools/data/method/MethodTestWithStaticMethods");
-        expected.add("[Ljava/lang/Object;");
         return expected;
     }
 
     private Set<String> getExpectedReferencedClassesForMethodTestWithAnnotations() {
         Set<String> expected = new HashSet<>();
+        expected.add("java/lang/CloneNotSupportedException");
         expected.add("java/lang/Object");
         expected.add("java/lang/String");
         expected.add("java/util/concurrent/ConcurrentHashMap");
-        expected.add("net/technolords/tools/data/method/MethodTestWithAnnotations");
         expected.add("java/util/Map");
-        expected.add("java/lang/CloneNotSupportedException");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingBoolean");
         expected.add("net/technolords/tools/data/annotation/AnnotationUsingDefault");
+        expected.add("net/technolords/tools/data/method/MethodTestWithAnnotations");
         return expected;
     }
 
     private Set<String> getExpectedReferencedClassesForMethodTestWithGenericMethods() {
         Set<String> expected = new HashSet<>();
-        expected.add("java/util/List;Ljava/util/Comparator;)Ljava/lang/Object");
         expected.add("java/lang/Object");
-        expected.add("java/util/Iterator");
         expected.add("java/util/Comparator");
+        expected.add("java/util/Iterator");
         expected.add("java/util/List");
+        expected.add("java/util/List;Ljava/util/Comparator;)Ljava/lang/Object");
         expected.add("net/technolords/tools/data/method/MethodTestWithGenericMethods");
         return expected;
     }
 
     private Set<String> getExpectedReferencedClassesForMethodTestWithMainMethod() {
         Set<String> expected = new HashSet<>();
-        expected.add("java/lang/Object");
-        expected.add("net/technolords/tools/data/method/MethodTestWithMainMethod");
-        expected.add("java/lang/System");
         expected.add("java/io/PrintStream");
+        expected.add("java/lang/Object");
+        expected.add("java/lang/System");
+        expected.add("net/technolords/tools/data/method/MethodTestWithMainMethod");
         return expected;
     }
 
     private Set<String> getExpectedReferencedClassesForMethodTestWithLambdaMethods() {
         Set<String> expected = new HashSet<>();
-        expected.add("java/lang/Object");
+        expected.add("java/lang/invoke/MethodHandles");
         expected.add("java/lang/invoke/MethodHandles$Lookup");
-        expected.add("java/util/stream/Collectors");
         expected.add("java/lang/invoke/LambdaMetafactory");
+        expected.add("java/lang/Object");
+        expected.add("java/util/Map");
         expected.add("java/util/Map$Entry");
         expected.add("java/util/Map$Entry;)Ljava/lang/Object");
-        expected.add("java/lang/invoke/MethodHandles");
+        expected.add("java/util/stream/Collectors");
         expected.add("net/technolords/tools/data/method/MethodTestWithLambdaMethods");
-        expected.add("java/util/Map");
         return expected;
     }
 
@@ -231,8 +232,8 @@ public class BytecodeParserTest extends TestSupport {
         Set<String> expected = new HashSet<>();
         expected.add("java/lang/Object");
         expected.add("java/lang/String");
-        expected.add("net/technolords/tools/data/method/MethodTestWithStaticInitializer");
         expected.add("java/util/Date");
+        expected.add("net/technolords/tools/data/method/MethodTestWithStaticInitializer");
         return expected;
     }
 
@@ -252,7 +253,7 @@ public class BytecodeParserTest extends TestSupport {
         Resource resource = new Resource();
         resource.setPath(pathToDataSample);
         resource.setName(className.getSimpleName());
-        resource.setCompiledVersion("1.8");
+        resource.setCompiledVersion(compiledVersion);
 
         BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
         bytecodeParser.analyseBytecode(resource);

@@ -60,6 +60,6 @@ public class ClassDomainAnalyser {
     }
 
     protected void populateEnterpriseClasses() {
-
+        // TODO: For EE 7: http://repo1.maven.org/maven2/javax/javaee-api/7.0/
     }
 }
