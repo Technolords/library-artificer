@@ -50,6 +50,7 @@
         +-->
     <modules>
         <module>artificer</module>
+        <module>silent-load</module>
     </modules>
 
     <!--+
