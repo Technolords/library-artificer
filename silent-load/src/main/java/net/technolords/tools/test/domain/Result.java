@@ -7,6 +7,7 @@ public class Result {
     private String response;
     private int statusCode;
     private long size;
+    private long executionTime;
 
     public String getResponse() {
         return response;
@@ -30,5 +31,13 @@ public class Result {
 
     public void setSize(long size) {
         this.size = size;
+    }
+
+    public long getExecutionTime() {
+        return executionTime;
+    }
+
+    public void setExecutionTime(long executionTime) {
+        this.executionTime = executionTime;
     }
 }

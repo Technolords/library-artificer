@@ -6,7 +6,6 @@ import java.util.concurrent.Callable;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -32,7 +31,9 @@ public class HttpCallable implements Callable<Result> {
 
     @Override
     public Result call() throws Exception {
+        long timeBefore = System.currentTimeMillis();
         HttpResponse response = httpClient.execute(this.uriRequest);
+        long timeAfter = System.currentTimeMillis();
         StatusLine statusLine = response.getStatusLine();
         HttpEntity entity = response.getEntity();
         Result result = new Result();
@@ -40,6 +41,7 @@ public class HttpCallable implements Callable<Result> {
         result.setResponse(stringResult);
         result.setStatusCode(statusLine.getStatusCode());
         result.setSize(stringResult.length());
+        result.setExecutionTime(timeAfter - timeBefore);
         LOGGER.trace("Got result: " + result.getStatusCode() + ", size: " + result.getSize());
         return result;
     }
