@@ -2,14 +2,7 @@ package net.technolords.tools.artificer.analyser.dotclass;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +17,8 @@ import net.technolords.tools.artificer.analyser.dotclass.bytecode.MagicNumberPar
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.MethodsParser;
 import net.technolords.tools.artificer.analyser.dotclass.bytecode.MinorAndMajorVersionParser;
 import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecification;
-import net.technolords.tools.artificer.analyser.dotclass.specification.JavaSpecifications;
+import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
-import net.technolords.tools.artificer.exception.ArtificerException;
 
 /**
  * Created by Technolords on 2015-Nov-25.
@@ -54,34 +46,12 @@ import net.technolords.tools.artificer.exception.ArtificerException;
  */
 public class BytecodeParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(BytecodeParser.class);
-    private String referenceFile;
-    private Map<String, JavaSpecification> lookupMap;
+    private static final String JAVA_SPECIFICATIONS_REFERENCE = "analyser/dotclass/java-specifications.xml";
+    private JavaSpecificationManager javaSpecificationManager;
 
-    public BytecodeParser(String referenceFile) {
-        this.referenceFile = referenceFile;
-    }
-
-    /**
-     * Auxiliary method to initialize the lookup map. It uses the default classloader to obtain
-     * an inputstream as reference for the XML file and then JAXB will use this to unmarshall this
-     * to an instance of the JavaSpecifications class.
-     *
-     * @throws ArtificerException
-     *  When unmarshalling the XML file fails.
-     */
-    public void initializeSpecifications() throws ArtificerException {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(JavaSpecifications.class);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(this.referenceFile);
-            JavaSpecifications javaSpecifications = (JavaSpecifications) unmarshaller.unmarshal(inputStream);
-            for(JavaSpecification javaSpecification : javaSpecifications.getJavaSpecifications()) {
-                this.lookupMap.put(javaSpecification.getVersion(), javaSpecification);
-            }
-            LOGGER.debug("Total java specifications initialized: " + this.lookupMap.size());
-        } catch (JAXBException e) {
-            throw new ArtificerException(e);
-        }
+    public BytecodeParser() {
+        // Initialize manager of java compiler versions (for lookup)
+        this.javaSpecificationManager = new JavaSpecificationManager(JAVA_SPECIFICATIONS_REFERENCE);
     }
 
     /**
@@ -114,16 +84,15 @@ public class BytecodeParser {
      * @param resource
      *  The resource associated with the determination of the referenced classes.
      */
-    public void analyseBytecode(Resource resource) {
+    public void analyseBytecode(Meta meta, Resource resource) {
+        // Peek ahead (determine if resource is valid as well), and update meta information
+        this.javaSpecificationManager.registerCompiledVersion(meta, resource);
+        // Filter on valid classes
         if(!resource.isValidClass()) {
             return;
         }
         try {
-            if(this.lookupMap == null) {
-                this.lookupMap = new HashMap<>();
-                this.initializeSpecifications();
-            }
-            JavaSpecification javaSpecification = this.lookupMap.get(resource.getCompiledVersion());
+            JavaSpecification javaSpecification = this.javaSpecificationManager.getSpecification(resource);
             StringBuilder buffer = new StringBuilder();
             buffer.append("About to analyse byte code of: ").append(resource.getName());
             buffer.append(", for JVM spec: ").append((javaSpecification == null ? "None found" : javaSpecification.getVersion()));
@@ -152,8 +121,6 @@ public class BytecodeParser {
             AttributesParser.extractAttributesFromClassFile(dataInputStream, javaSpecification, resource);
         } catch (IOException e) {
             LOGGER.error("Unable to parse the class: " + resource.getName(), e);
-        } catch (ArtificerException e) {
-            LOGGER.error("Unable to initialize lookup map" + e.getMessage(), e);
         }
 
         // At this point the resource has a list of referenced classes as well as a populated constant pool.

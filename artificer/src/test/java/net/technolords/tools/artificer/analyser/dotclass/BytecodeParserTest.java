@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import junit.framework.Assert;
 import net.technolords.tools.artificer.TestSupport;
+import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
 import net.technolords.tools.data.field.FieldTestWithAnnotations;
 import net.technolords.tools.data.field.FieldTestWithConstants;
@@ -33,7 +34,6 @@ import net.technolords.tools.data.method.MethodTestWithStaticMethods;
  */
 public class BytecodeParserTest extends TestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(BytecodeParserTest.class);
-    private static final String KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE = "analyser/dotclass/java-specifications.xml";
     private static final String JAVA_8 = "1.8";
 
     /**
@@ -139,8 +139,8 @@ public class BytecodeParserTest extends TestSupport {
         resource.setPath(pathToDataSample);
         resource.setName(className.getSimpleName());
         resource.setCompiledVersion(compiledVersion);
-        BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
-        bytecodeParser.analyseBytecode(resource);
+        BytecodeParser bytecodeParser = new BytecodeParser();
+        bytecodeParser.analyseBytecode(new Meta(), resource);
 
         // Test result of analysis
         Assert.assertEquals("Expected total referenced classes to be equal", expectedReferencedClasses.size(), resource.getReferencedClasses().size());
@@ -255,8 +255,8 @@ public class BytecodeParserTest extends TestSupport {
         resource.setName(className.getSimpleName());
         resource.setCompiledVersion(compiledVersion);
 
-        BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
-        bytecodeParser.analyseBytecode(resource);
+        BytecodeParser bytecodeParser = new BytecodeParser();
+        bytecodeParser.analyseBytecode(new Meta(), resource);
 
         // Test result of analysis
         Assert.assertEquals("Expected total referenced classes to be equal", expectedReferencedClasses.size(), resource.getReferencedClasses().size());

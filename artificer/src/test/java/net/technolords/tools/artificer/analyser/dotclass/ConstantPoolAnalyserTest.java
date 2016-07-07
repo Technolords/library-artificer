@@ -14,6 +14,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import net.technolords.tools.artificer.TestSupport;
+import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
 
 /**
@@ -36,6 +37,7 @@ public class ConstantPoolAnalyserTest extends TestSupport {
             { "abc.class",       false, new HashSet<>()                 }
         };
     }
+
     @Test(dataProvider = "dataSetClasses")
     public void testReferencedClassesExtraction(final String classname, final boolean validClass, final Set<String> expectedRefClasses) {
         Path pathToResourceLocation = FileSystems.getDefault().getPath(super.getPathToClassFolder().toAbsolutePath() + File.separator + classname);
@@ -47,8 +49,8 @@ public class ConstantPoolAnalyserTest extends TestSupport {
         resource.setCompiledVersion("1.8");
         resource.setValidClass(validClass);
         // Analyse bytecode
-        BytecodeParser bytecodeParser = new BytecodeParser(KNOWN_JAVA_SPECIFICATIONS_REFERENCE_FILE);
-        bytecodeParser.analyseBytecode(resource);
+        BytecodeParser bytecodeParser = new BytecodeParser();
+        bytecodeParser.analyseBytecode(new Meta(), resource);
         // Analyse constant pool
         // TODO: update the test and assert on the 5 referenced classes, rather than the current 3 (See also BytecodeParserTest)
         Set<String> referencedClasses = ConstantPoolAnalyser.extractReferencedClasses(resource.getConstantPool());
