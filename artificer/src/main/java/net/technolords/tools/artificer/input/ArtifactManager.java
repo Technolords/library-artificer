@@ -14,7 +14,6 @@ import net.technolords.tools.artificer.Analyser;
 import net.technolords.tools.artificer.analyser.dotclass.BytecodeParser;
 import net.technolords.tools.artificer.analyser.dotclass.ClassDomainAnalyser;
 import net.technolords.tools.artificer.analyser.dotclass.ConstantPoolAnalyser;
-import net.technolords.tools.artificer.analyser.dotclass.JavaSpecificationManager;
 import net.technolords.tools.artificer.domain.Analysis;
 import net.technolords.tools.artificer.domain.meta.Meta;
 import net.technolords.tools.artificer.domain.resource.Resource;
@@ -25,10 +24,8 @@ import net.technolords.tools.artificer.domain.resource.ResourceGroup;
  */
 public class ArtifactManager {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private static final String JAVA_SPECIFICATIONS_REFERENCE = "analyser/dotclass/java-specifications.xml";
     public static final String CLASSIFICATION_UNDEFINED = "_classification_undefined_";
     public static final String CLASSIFICATION_JAVA_CLASSES = ".class";
-    private JavaSpecificationManager javaSpecificationManager;
     private BytecodeParser bytecodeParser;
     private ConstantPoolAnalyser constantPoolAnalyser;
     private ClassDomainAnalyser classDomainAnalyser;
@@ -50,12 +47,6 @@ public class ArtifactManager {
      */
     public void analyseArtifact(Analysis analysis, Path pathToZipFile) {
         try {
-
-            // Initialize manager of java compiler versions (for lookup)
-            if (this.javaSpecificationManager == null) {
-                this.javaSpecificationManager = new JavaSpecificationManager(JAVA_SPECIFICATIONS_REFERENCE);
-            }
-
             // Walk the tree for initial scan, and classify the resources
             ArtifactResourceVisitor artifactResourceVisitor = new ArtifactResourceVisitor(analysis);
             FileSystem fileSystem = FileSystems.newFileSystem(pathToZipFile, null);
@@ -63,7 +54,7 @@ public class ArtifactManager {
 
             // Initialize manager of byte code analysis (for referenced classes)
             if (this.bytecodeParser == null) {
-                this.bytecodeParser = new BytecodeParser(JAVA_SPECIFICATIONS_REFERENCE);
+                this.bytecodeParser = new BytecodeParser();
             }
 
             // Initialize constant pool analyser
@@ -76,12 +67,8 @@ public class ArtifactManager {
             if (javaResourceGroup != null) {
                 // Analyse each resource individually
                 for (Resource resource : javaResourceGroup.getResources()) {
-                    // Determine the compiled version of the resource, and register it
-                    // TODO: move spec manager 'behind' the bytecodeParser (avoid double parsing of xml?)
-                    this.javaSpecificationManager.registerCompiledVersion(analysis.getMeta(), resource);
-
                     // Determine the references classes by the resource
-                    this.bytecodeParser.analyseBytecode(resource);
+                    this.bytecodeParser.analyseBytecode(analysis.getMeta(), resource);
                 }
                 // Now that all java classes are analysed, the 'self' classes are known. At this point we can divide
                 // the resources in the appropriate groups. In other words: Self, Standard, Enterprise and External

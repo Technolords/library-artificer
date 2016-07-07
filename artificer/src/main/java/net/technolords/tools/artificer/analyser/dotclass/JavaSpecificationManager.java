@@ -30,6 +30,7 @@ public class JavaSpecificationManager {
     private static final int MAGIC_NUMBER = 0xcafebabe;
     private static final String UNKNOWN_JAVA_VERSION = "unknownJavaVersion";
     private Map<String, String> lookupMap;
+    private Map<String, JavaSpecification> specificationMap;
     private String referenceFile;
 
     /**
@@ -58,6 +59,7 @@ public class JavaSpecificationManager {
             JavaSpecifications javaSpecifications = (JavaSpecifications) unmarshaller.unmarshal(inputStream);
             for(JavaSpecification javaSpecification : javaSpecifications.getJavaSpecifications()) {
                 this.lookupMap.put(javaSpecification.getMagicNumber(), javaSpecification.getVersion());
+                this.specificationMap.put(javaSpecification.getVersion(), javaSpecification);
             }
             LOGGER.debug("Total java versions initialized: " + this.lookupMap.size());
         } catch (JAXBException | IllegalArgumentException e) {
@@ -118,6 +120,7 @@ public class JavaSpecificationManager {
     public String lookupJavaVersion(String magicNumber) throws ArtificerException {
         if(this.lookupMap == null) {
             this.lookupMap = new HashMap<>();
+            this.specificationMap = new HashMap<>();
             this.initializeLookupMap();
         }
         if(!this.lookupMap.containsKey(magicNumber)) {
@@ -125,6 +128,21 @@ public class JavaSpecificationManager {
             return UNKNOWN_JAVA_VERSION;
         }
         return this.lookupMap.get(magicNumber);
+    }
+
+    /**
+     * Auxiliary method to get a reference of the JavaSpecification associated with the resource.
+     *
+     * @param resource
+     *  The resource associated with the JavaSpecification.
+     * @return
+     *  A reference of the JavaSpecification (or null).
+     */
+    public JavaSpecification getSpecification(Resource resource) {
+        if (resource != null) {
+            return this.specificationMap.get(resource.getCompiledVersion());
+        }
+        return null;
     }
 
     /**
@@ -167,7 +185,7 @@ public class JavaSpecificationManager {
             foundJavaVersion.setTotalClasses(foundJavaVersion.getTotalClasses() + 1);
         } catch (IOException | ArtificerException e) {
             // Empty .class files, or .class files not compliant with java intrinsic magic number are marked
-            // as invalid (as further processing is not required)
+            // as invalid (as further processing is not required/not possible)
             LOGGER.warn("Resource " + resource.getName() + ", is not a valid java class and will be skipped.");
             resource.setValidClass(false);
         }
