@@ -96,7 +96,8 @@ public class BytecodeParser {
             StringBuilder buffer = new StringBuilder();
             buffer.append("About to analyse byte code of: ").append(resource.getName());
             buffer.append(", for JVM spec: ").append((javaSpecification == null ? "None found" : javaSpecification.getVersion()));
-            buffer.append(", with total mnemonics: ").append((javaSpecification == null ? "None" : javaSpecification.getMnemonics().getMnemonics().size()));
+            buffer.append(", with total mnemonics: ").append((javaSpecification == null ? "None" :
+                (javaSpecification.getMnemonics() == null ? 0 : javaSpecification.getMnemonics().getMnemonics().size())));
             LOGGER.info(buffer.toString());
             DataInputStream dataInputStream = new DataInputStream(Files.newInputStream(resource.getPath()));
             // Extract the magic number

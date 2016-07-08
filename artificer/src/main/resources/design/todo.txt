@@ -1,8 +1,8 @@
+- Implement all cases for the SignatureAnalyser
+
 - Export referenced classes in the XML output
 
 - Discover how to source all attributes from XML spec into attribute reading
-
-- Implement all cases for the SignatureAnalyser
 
 - Support sets of classes, i.e. self, standard, enterprise -> ClassDomain
 
