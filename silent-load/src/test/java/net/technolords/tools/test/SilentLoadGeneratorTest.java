@@ -24,7 +24,7 @@ public class SilentLoadGeneratorTest {
         LOGGER.info("Total execution time: " + ((endTime - startTime) / 1000) + " s");
     }
 
-    @Test
+    @Test (enabled = false)
     public void testTimedLoad() throws ExecutionException, InterruptedException {
         // Tasks
         long startTime = System.currentTimeMillis();

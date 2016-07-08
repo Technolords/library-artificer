@@ -14,7 +14,7 @@ import net.technolords.tools.test.http.HttpUtil;
 public class HttpCallableTest {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @Test
+    @Test (enabled = false)
     public void executeRequest() throws Exception {
         final int POOL_SIZE = 50;
         final String REQUEST = "http://localhost:9000/mapng/traxis-structure-service/v1/pl/pl/vodStructure?categoryId=crid:~~2F~~2Fschange.com~~2F6149894e-c1ac-4deb-8404-d7e944c712e6";
