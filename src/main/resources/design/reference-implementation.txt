@@ -1,0 +1,2010 @@
+package org.danhicks.classfile;
+import java.nio.ByteBuffer;
+
+public class Clazz {
+	private static final boolean debug = false;
+	private static final int CONSTANT_Class = 7;
+	private static final int CONSTANT_Fieldref = 9;
+	private static final int CONSTANT_Methodref = 10;
+	private static final int CONSTANT_InterfaceMethodref = 11;
+	private static final int CONSTANT_String = 8;
+	private static final int CONSTANT_Integer = 3;
+	private static final int CONSTANT_Float = 4;
+	private static final int CONSTANT_Long = 5;
+	private static final int CONSTANT_Double = 6;
+	private static final int CONSTANT_NameAndType = 12;
+	private static final int CONSTANT_Utf8 = 1;
+	
+	private static final int CONSTANT_Dummy = 256;
+	private static final int CONSTANT_LongDummy = CONSTANT_Long + 256;
+	private static final int CONSTANT_DoubleDummy = CONSTANT_Double + 256;
+	
+	private static final short[] codeLengthTable = {
+	// xxxxxx 00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15
+	/* 000 */ 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,
+	/* 016 */ 02,03,02,03,03,02,02,02,02,02,01,01,01,01,01,01,
+	/* 032 */ 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,
+	/* 048 */ 01,01,01,01,01,01,02,02,02,02,02,01,01,01,01,01,
+	/* 064 */ 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,
+	/* 080 */ 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,
+	/* 096 */ 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,
+	/* 112 */ 01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,
+	/* 128 */ 01,01,01,01,03,01,01,01,01,01,01,01,01,01,01,01,
+	/* 144 */ 01,01,01,01,01,01,01,01,01,03,03,03,03,03,03,03,
+	/* 160 */ 03,03,03,03,03,03,03,03,03,02,-1,-1,01,01,01,01,
+	/* 176 */ 01,01,03,03,03,03,03,03,03,05,00,03,02,03,01,01,
+	/* 192 */ 03,03,01,01,-1,04,03,03,05,05,00,00,00,00,00,00,
+	/* 218 */ 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,
+	/* 234 */ 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,
+	/* 240 */ 00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00};
+	
+	private static final String[] mnemonicTable = {
+	/* 000 */ "nop", "aconst_nul", "iconst_m1", "iconst_0",
+	/* 004 */ "iconst_1", "iconst_2", "iconst_3", "iconst_4",
+	/* 008 */ "iconst_5", "lconst_0", "lconst_1", "fconst_0",
+	/* 012 */ "fconst_1", "dconst_0", "dconst_1", "bipush",
+	/* 016 */ "bipush", "sipush", "ldc", "ldc_w",
+	/* 020 */ "ldc2_w", "iload", "lload", "fload",
+	/* 024 */ "dload", "aload", "iload_0", "iload_1",
+	/* 028 */ "iload_2", "iload_3", "lload_0", "lload_1",
+	/* 032 */ "lload_2", "lload_3", "fload_0", "fload_1",
+	/* 036 */ "fload_2", "fload_3", "dload_0", "dload_1",
+	/* 040 */ "dload_2", "dload_3", "aload_0", "aload_1", 
+	/* 044 */ "aload_2", "aload_3", "iaload", "laload",
+	/* 048 */ "faload", "daload", "aaload", "baload",
+	/* 052 */ "caload", "saload", "istore", "lstore",
+	/* 056 */ "fstore", "dstore", "astore", "istore_0",
+	/* 060 */ "istore_1", "istore_2", "istore_3", "lstore_0",
+	/* 064 */ "lstore_1", "lstore_2", "lstore_3", "fstore_0",
+	/* 068 */ "fstore_1", "fstore_2", "fstore_3", "dstore_0",
+	/* 072 */ "dstore_1", "dstore_2", "dstore_3", "astore_0",
+	/* 076 */ "astore_1", "astore_2", "astore_3", "iastore",
+	/* 080 */ "lastore", "fastore", "dastore", "aastore",
+	/* 084 */ "bastore", "castore", "sastore", "pop",
+	/* 088 */ "pop2", "dup", "dup_x1", "dup_x2",
+	/* 092 */ "dup2", "dup2_x1", "dup2_x2", "swap",
+	/* 096 */ "iadd", "ladd", "fadd", "dadd",
+	/* 100 */ "isub", "lsub", "fsub", "dsub",
+	/* 104 */ "imul", "lmul", "fmul", "dmul",
+	/* 108 */ "idiv", "ldiv", "fdiv", "ddiv",
+	/* 112 */ "irem", "lrem", "frem", "drem", 
+	/* 116 */ "ineg", "lneg", "fneg", "dneg",
+	/* 120 */ "ishl", "lshl", "ishr", "lshr",
+	/* 124 */ "iushr", "lushr", "iand", "land",
+	/* 128 */ "ior", "lor", "ixor", "lxor",
+	/* 132 */ "iinc", "i2l", "i2f", "i2d",
+	/* 136 */ "l2i", "l2f", "l2d", "f2i",
+	/* 140 */ "f2l", "f2d", "d2i", "d2l",
+	/* 144 */ "d2f", "i2b", "i2c", "i2s",
+	/* 148 */ "lcmp", "fcmpl", "fcmpg", "dcmpl", 
+	/* 152 */ "dcmpg", "ifeq", "ifne", "iflt",
+	/* 156 */ "ifge", "ifgt", "ifle", "if_icmpeq",
+	/* 160 */ "if_icmpne", "if_icmplt", "if_icmpge", "if_icmpgt",
+	/* 164 */ "if_icmple", "if_acmpeq", "if_acmpne", "goto",
+	/* 168 */ "jsr", "ret", "tableswitch", "lookupswitch",
+	/* 172 */ "ireturn", "lreturn", "freturn", "dreturn",
+	/* 176 */ "areturn", "return", "getstatic", "putstatic",
+	/* 180 */ "getfield", "putfield", "invokevirtual", "invokespecial",
+	/* 184 */ "invokestatic", "invokeinterface", "unused186", "new",
+	/* 188 */ "newarray", "anewarray", "arraylength", "athrow",
+	/* 192 */ "checkcast", "instanceof", "monitorenter", "monitorexit",
+	/* 196 */ "wide", "mulitanewarray", "ifnull", "ifnonnull", 
+	/* 200 */ "goto_w", "jsr_w", "unused202", "unused203",
+	/* 204 */ "unused204", "unused205", "unused206", "unused207",
+	/* 208 */ "unused208", "unused209", "unused210", "unused211",
+	/* 212 */ "unused212", "unused213", "unused214", "unused215",
+	/* 216 */ "unused216", "unused217", "unused218", "unused219",
+	/* 220 */ "unused220", "unused221", "unused222", "unused223",
+	/* 224 */ "unused224", "unused225", "unused226", "unused227",
+	/* 228 */ "unused228", "unused229", "unused230", "unused231",
+	/* 232 */ "unused232", "unused233", "unused234", "unused235",
+	/* 236 */ "unused236", "unused237", "unused238", "unused239",
+	/* 240 */ "unused240", "unused241", "unused242", "unused243",
+	/* 244 */ "unused244", "unused245", "unused246", "unused247",
+	/* 248 */ "unused248", "unused249", "unused250", "unused251",
+	/* 252 */ "unused252", "unused253", "unused254", "unused255"};
+	
+	private ByteBuffer buffer;
+	private long magic;
+	private int minor_version;
+	private int major_version;
+	private int constant_pool_count;
+	private cp_info[] constant_pool;
+	private int access_flags;
+	private int this_class;
+	private int super_class;
+	private int interfaces_count;
+	private int[] interfaces;
+	private int fields_count;
+	private field_info[] fields;
+	private int methods_count;
+	private method_info[] methods;
+	private int attributes_count;
+	private attribute_info[] attributes;
+	boolean tooShort;
+	boolean hasRemaining;
+	
+	public Clazz(ByteBuffer buffParm) throws MalformedClass {
+		buffer = buffParm;
+		try {
+			magic = buffer.getInt();
+			magic &= 0x00000000FFFFFFFFL;
+			minor_version = buffer.getShort();
+			minor_version &= 0x0000FFFF;
+			major_version = buffer.getShort();
+			major_version &= 0x0000FFFF;
+			constant_pool_count = buffer.getShort();
+			minor_version &= 0x0000FFFF;
+			constant_pool = getConstantPool(buffer, constant_pool_count);
+			access_flags = buffer.getShort();
+			access_flags &= 0x0000FFFF;
+			this_class = buffer.getShort();
+			this_class &= 0x0000FFFF;
+			super_class = buffer.getShort();
+			super_class &= 0x0000FFFF;
+			interfaces_count = buffer.getShort();
+			interfaces_count &= 0x0000FFFF;
+			interfaces = getInterfaces(buffer, interfaces_count);
+			fields_count = buffer.getShort();
+			fields_count &= 0x0000FFFF;
+			fields = getFields(buffer, fields_count);
+			methods_count = buffer.getShort();
+			methods_count &= 0x0000FFFF;
+			methods = getMethods(buffer, methods_count);
+			attributes_count = buffer.getShort();
+			attributes_count &= 0x0000FFFF;
+			attributes = getAttributes(buffer, attributes_count);
+		}
+		catch (java.nio.BufferUnderflowException ex) {
+			if (debug) {
+				ex.printStackTrace(System.out);
+			}
+			tooShort = true;
+		}
+		catch (MalformedClass ex) {
+			if (debug) {
+				ex.printStackTrace(System.out);
+				print(System.out);
+			}
+			throw ex;
+		}
+		hasRemaining = buffer.hasRemaining();
+		
+		if (tooShort) {
+			if (debug) {
+				print(System.out);
+			}
+			throw new MalformedClass(buffer.position(), "Class file ends abruptly");
+		}
+		
+		if (hasRemaining) {
+			if (debug) {
+				print(System.out);
+			}
+			throw new MalformedClass(buffer.position(), "Class file contains extra bytes");
+		}
+	}
+	
+	String getClassName(int index) {
+		if ((index < 1) || (index >= constant_pool_count)) {
+			return "** Invalid constant pool index: " + index + "**";
+		}
+		if (constant_pool[index].getTag() != CONSTANT_Class) {
+			return "** Invalid tag for Class entry #" + index + "**";
+		}
+		String result = "*** Not a class ***";
+		cp_info refined = constant_pool[index].refine();
+		if (refined != null) {
+			if (refined.getClass() == Class_info.class) {
+				result = ((Class_info) refined).getName();
+			}
+		}
+		return result;
+	}
+	
+	String getFieldNames(int index) {
+		String result = "*** Not a field ***";
+		cp_info refined = constant_pool[index].refine();
+		if (refined != null) {
+			if (refined.getClass() == Fieldref_info.class) {
+				result = ((Fieldref_info) refined).getNames();
+			}
+		}
+		return result;
+	}
+	
+	String getMethodNames(int index) {
+		String result = "*** Not a method ***";
+		cp_info refined = constant_pool[index].refine();
+		if (refined != null) {
+			if (refined.getClass() == Methodref_info.class) {
+				result = ((Methodref_info) refined).getNames();
+			}
+		}
+		return result;
+	}
+	
+	void print(java.io.PrintStream stream) {
+		stream.println("Magic = 0x" + Long.toHexString(magic));
+		stream.println("Major version = 0x" + Integer.toHexString(major_version));
+		stream.println("Minor version = 0x" + Integer.toHexString(minor_version));
+		stream.println("Constant pool count = " + constant_pool_count);
+		stream.println("Access flags = 0x" + Integer.toHexString(access_flags));
+		stream.println("This class index = " + this_class);
+		stream.println("Super class index = " + super_class);
+		stream.println("Interfaces count = " + interfaces_count);
+		stream.println("Fields count = " + fields_count);
+		stream.println("Methods count = " + methods_count);
+		stream.println("Attributes count = " + attributes_count);
+		if (constant_pool != null) {
+			stream.println();
+			stream.println("********** Constant Pool **********");
+			printConstantPool(stream);
+		}
+		if (interfaces != null) {
+			stream.println();
+			stream.println("********** Interfaces **********");
+			printInterfaces(stream);
+		}
+		if (fields != null) {
+			stream.println();
+			stream.println("********** Fields **********");
+			printFields(stream);
+		}
+		if (methods != null) {
+			stream.println();
+			stream.println("********** Methods **********");
+			printMethods(stream);
+		}
+		if (attributes != null) {
+			stream.println();
+			stream.println("********** File-Level Attributes **********");
+			printAttributes(stream);
+		}
+	}
+	
+	void format(java.io.PrintStream stream) {
+		stream.println("Magic = 0x" + Long.toHexString(magic));
+		stream.println("Major version = 0x" + Integer.toHexString(major_version));
+		stream.println("Minor version = 0x" + Integer.toHexString(minor_version));
+		stream.println("Constant pool count = " + constant_pool_count);
+		stream.println("Access flags = 0x" + Integer.toHexString(access_flags));
+		stream.println("This class index = " + this_class + "  " + getClassName(this_class));
+		stream.println("Super class index = " + super_class + "  " + getClassName(super_class));
+		stream.println("Interfaces count = " + interfaces_count);
+		stream.println("Fields count = " + fields_count);
+		stream.println("Methods count = " + methods_count);
+		stream.println("Attributes count = " + attributes_count);
+		stream.println();
+		stream.println("********** Constant Pool **********");
+		formatConstantPool(stream);
+		stream.println();
+		stream.println("********** Interfaces **********");
+		formatInterfaces(stream);
+		stream.println();
+		stream.println("********** Fields **********");
+		formatFields(stream);
+		stream.println();
+		stream.println("********** Methods **********");
+		formatMethods(stream);
+		stream.println();
+		stream.println("********** File-Level Attributes **********");
+		formatAttributes(attributes, attributes_count, stream);
+	}
+	
+	void printHexByte(byte data, java.io.PrintStream stream) {
+		String bytes = Integer.toHexString(0x00FF & (int) data);
+		if (bytes.length() == 1) {
+			stream.print('0');
+		}
+		stream.print(bytes);
+	}
+	
+	void printHex(byte[] bytes, int indent, java.io.PrintStream stream) {
+		int len = bytes.length;
+		int offset = 0;
+		while (len > 0) {
+			if ((offset % 16) == 0) {
+				if (offset != 0) {
+					stream.println();
+				}
+				stream.print("                    ".substring(0,indent));
+				String offsetString = "     " + Integer.toString(offset);
+				int l = offsetString.length();
+				stream.print(offsetString.substring(l - 6, l));
+				stream.print(": ");
+			}
+			else if ((offset % 4) == 0) {
+				stream.print("  ");
+			}
+			printHexByte(bytes[offset], stream);
+			offset++;
+			len--;
+		}
+		stream.println();
+	}
+	
+	void printConstantPool(java.io.PrintStream stream) {
+		if (constant_pool != null) {
+			for (int i = 0; i < constant_pool_count; i++) {
+				constant_pool[i].print(stream);
+			}
+		}
+	}
+	
+	void formatConstantPool(java.io.PrintStream stream) {
+		if (constant_pool != null) {
+			for (int i = 0; i < constant_pool_count; i++) {
+				constant_pool[i].format(stream);
+			}
+		}
+	}
+	
+	
+	cp_info[] getConstantPool(ByteBuffer buff, int count) throws MalformedClass {
+	
+		cp_info[] result = new cp_info[count];
+		
+		// Create zeroth entry
+		result[0] = new cp_info();
+		
+		// Since the zeroth entry is reserved start with 1
+		for (int i = 1; i < count; i++) {
+			result[i] = new cp_info(buff, i);
+			
+			// If entry just read is a miserable double entry, create its doppleganger
+			if (result[i].hasDummy()) {
+				result[i+1] = new cp_info(result[i]);
+				i++;
+			}
+		}
+		
+		return result;
+	}
+		
+	int getU2(byte[] bytes, int offset) {
+		return 0x0000FFFF & (bytes[offset] << 8) | (0x00FF & bytes[offset+1]);
+	}
+	
+	int getU4(byte[] bytes, int offset) {
+		return (getU2(bytes, offset) << 16) | getU2(bytes, offset+2);
+	}
+		
+	private class cp_info {
+		short tag;
+		int info_length;
+		byte[] info;
+		int index;
+		int position;
+		cp_info refinedInfo;
+		
+		cp_info() {
+			tag = (short) CONSTANT_Dummy;
+			if (debug) {
+				print(System.out);
+			}
+		}
+		
+		cp_info(ByteBuffer buff, int entryIndex) throws MalformedClass {
+			index = entryIndex;
+			position = buff.position();
+			tag = (short) (0x00FF & buff.get());
+			switch (tag) {
+				case CONSTANT_Class:
+					info_length = 2;
+					break;
+				case CONSTANT_Fieldref:
+				case CONSTANT_Methodref:
+				case CONSTANT_InterfaceMethodref:
+					info_length = 4;
+					break;
+				case CONSTANT_String:
+					info_length = 2;
+					break;
+				case CONSTANT_Integer:
+				case CONSTANT_Float:
+					info_length = 4;
+					break;
+				case CONSTANT_Long:
+				case CONSTANT_Double:
+					info_length = 8;
+					break;
+				case CONSTANT_NameAndType:
+					info_length = 4;
+					break;
+				case CONSTANT_Utf8:
+					info_length = 0x0000FFFF & buff.getShort();
+					break;
+				default:
+					throw new MalformedClass(position, "Constant pool tag " + tag + " not valid");		
+			}
+			if (tag != CONSTANT_Utf8) {
+				info = new byte[info_length];
+				buff.get(info, 0, info_length);
+			}
+			else {
+				info = new byte[2 + info_length];
+				info[0] = (byte) (info_length >> 8);
+				info[1] = (byte) info_length;
+				buff.get(info, 2, info_length);
+				info_length += 2;
+			}
+			
+			if (debug) {
+				print(System.out);
+			}
+		}
+		
+		cp_info(cp_info base) {
+			tag = (short) (base.tag + CONSTANT_Dummy);
+			index = base.index + 1;
+			if (debug) {
+				print(System.out);
+			}
+		}
+		
+		short getTag() {
+			return tag;
+		}
+		
+		String getUtf8Value() {
+			if (tag != CONSTANT_Utf8) return null;
+			try {
+				return new String(info, 2, info_length - 2, "utf-8");
+			}
+			catch (java.io.UnsupportedEncodingException ex) {
+				// Should never really happen
+				return null;
+			}
+		}
+		
+		boolean hasDummy() {
+			return (tag == CONSTANT_Long) || (tag == CONSTANT_Double);
+		}
+		
+		cp_info refine() {
+			if (refinedInfo == null) {
+				switch (tag) {
+					case CONSTANT_Class:
+						refinedInfo = new Class_info(this);
+						break;
+					case CONSTANT_Fieldref:
+						refinedInfo = new Fieldref_info(this);
+						break;
+					case CONSTANT_Methodref:
+						refinedInfo = new Methodref_info(this);
+						break;
+					case CONSTANT_NameAndType:
+						refinedInfo = new NameAndType_info(this);
+						break;
+					case CONSTANT_String:
+						refinedInfo = new String_info(this);
+						break;
+					case CONSTANT_Integer:
+						refinedInfo = new Integer_info(this);
+						break;
+					case CONSTANT_Float:
+						refinedInfo = new Float_info(this);
+						break;
+					case CONSTANT_Long:
+						refinedInfo = new Long_info(this);
+						break;
+					case CONSTANT_Double:
+						refinedInfo = new Double_info(this);
+						break;
+					case CONSTANT_Utf8:
+						refinedInfo = new Utf8_info(this);
+						break;
+				}
+			}
+			return refinedInfo;
+		}
+		
+		public String toString() {
+			if (this.getClass() == cp_info.class) {
+				cp_info refined = refine();
+				if (refined != null) {
+					return refined.toString();
+				}
+			}
+			String type = null;
+			switch (tag) {
+				case CONSTANT_Class:
+					type = "Class";
+					break;
+				case CONSTANT_Fieldref:
+					type = "Fieldref";
+					break;
+				case CONSTANT_Methodref:
+					type = "Methodref";
+					break;
+				case CONSTANT_InterfaceMethodref:
+					type = "InterfaceMethodref";
+					break;
+				case CONSTANT_String:
+					type = "String";
+					break;
+				case CONSTANT_Integer:
+					type = "Integer";
+					break;
+				case CONSTANT_Float:
+					type = "Float";
+					break;
+				case CONSTANT_Long:
+					type = "Long";
+					break;
+				case CONSTANT_Double:
+					type = "Double";
+					break;
+				case CONSTANT_NameAndType:
+					type = "NameAndType";
+					break;
+				case CONSTANT_Utf8:
+					type = "Utf8";
+					break;
+				case CONSTANT_Dummy:
+					type = "Dummy first entry";
+					break;
+				case CONSTANT_LongDummy:
+					type = "Long#2";
+					break;
+				case CONSTANT_DoubleDummy:
+					type = "Double#2";
+					break;
+				default:
+					type = "*** Unknown ***";
+			}
+			return type;
+		}			
+		
+		void print(java.io.PrintStream stream) {
+			stream.println("CP entry #" + index + ": Tag = " + tag + ", length = " + info_length + 
+							", position = " + position);
+			if ((tag == CONSTANT_Utf8) && (info_length > 2)) {
+				try {
+					stream.println("        " + new String(info, 2, info_length - 2, "utf-8"));
+				}
+				catch (java.io.UnsupportedEncodingException ex) {
+				}
+			}
+		}
+		
+		void format(java.io.PrintStream stream) {
+			stream.println("CP entry #" + index + ": Tag = " + tag + ", length = " + info_length + 
+							", position = " + position);
+			stream.println("        " + toString());
+		}
+	}
+	
+	class Class_info extends cp_info {
+		int classNameIndex;
+		String className;
+		Class_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			classNameIndex = getU2(info, 0);
+			className = getUtf8AsString(classNameIndex);
+		}
+		
+		String getName() {
+			return className;
+		}
+		
+		public String toString() {
+			return "Class " + className;
+		}
+	}
+	
+	class Fieldref_info extends cp_info {
+		int classIndex;
+		int nameAndTypeIndex;
+		Class_info classEntry;
+		String className;
+		String fieldName;
+		String fieldDescriptor;
+		Fieldref_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			classIndex = getU2(info, 0);
+			classEntry = (Class_info) (constant_pool[classIndex].refine());
+			className = classEntry.getName();
+			nameAndTypeIndex = getU2(info, 2);
+			NameAndType_info natEntry = (NameAndType_info) (constant_pool[nameAndTypeIndex].refine());
+			fieldName = natEntry.getName();
+			fieldDescriptor = natEntry.getDescriptor();
+		}
+		
+		String getNames() {
+			return className + "." + fieldName + " (" + fieldDescriptor + ")";
+		}
+		
+		public String toString() {
+			return "Fieldref " + getNames();
+		}
+	}
+	
+	class Methodref_info extends cp_info {
+		int classIndex;
+		int nameAndTypeIndex;
+		Class_info classEntry;
+		String className;
+		String methodName;
+		String methodDescriptor;
+		Methodref_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			classIndex = getU2(info, 0);
+			classEntry = (Class_info) (constant_pool[classIndex].refine());
+			className = classEntry.getName();
+			nameAndTypeIndex = getU2(info, 2);
+			NameAndType_info natEntry = (NameAndType_info) (constant_pool[nameAndTypeIndex].refine());
+			methodName = natEntry.getName();
+			methodDescriptor = natEntry.getDescriptor();
+		}
+		
+		String getNames() {
+			return className + "." + methodName + methodDescriptor;
+		}
+		
+		public String toString() {
+			return "Methodref " + getNames();
+		}
+	}
+	
+	class NameAndType_info extends cp_info {
+		int nameIndex;
+		int descriptorIndex;
+		String name;
+		String descriptor;
+		NameAndType_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			nameIndex = getU2(info, 0);
+			name = getUtf8AsString(nameIndex);
+			descriptorIndex = getU2(info, 2);
+			descriptor = getUtf8AsString(descriptorIndex);
+		}
+		
+		String getName() {
+			return name;
+		}
+		
+		String getDescriptor() {
+			return descriptor;
+		}
+
+		public String toString() {
+			return "NameAndType " + name + " " + descriptor;
+		}
+	}
+	
+	class String_info extends cp_info {
+		int utf8Index;
+		String value;
+		String_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			utf8Index = getU2(info, 0);
+			value = getUtf8AsString(utf8Index);
+		}
+		
+		public String toString() {
+			return "String " + "\"" + value + "\"";
+		}
+	}
+	
+	class Integer_info extends cp_info {
+		int value;
+		Integer_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			value = getU4(info, 0);
+		}
+		
+		public String toString() {
+			return "Integer " + value + "(0x" + Integer.toHexString(value) +")";
+		}
+	}
+	
+	class Float_info extends cp_info {
+		int value;
+		Float_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			value = getU4(info, 0);
+		}
+		
+		public String toString() {
+			return "Float " + Integer.toHexString(value);
+		}
+	}
+	
+	class Long_info extends cp_info {
+		long value;
+		Long_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			value = (((long) getU4(info, 0)) << 32) + (0x00000000FFFFFFFFL & ((long) getU4(info, 4)));
+		}
+		
+		public String toString() {
+			return "Long " + value + "(0x" + Long.toHexString(value) +"L)";
+		}
+	}
+	
+	class Double_info extends cp_info {
+		long value;
+		Double_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			value = (((long) getU4(info, 0)) << 32) + (0x00000000FFFFFFFFL & ((long) getU4(info, 4)));
+		}
+		
+		public String toString() {
+			return "Double" + Long.toHexString(value);
+		}
+	}
+	
+	class Utf8_info extends cp_info {
+		String value;
+		Utf8_info(cp_info base) {
+			refinedInfo = this;
+			tag = base.tag;
+			info_length = base.info_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			value =  getUtf8Value();
+		}
+		
+		public String toString() {
+			return "Utf8 " + "\"" + value + "\"";
+		}
+	}
+	
+	String getUtf8AsString(int index) {
+		if ((index < 1) || (index >= constant_pool_count)) {
+			return "** Invalid constant pool index: " + index + "**";
+		}
+		if (constant_pool[index].getTag() != CONSTANT_Utf8) {
+			return "** Invalid tag for Utf8 entry #" + index + "**";
+		}
+		return constant_pool[index].getUtf8Value();
+	}
+	
+	void printInterfaces(java.io.PrintStream stream) {
+		for (int i = 0; i < interfaces_count; i++) {
+			stream.println("Interface #" + i + ": " + interfaces[i]);
+		}
+	}
+	
+	void formatInterfaces(java.io.PrintStream stream) {
+		for (int i = 0; i < interfaces_count; i++) {
+			stream.println("Interface #" + i + ": " + getClassName(interfaces[i]));
+		}
+	}
+	
+	int[] getInterfaces(ByteBuffer buff, int count) {
+		int[] result = new int[count];
+		for (int i = 0; i < count; i++) {
+			result[i] = 0x0000FFFF & buff.getShort();
+		}
+		return result;
+	}
+	
+	void printFields(java.io.PrintStream stream) {
+		for (int i = 0; i < fields_count; i++) {
+			fields[i].print(stream);
+		}
+	}
+	
+	void formatFields(java.io.PrintStream stream) {
+		for (int i = 0; i < fields_count; i++) {
+			fields[i].format(stream);
+		}
+	}
+	
+	field_info[] getFields(ByteBuffer buff, int count) {
+		field_info[] result = new field_info[count];
+		for (int i = 0; i < count; i++) {
+			result[i] = new field_info(buff, i);
+		}
+		return result;
+	}
+	
+	private class field_info {
+		int access_flags;
+		int name_index;
+		int descriptor_index;
+		int attributes_count;
+		attribute_info[] attributes;
+		int index;
+		int position;
+		FieldInfoEntry field;
+		
+		field_info(ByteBuffer buff, int entryIndex) {
+			position = buff.position();
+			index = entryIndex;
+			access_flags = 0x0000FFFF & buff.getShort();
+			name_index = 0x0000FFFF & buff.getShort();
+			descriptor_index = 0x0000FFFF & buff.getShort();
+			attributes_count = 0x0000FFFF & buff.getShort();
+			if (debug) {
+				print(System.out);
+			}
+			attributes = getAttributes(buff, attributes_count);
+		}
+		
+		void print(java.io.PrintStream stream) {
+			stream.println("Field #" + index + ": Access flags = 0x" + Integer.toHexString(access_flags) +
+							", name index = " + name_index + ", descriptor_index = " + descriptor_index +
+							", attributes count = " + attributes_count + ", position = " + position);
+			if (attributes != null) {
+				printAttributes(attributes, attributes_count, stream);
+			}
+		}
+		
+		void format(java.io.PrintStream stream) {
+			stream.println("Field #" + index + ": ");
+			stream.println("    Access flags = 0x" + Integer.toHexString(access_flags) +
+							"  Name = " + getUtf8AsString(name_index) + "  Type = " + getUtf8AsString(descriptor_index));
+			stream.println("    Attributes count = " + attributes_count);
+			if (attributes != null) {
+				formatAttributes(attributes, attributes_count, stream);
+			}
+		}
+	
+		void formatAttributes(attribute_info[] attributes, int count, java.io.PrintStream stream) {
+			for (int i = 0; i < attributes_count; i++) {
+				String attrName = attributes[i].getName();
+				int attrLength = attributes[i].getLength();
+				byte[] attrInfo = attributes[i].getInfo();
+				
+				stream.println("    field_info attribute #" + i + " (" + attrName + ") :");
+
+				attribute_info refined = refine(attributes[i]);
+				if (refined != null) {
+					refined.format(stream);
+					stream.println();
+				}
+				else {
+					printHex(attrInfo, 4, stream);
+					stream.println();
+				}
+			}
+		}
+		
+		attribute_info refine(attribute_info attr) {
+			if (attr.refinedAttribute == null) {
+				String name = attr.getName();
+				if (name.equals("ConstantValue")) {
+					attr.refinedAttribute = new ConstantValue_attribute(attr);
+				}
+			}
+			return attr.refinedAttribute;
+		}
+		
+		class ConstantValue_attribute extends attribute_info {
+			int constantvalue_index;
+			ConstantValue_attribute(attribute_info base) {
+				attribute_name_index = base.attribute_name_index;
+				attribute_length = base.attribute_length;
+				info = base.info;
+				index = base.index;
+				position = base.position;
+				ByteBuffer buffer = ByteBuffer.wrap(info);
+				constantvalue_index = buffer.getShort() & 0x0000FFFF;
+			}
+			
+			void format(java.io.PrintStream stream) {
+				stream.print("        constantvalue_index = " + constantvalue_index + "  " +
+								constant_pool[constantvalue_index].toString());
+			}
+		}
+	}
+	
+	void printMethods(java.io.PrintStream stream) {
+		for (int i = 0; i < methods_count; i++) {
+			methods[i].print(stream);
+		}
+	}
+	
+	void formatMethods(java.io.PrintStream stream) {
+		for (int i = 0; i < methods_count; i++) {
+			methods[i].format(stream);
+		}
+	}
+	
+	method_info[] getMethods(ByteBuffer buff, int count) {
+		method_info[] result = new method_info[count];
+		for (int i = 0; i < count; i++) {
+			result[i] = new method_info(buff, i);
+		}
+		return result;
+	}
+	
+	private class method_info {
+		int access_flags;
+		int name_index;
+		int descriptor_index;
+		int attributes_count;
+		attribute_info[] attributes;
+		int index;
+		int position;
+		MethodInfoEntry method;
+		
+		method_info(ByteBuffer buff, int entryIndex) {
+			position = buff.position();
+			index = entryIndex;
+			access_flags = 0x0000FFFF & buff.getShort();
+			name_index = 0x0000FFFF & buff.getShort();
+			descriptor_index = 0x0000FFFF & buff.getShort();
+			attributes_count = 0x0000FFFF & buff.getShort();
+			attributes = getAttributes(buff, attributes_count);
+		}
+		
+		boolean isStatic() {
+			return (access_flags & 0x0008) != 0;
+		}
+		
+		int getClassIndex() {
+			return this_class;
+		}
+		
+		int getDescriptorIndex() {
+			return descriptor_index;
+		}
+		
+		void print(java.io.PrintStream stream) {
+			stream.println("Method #" + index + ": Access flags = 0x" + Integer.toHexString(access_flags) +
+							", name index = " + name_index + ", descriptor_index = " + descriptor_index +
+							", attributes count = " + attributes_count + ", position = " + position);
+			if (attributes != null) {
+				printAttributes(attributes, attributes_count, stream);
+			}
+		}
+		
+		void format(java.io.PrintStream stream) {
+			String name = getUtf8AsString(name_index);
+			String descriptor = getUtf8AsString(descriptor_index);
+
+			stream.println();
+			stream.println("Method #" + index + ":");
+			String accessFlags = "000" + Integer.toHexString(access_flags);
+			accessFlags = accessFlags.substring(accessFlags.length() - 4, accessFlags.length());
+			stream.println("    Access flags = 0x" + accessFlags + "  Name: " + name + descriptor);
+			stream.println();
+			
+			for (int i = 0; i < attributes_count; i++) {
+				String attrName = attributes[i].getName();
+				int attrLength = attributes[i].getLength();
+				byte[] attrInfo = attributes[i].getInfo();
+				
+				stream.println("    method_info attribute #" + i + " (" + attrName + ") :");
+
+				attribute_info refined = attributes[i].refine(this);
+				if (refined != null) {
+					refined.format(stream);
+					stream.println();
+				}
+				else {
+					printHex(attrInfo, 4, stream);
+					stream.println();
+				}
+			}
+		}
+		
+		class Exceptions_attribute extends attribute_info {
+			int number_of_exceptions;
+			int[] exception_index_table;
+			
+			Exceptions_attribute(attribute_info base) {
+				attribute_name_index = base.attribute_name_index;
+				attribute_length = base.attribute_length;
+				info = base.info;
+				index = base.index;
+				position = base.position;
+				ByteBuffer buffer = ByteBuffer.wrap(info);
+				number_of_exceptions = buffer.getShort() & 0x0000FFFF;
+				exception_index_table = new int[number_of_exceptions];
+				for (int i = 0; i < number_of_exceptions; i++) {
+					exception_index_table[i] = buffer.getShort() & 0x0000FFFF;
+				}
+			}
+			
+			void format(java.io.PrintStream stream) {
+				stream.println("        Number of exceptions = " + number_of_exceptions);
+				for (int i = 0; i < number_of_exceptions; i++) {
+					stream.print("          " + i + ": " + getClassName(exception_index_table[i]));
+				}
+			}
+		}
+		
+		class Code_attribute extends attribute_info {
+			int max_stack;
+			int max_locals;
+			long code_length;
+			byte[] code;
+			int exception_table_length;
+			exception_table[] exceptions;
+			int attributes_count;
+			attribute_info[] attributes;
+			
+			Code_attribute(attribute_info base) {
+				attribute_name_index = base.attribute_name_index;
+				attribute_length = base.attribute_length;
+				info = base.info;
+				index = base.index;
+				position = base.position;
+				ByteBuffer buffer = ByteBuffer.wrap(info);
+				max_stack = buffer.getShort();
+				max_locals = buffer.getShort();
+				code_length = buffer.getInt();
+				code = new byte[(int) code_length];
+				buffer.get(code, 0, (int) code_length);
+				exception_table_length = buffer.getShort();
+				exceptions = getExceptionTable(buffer, exception_table_length);
+				attributes_count = buffer.getShort();
+				attributes = getAttributes(buffer, attributes_count);
+			}
+			
+			exception_table[] getExceptionTable(java.nio.ByteBuffer buff, int count) {
+				exception_table[] result = new exception_table[count];
+				for (int i = 0; i < count; i++) {
+					result[i] = new exception_table(buff, i);
+				}
+				return result;
+			}
+
+			void format(java.io.PrintStream stream) {
+				stream.println("    max_stack = " + max_stack + ", max_locals = " + max_locals + 
+								", code_length = " + code_length + ", starting offset = " + (position+14));
+				stream.println();
+				formatCode(stream, code, (int) code_length);
+				stream.println("    attributes_count = " + attributes_count);
+				stream.println();
+				for (int i = 0; i < attributes_count; i++) {
+					String attrName = attributes[i].getName();
+					int attrLength = attributes[i].getLength();
+					byte[] attrInfo = attributes[i].getInfo();
+					
+					stream.println("    Code_attribute attribute #" + i + " (" + attrName + ") :");
+
+					attribute_info refined = refine(attributes[i]);
+					if (refined != null) {
+						refined.format(stream);
+						stream.println();
+					}
+					else {
+						printHex(attrInfo, 4, stream);
+						stream.println();
+					}
+				}
+			}
+			
+			void formatCode(java.io.PrintStream stream, byte[] code, int length) {
+				int offset = 0;
+				while (offset < length) {
+					short bytecode = (short) (0x00FF & code[offset]);
+					int codeLength = codeLengthTable[bytecode];
+					if (codeLength <= 0) {
+						codeLength = getCodeLength(code, offset);
+					}
+					String mnemonic = mnemonicTable[bytecode];
+					if (mnemonic.equals("wide")) {
+						mnemonic = mnemonic + " " + mnemonicTable[code[offset+1] & 0x00FF];
+					}
+					String operands = "";
+					int constIndex = 0;
+					int branchOffset = 0;
+					switch (bytecode) {
+						case 25:  // aload
+						case 58:  // astore
+						case 24:  // dload
+						case 57:  // dstore
+						case 23:  // fload
+						case 56:  // fstore
+						case 21:  // iload
+						case 54:  // istore
+						case 22:  // lload
+						case 55:  // lstore
+						case 169:  // ret
+							operands = Integer.toString(0x00FF & code[offset+1]);
+							break;
+						case 16:  // bipush
+							operands = Integer.toString(code[offset+1]);
+							break;
+						case 189:  // anewarray
+						case 192:  // checkcast
+						case 193:  // instanceof
+						case 187:  // new
+							constIndex = getU2(code, offset+1);
+							operands = getClassName(constIndex);
+							break;
+						case 180:  // getfield
+						case 178:  // getstatic
+						case 181:  // putfield
+						case 179:  // putstatic
+							constIndex = getU2(code, offset+1);
+							operands = getFieldNames(constIndex);
+							break;
+						case 167:  // goto
+						case 165:  // if_acmpeq
+						case 166:  // if_acmpne
+						case 159:  // if_icmpeq
+						case 160:  // if_icmpne
+						case 161:  // if_icmplt
+						case 162:  // if_icmpge
+						case 163:  // if_icmpgt
+						case 164:  // if_icmple
+						case 153:  // ifeq
+						case 154:  // ifne
+						case 155:  // iflt
+						case 156:  // ifge
+						case 157:  // ifgt
+						case 158:  // ifle
+						case 199:  // ifnonnull
+						case 198:  // ifnull
+						case 168:  // jsr
+							branchOffset = (short) getU2(code, offset+1);  // Sign-extend the 2-byte value
+							operands = Integer.toString(offset + branchOffset);
+							break;
+						case 200:  // goto_w
+						case 201:  // jsr_w
+							branchOffset = getU4(code, offset+1);
+							operands = Integer.toString(offset + branchOffset);
+							break;
+						case 132:  // iinc
+							operands = Integer.toString(code[offset+1] & 0x00FF) + "," + Integer.toString(code[offset+2]);
+							break;
+						case 185:  // invokeinterface
+							constIndex = getU2(code, offset+1);
+							operands = Integer.toString(code[offset+3] & 0x00FF) + "," + getMethodNames(constIndex);
+							break;
+						case 183:  // invokespecial
+						case 184:  // invokestatic
+						case 182:  // invokevirtual
+							constIndex = getU2(code, offset+1);
+							operands = getMethodNames(constIndex);
+							break;
+						case 18:  // ldc
+							constIndex = 0x00FF & code[offset+1];
+							operands = Integer.toString(constIndex) + " " + constant_pool[constIndex].toString();
+							break;
+						case 19:  // ldc_w
+						case 20:  // ldc2_w
+							constIndex = getU2(code, offset+1);
+							operands = Integer.toString(constIndex) + " " + constant_pool[constIndex].toString();
+							break;
+						case 171:  // lookupswitch
+							throw new UnknownError();
+						case 197:  // multianewarray
+							constIndex = getU2(code, offset+1);
+							operands = Integer.toString(code[offset+3] & 0x00FF) + "," + getClassName(constIndex);
+							break;
+						case 188:  // newarray
+							switch (code[offset+1]) {
+								case 4:  // boolean
+									operands = "boolean";
+									break;
+								case 5:  // char
+									operands = "char";
+									break;
+								case 6:  // float
+									operands = "float";
+									break;
+								case 7:  // double
+									operands = "double";
+									break;
+								case 8:  // byte
+									operands = "byte";
+									break;
+								case 9:  // short
+									operands = "short";
+									break;
+								case 10:  // int
+									operands = "int";
+									break;
+								case 11:  // long
+									operands = "long";
+									break;
+								default:
+									operands = "*** Unknown ***";
+							}
+							break;
+						case 17:  // sipush
+							operands = Integer.toString((short) getU2(code, offset+1));
+							break;
+						case 170:  // tableswitch
+							throw new UnknownError();
+						case 196:  // wide
+							switch (code[offset+1] & 0x00FF) {
+								case 21:  // iload
+								case 23:  // fload
+								case 25:  // aload
+								case 22:  // lload
+								case 24:  // dload
+								case 54:  // istore
+								case 56:  // fstore
+								case 58:  // astore
+								case 55:  // lstore
+								case 57:  // dstore
+								case 169:  // ret
+									operands = Integer.toString(getU2(code, offset+2));
+									break;
+								case 132:  // iinc
+									operands = Integer.toString(getU2(code, offset+2)) + "," +
+												Integer.toString(getU2(code, offset+2));
+									break;
+								default:
+									throw new UnknownError();
+							}
+							break;
+					}
+					switch (codeLength) {
+						case 1:
+							stream.format("    %1$ 6d: %2$02x              %3$-13s %4$s", offset, bytecode, mnemonic, 
+										operands);
+							break;
+						case 2:
+							stream.format("    %1$ 6d: %2$02x %3$02x           %4$-13s %5$s", offset, bytecode,
+										code[offset+1], mnemonic, operands);
+							break;
+						case 3:
+							stream.format("    %1$ 6d: %2$02x %3$02x %4$02x        %5$-13s %6$s", offset, bytecode, 
+										code[offset+1], code[offset+2], mnemonic, operands);
+							break;
+						case 4:
+							stream.format("    %1$ 6d: %2$02x %3$02x %4$02x %5$02x     %6$-13s %7$s", offset, bytecode,
+										code[offset+1], code[offset+2], code[offset+3], mnemonic, operands);
+							break;
+						case 5:
+							stream.format("    %1$ 6d: %2$02x %3$02x %4$02x %5$02x %6$02x  %7$-13s %8$s", offset, bytecode,
+										code[offset+1], code[offset+2], code[offset+3], code[offset+4], mnemonic, operands);
+							break;
+						default:
+							stream.format("    %1$ 6d: %2$02x %3$02x %4$02x %5$02x %6$02x  %7$-13s %8$s", offset, bytecode,
+										code[offset+1], code[offset+2], code[offset+3], code[offset+4], mnemonic, operands);
+							throw new UnknownError();
+					}
+					offset += codeLength;
+					stream.println();
+				}
+				stream.println();
+				
+				stream.println("    exception_table_length = " + exception_table_length);
+				if (exception_table_length > 0) {
+					stream.println();
+					formatExceptionTable(stream);
+				}
+				stream.println();
+			}
+			
+			int getCodeLength(byte[] code, int offset) {
+				throw new UnknownError();
+			}
+			
+			void formatExceptionTable(java.io.PrintStream stream) {
+				for (int i = 0; i < exception_table_length; i++) {
+					exceptions[i].format(stream);
+				}
+			}
+			
+			attribute_info refine(attribute_info attr) {
+				if (attr.refinedAttribute == null) {
+					String name = attr.getName();
+					if (name.equals("LineNumberTable")) {
+						attr.refinedAttribute = new LineNumberTable_attribute(attr, Code_attribute.this);
+					}
+					else if (name.equals("StackMapTable")) {
+						attr.refinedAttribute = new StackMapTable_attribute(attr);
+					}
+				}
+				return attr.refinedAttribute;
+			}				
+	
+			class StackMapTable_attribute extends attribute_info {
+				int number_of_entries;
+				stack_map_frame[] stack_map_frame_entries;
+				
+				StackMapTable_attribute(attribute_info base) {
+					attribute_name_index = base.attribute_name_index;
+					attribute_length = base.attribute_length;
+					info = base.info;
+					index = base.index;
+					position = base.position;
+					ByteBuffer buffer = ByteBuffer.wrap(info);
+					number_of_entries = buffer.getShort();
+					stack_map_frame_entries = new stack_map_frame[number_of_entries + 1];
+					stack_map_frame_entries[0] = new stack_map_frame(Code_attribute.this);
+					stack_map_frame firstFrame = stack_map_frame_entries[0];
+					for (int i = 0; i < number_of_entries; i++) {
+						stack_map_frame_entries[i+1] = newFrame(stack_map_frame_entries, buffer, i+1);
+					}
+				}
+						
+				stack_map_frame newFrame(stack_map_frame[] entries, ByteBuffer buffer, int ndx) {
+					short frameType = (short) (buffer.get() & 0x00FF);
+					if (frameType < 64) {
+						return new same_frame(entries, frameType, buffer, ndx);
+					}
+					else if (frameType < 128) {
+						return new same_locals_1_stack_item_frame(entries, frameType, buffer, ndx);
+					}
+					else if (frameType < 247) {
+						throw new UnknownError();  // ???? Invalid frame type value
+					}
+					else if (frameType == 247) {
+						return new same_locals_1_stack_item_frame_extended(entries, frameType, buffer, ndx);
+					}
+					else if (frameType < 251) {
+						return new chop_frame(entries, frameType, buffer, ndx);
+					}
+					else if (frameType < 255) {
+						return new append_frame(entries, frameType, buffer, ndx);
+					}
+					else {
+						return new full_frame(entries, frameType, buffer, ndx);
+					}
+				}
+						
+				void format(java.io.PrintStream stream) {
+					stream.println("        number of entries = " + number_of_entries);
+					for (int i = 0; i < number_of_entries + 1; i++) {
+						stack_map_frame_entries[i].format(stream);
+					}
+				}
+			}
+			
+			class stack_map_frame {
+				short frame_type;
+				String frame_type_name;
+				int offset_delta;
+				int number_of_locals;
+				verification_type_info[] locals;
+				int number_of_stack_items;
+				verification_type_info[] stack;
+				int offset;
+				int index;
+				
+				stack_map_frame() {
+				}
+				
+				stack_map_frame(method_info.Code_attribute codeAttr) {
+					frame_type = 255;
+					frame_type_name = "initial_frame";
+					offset_delta = 0;
+					number_of_locals = parmCount();
+					locals = new verification_type_info[number_of_locals];
+					initializeLocals();
+					number_of_stack_items = 0;
+				}
+				
+				int parmCount() {
+					String descriptor = getUtf8AsString(getDescriptorIndex());
+					int result = isStatic() ? 0 : 1;
+					boolean scanForSemi = false;
+					boolean endOfParms = false;
+					for (int i = 1; i < descriptor.length(); i++) {
+						char item = descriptor.charAt(i);
+						switch (item) {
+							case 'B':
+							case 'C':
+							case 'D':
+							case 'F':
+							case 'I':
+							case 'J':
+							case 'S':
+							case 'Z':
+								if (!scanForSemi) {
+									result++;
+								}
+								break;
+							case '[':
+								break;
+							case 'L':
+								result++;
+								scanForSemi = true;
+								break;
+							case ';':
+								scanForSemi = false;
+								break;
+							case ')':
+								endOfParms = true;
+								break;
+						}
+						if (endOfParms) break;
+					}
+					if (!endOfParms) throw new UnknownError();
+					return result;
+				}
+				
+				void initializeLocals() {
+					String descriptor = getUtf8AsString(getDescriptorIndex());
+					int i = 0;
+					if (!isStatic()) {
+						locals[0] = new verification_type_info(7);  // Object
+						locals[0].cpool_index = getClassIndex();
+						locals[0].objectType = getUtf8AsString(locals[0].cpool_index);
+						i++;
+					}
+					boolean endOfParms = false;
+					int state = 0;
+					int mark = -1;
+					String typeString = null;
+					for (int j = 1; j < descriptor.length(); j++) {
+						char item = descriptor.charAt(j);
+						switch (state) {
+							case 0:  // Normal -- no [ or L
+								switch (item) {
+									case 'B':
+									case 'C':
+									case 'I':
+									case 'S':
+									case 'Z':
+										locals[i] = new verification_type_info(1);  // int
+										i++;
+										break;
+									case 'J':
+										locals[i] = new verification_type_info(4);  // long
+										i++;
+										break;
+									case 'D':
+										locals[i] = new verification_type_info(3);  // double
+										i++;
+										break;
+									case 'F':
+										locals[i] = new verification_type_info(2);  // float
+										i++;
+										break;
+									case '[':
+										mark = j;
+										state = 2;
+										break;
+									case 'L':
+										mark = j;
+										state = 3;
+										break;
+									case ')':
+										endOfParms = true;
+										break;
+									default:
+										throw new UnknownError();
+								}
+								break;
+							case 2:
+								switch (item) {
+									case 'B':
+									case 'C':
+									case 'D':
+									case 'F':
+									case 'I':
+									case 'J':
+									case 'S':
+									case 'Z':
+										typeString = descriptor.substring(mark, j+1);
+										locals[i] = new verification_type_info(7);  // Object
+										locals[i].objectType = typeString;
+										i++;
+										state = 0;
+										break;
+									case '[':  // Remain in current state
+										break;
+									case 'L':  // Switch to looking for semicolon
+										state = 3;
+										break;
+								}
+							case 3:
+								switch (item) {
+									case ';':
+										typeString = descriptor.substring(mark, j+1);
+										locals[i] = new verification_type_info(7);  // Object
+										locals[i].objectType = typeString;
+										i++;
+										state = 0;
+										break;
+								}
+								break;
+						}
+						if (endOfParms) break;
+					}
+					if (!endOfParms) throw new UnknownError();
+					if (i != locals.length) {
+						System.out.println("i = " + i + ", locals.length = " + locals.length);
+						throw new UnknownError();
+					}
+				}
+				
+				void cloneFrom(stack_map_frame original) {
+					offset = original.offset + 1;
+					number_of_locals = original.number_of_locals;
+					locals = original.locals;
+					number_of_stack_items = original.number_of_stack_items;
+					stack = original.stack;
+				}
+				
+				void format(java.io.PrintStream stream) {
+					stream.println("        Frame #" + index + ": " + frame_type_name + " -- offset = " + offset +
+								", num locals = " + number_of_locals + ", num stack = " + number_of_stack_items);
+					stream.println("          Locals:");
+					formatTypeInfo(stream, locals, number_of_locals);
+					if (number_of_stack_items > 0) {
+						stream.println("          Stack:");
+						formatTypeInfo(stream, stack, number_of_stack_items);
+					}
+				}
+				
+				void formatTypeInfo(java.io.PrintStream stream, verification_type_info[] info, int count) {
+					for (int i = 0; i < count; i++) {
+						stream.print("          " + i + ": tag=" + info[i].tag);
+						if (info[i].tag == 7) {
+							stream.print(" cpool_index=" + info[i].cpool_index);
+							if (info[i].cpool_index > 0) {
+								info[i].objectType = getClassName(info[i].cpool_index);
+							}
+						}
+						if (info[i].objectType != null) {
+							stream.print("  " + info[i].objectType);
+						}
+						stream.println();
+					}
+				}
+			}
+
+			class same_frame extends stack_map_frame {
+				same_frame(stack_map_frame[] entries, short frameType, ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "same_frame";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = frameType;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+				}
+			}
+
+			class same_locals_1_stack_item_frame extends stack_map_frame {
+				same_locals_1_stack_item_frame(stack_map_frame[] entries, short frameType, ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "same_locals_1_stack_item_frame";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = frameType - 64;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+					stack = new verification_type_info[1];
+					stack[0] = new verification_type_info(buffer, 0);
+				}
+			}
+			
+			class same_locals_1_stack_item_frame_extended extends stack_map_frame {
+				same_locals_1_stack_item_frame_extended(stack_map_frame[] entries, short frameType,
+														ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "same_locals_1_stack_item_frame_extended";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = buffer.getShort() & 0x0000FFFF;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+					number_of_stack_items = 1;
+					stack = new verification_type_info[1];
+					stack[0] = new verification_type_info(buffer, 0);
+				}
+			}
+			
+			class chop_frame extends stack_map_frame {
+				chop_frame(stack_map_frame[] entries, short frameType, ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "chop_frame";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = buffer.getShort() & 0x0000FFFF;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+					int chopCount = 251 - frameType;
+					if (number_of_locals < chopCount) {
+						throw new UnknownError();  // ???? Invalid chop count
+					}
+					number_of_locals -= chopCount;
+					number_of_stack_items = 0;
+				}
+			}
+			
+			class same_frame_extended extends stack_map_frame {
+				same_frame_extended(stack_map_frame[] entries, short frameType, ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "same_frame_extended";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = buffer.getShort() & 0x0000FFFF;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+					number_of_stack_items = 0;
+				}
+			}
+			
+			class append_frame extends stack_map_frame {
+				append_frame(stack_map_frame[] entries, short frameType, ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "append_frame";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = buffer.getShort() & 0x0000FFFF;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+					int addedLocals = frameType - 251;
+					verification_type_info[] newLocals = new verification_type_info[number_of_locals + addedLocals];
+					if (locals != null) {
+						System.arraycopy(locals, 0, newLocals, 0, number_of_locals);
+					}
+					else {  // ???? temp
+						System.out.println("*** Locals == null, entry# " + ndx + " ***");
+					}
+					locals = newLocals;
+					for (int i = 0; i < addedLocals; i++) {
+						locals[number_of_locals + i] = new verification_type_info(buffer, number_of_locals + i);
+					}
+					number_of_locals += addedLocals;
+					number_of_stack_items = 0;
+				}
+			}
+			
+			class full_frame extends stack_map_frame {
+				full_frame(stack_map_frame[] entries, short frameType, ByteBuffer buffer, int ndx) {
+					index = ndx;
+					frame_type = frameType;
+					frame_type_name = "full_frame";
+					if (ndx != 0) {
+						cloneFrom(entries[ndx - 1]);
+					}
+					offset_delta = buffer.getShort() & 0x0000FFFF;
+					offset += offset_delta;  // Offset was initialized to 1 + previous entry offset
+					number_of_locals = buffer.getShort() & 0x0000FFFF;
+					locals = new verification_type_info[number_of_locals];
+					for (int i = 0; i < number_of_locals; i++) {
+						locals[i] = new verification_type_info(buffer, i);
+					}
+					number_of_stack_items = buffer.getShort() & 0x0000FFFF;
+					stack = new verification_type_info[number_of_stack_items];
+					for (int i = 0; i < number_of_stack_items; i++) {
+						stack[i] = new verification_type_info(buffer, i);
+					}
+				}
+			}
+			
+			class verification_type_info {
+				short tag;
+				int cpool_index;
+				String objectType;
+				int offset;
+				int index;
+				
+				verification_type_info(int newTag) {
+					tag = (short) newTag;
+				}
+				
+				verification_type_info(ByteBuffer buffer, int ndx) {
+					tag = (short) (buffer.get() & 0x00FF);
+					if (tag == 7) { // Object_variable_info
+						cpool_index = buffer.getShort() & 0x0000FFFF;
+					}
+					else if (tag == 8) { // Uninitialized variable info
+						offset = buffer.getShort() & 0x0000FFFF;
+					}
+				}
+			}
+		}
+	}
+	
+	void printAttributes(attribute_info[] attributes, int count, java.io.PrintStream stream) {
+		for (int i = 0; i < count; i++) {
+			attributes[i].print(stream);
+		}
+	}
+	
+	void printAttributes(java.io.PrintStream stream) {
+		printAttributes(attributes, attributes_count, stream);
+	}
+	
+	void formatAttributes(attribute_info[] attributes, int count, java.io.PrintStream stream) {
+		for (int i = 0; i < attributes_count; i++) {
+			String attrName = attributes[i].getName();
+			int attrLength = attributes[i].getLength();
+			byte[] attrInfo = attributes[i].getInfo();
+			
+			stream.println("    Attribute #" + i + " (" + attrName + ") :");
+
+			attribute_info refined = refine(attributes[i]);
+			if (refined != null) {
+				refined.format(stream);
+				stream.println();
+			}
+			else {
+				printHex(attrInfo, 4, stream);
+				stream.println();
+			}
+		}
+	}
+		
+	attribute_info refine(attribute_info attr) {
+		if (attr.refinedAttribute == null) {
+			String name = attr.getName();
+			if (name.equals("SourceFile")) {
+				attr.refinedAttribute = new SourceFile_attribute(attr);
+			}
+			else if (name.equals("InnerClasses")) {
+				attr.refinedAttribute = new InnerClasses_attribute(attr);
+			}
+		}
+		return attr.refinedAttribute;
+	}
+
+	attribute_info[] getAttributes(ByteBuffer buff, int count) {
+		attribute_info[] result = new attribute_info[count];
+		for (int i = 0; i < count; i++) {
+			result[i] = new attribute_info(buff, i);
+		}
+		return result;
+	}
+	
+	private class attribute_info {
+		int attribute_name_index;
+		long attribute_length;
+		byte[] info;
+		int index;
+		int position;
+		attribute_info refinedAttribute;
+		
+		protected attribute_info() {
+		}
+		
+		attribute_info(ByteBuffer buff, int entryIndex) {
+			position = buff.position();
+			index = entryIndex;
+			attribute_name_index = 0x0000FFFF & buff.getShort();
+			attribute_length = 0x00000000FFFFFFFFL & (long) buff.getInt();
+			info = new byte[(int) attribute_length];
+			buff.get(info, 0, (int) attribute_length);
+			if (debug) {
+				print(System.out);
+			}
+		}
+		
+		String getName() {
+			return getUtf8AsString(attribute_name_index);
+		}
+		
+		int getLength() {
+			return (int) attribute_length;
+		}
+		
+		byte[] getInfo() {
+			return info;
+		}
+		
+		attribute_info refine() {
+			if (refinedAttribute == null) {
+				String name = getName();
+			}
+			return refinedAttribute;
+		}				
+		
+		attribute_info refine(method_info method) {
+			if (refinedAttribute == null) {
+				String name = getName();
+				if (name.equals("Code")) {
+					refinedAttribute = method.new Code_attribute(this);
+				}
+				else if (name.equals("Exceptions")) {
+					refinedAttribute = method.new Exceptions_attribute(this);
+				}
+			}
+			return refinedAttribute;
+		}				
+		
+		void print(java.io.PrintStream stream) {
+			stream.println("Attribute #" + index + ": Name index = " + attribute_name_index + ", length = "
+							+ attribute_length + ", position = " + position);
+		}
+		
+		void format(java.io.PrintStream stream) {
+			String attrName = getName();
+			int attrLength = getLength();
+			byte[] attrInfo = getInfo();
+			
+			stream.println("    Attribute #" + index + " (" + attrName + ") :");
+
+			attribute_info refined = refine();
+			if (refined != null) {
+				refined.format(stream);
+				stream.println();
+			}
+			else {
+				printHex(info, 4, stream);
+				stream.println();
+			}
+		}
+	}
+		
+	class exception_table {
+		int start_pc;
+		int end_pc;
+		int handler_pc;
+		int catch_type;
+		int index;
+		exception_table(ByteBuffer buff, int ndx) {
+			index = ndx;
+			start_pc = buff.getShort();
+			end_pc = buff.getShort();
+			handler_pc = buff.getShort();
+			catch_type = buff.getShort();
+		}
+		
+		void format(java.io.PrintStream stream) {
+			stream.println("    Exception range #" + index + ": start = " + start_pc + ", end = " + end_pc +
+							", handler = " + handler_pc);
+			stream.println("      catch type = " + getClassName(catch_type));
+		}
+	}	
+	
+	class LineNumberTable_attribute extends attribute_info {
+		int line_number_table_length;
+		line_number_table_entry[] line_number_table;
+		
+		LineNumberTable_attribute(attribute_info base, method_info.Code_attribute codeAttr) {
+			attribute_name_index = base.attribute_name_index;
+			attribute_length = base.attribute_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			ByteBuffer buffer = ByteBuffer.wrap(info);
+			line_number_table_length = buffer.getShort();
+			line_number_table = new line_number_table_entry[line_number_table_length];
+			for (int i = 0; i < line_number_table_length; i++) {
+				line_number_table[i] = new line_number_table_entry(buffer, i);
+			}
+		}
+		
+		void format(java.io.PrintStream stream) {
+			for (int i = 0; i < line_number_table_length; i++) {
+				line_number_table[i].format(stream);
+				if (((i+1) % 4) == 0) {
+					stream.println();
+				}
+			}
+			if ((line_number_table_length % 4) != 0) {
+				stream.println();
+			}
+		}
+	}
+	
+	class line_number_table_entry {
+		int start_pc;
+		int line_number;
+		int index;
+		
+		line_number_table_entry(ByteBuffer buffer, int ndx) {
+			index = ndx;
+			start_pc = buffer.getShort() & 0x0000FFFF;
+			line_number = buffer.getShort() & 0x0000FFFF;
+		}
+		
+		void format(java.io.PrintStream stream) {
+			stream.format("    %1$ 6d: %2$ 4d", start_pc, line_number);
+		}
+	}
+		
+	class SourceFile_attribute extends attribute_info {
+		int sourcefile_index;
+		SourceFile_attribute(attribute_info base) {
+			attribute_name_index = base.attribute_name_index;
+			attribute_length = base.attribute_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			ByteBuffer buffer = ByteBuffer.wrap(info);
+			sourcefile_index = buffer.getShort() & 0x0000FFFF;
+		}
+		
+		void format(java.io.PrintStream stream) {
+			stream.print("        Source file = " + getUtf8AsString(sourcefile_index));
+		}
+	}
+		
+	class InnerClasses_attribute extends attribute_info {
+		int number_of_classes;
+		inner_class_info[] classes;
+		InnerClasses_attribute(attribute_info base) {
+			attribute_name_index = base.attribute_name_index;
+			attribute_length = base.attribute_length;
+			info = base.info;
+			index = base.index;
+			position = base.position;
+			ByteBuffer buffer = ByteBuffer.wrap(info);
+			number_of_classes = buffer.getShort() & 0x0000FFFF;
+			classes = new inner_class_info[number_of_classes];
+			for (int i = 0; i < number_of_classes; i++) {
+				classes[i] = new inner_class_info();
+				classes[i].inner_class_info_index = buffer.getShort() & 0x0000FFFF;
+				classes[i].outer_class_info_index = buffer.getShort() & 0x0000FFFF;
+				classes[i].inner_name_index = buffer.getShort() & 0x0000FFFF;
+				classes[i].inner_class_access_flags = buffer.getShort() & 0x0000FFFF;
+			}
+		}
+		
+		void format(java.io.PrintStream stream) {
+			for (int i = 0; i < number_of_classes; i++) {
+				stream.println("        #" + i + ":  Inner class CP# = " + classes[i].inner_class_info_index +
+								"  Outer class CP# = " + classes[i].outer_class_info_index + 
+								"  Inner class access flags = 0x" + 
+								Integer.toHexString(classes[i].inner_class_access_flags));
+				if (classes[i].inner_name_index != 0) {
+					stream.println("            Name = " + getUtf8AsString(classes[i].inner_name_index));
+				}
+				else {
+					stream.println("            Anonymous");
+				}
+			}
+		}
+		
+		class inner_class_info {
+			int inner_class_info_index;
+			int outer_class_info_index;
+			int inner_name_index;
+			int inner_class_access_flags;
+		}
+	}
+}
+
+class MalformedClass extends Exception {
+	MalformedClass(int position, String msg) {
+		super("Byte stream offset " + position + ".  " + msg);
+	}
+}
+
+class ConstantPoolEntry {}
+class FieldInfoEntry {}
+class MethodInfoEntry {}
