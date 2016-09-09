@@ -7,14 +7,14 @@
 >
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.technolords.pom</groupId>
-    <artifactId>tools-project</artifactId>
+    <groupId>net.technolords.tools</groupId>
+    <artifactId>artificer</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>Technolords :: Tools :: Parent POM</name>
+    <name>Technolords :: Tools :: Artificer</name>
     <description>
-        The root pom for all Technolords tools related projects
+        A tool that analyses Java jar files, with the purpose of detecting dependencies and patterns.
     </description>
 
     <!--+
@@ -44,14 +44,6 @@
     <scm>
         <connection>scm:git:https://github.com/Technolords/techno-tools</connection>
     </scm>
-
-    <!--+
-        | Modules
-        +-->
-    <modules>
-        <module>artificer</module>
-        <module>silent-load</module>
-    </modules>
 
     <!--+
         | Dependencies
@@ -84,15 +76,14 @@
             <scope>test</scope>
         </dependency>
 
-
     </dependencies>
 
     <!--+
         | Build
         +-->
     <build>
-        <!-- Allow placeholders in files in resources folder to be translated -->
         <resources>
+            <!-- Allow placeholders in files in resources folder to be translated -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
@@ -102,7 +93,6 @@
         <defaultGoal>install</defaultGoal>
 
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -113,8 +103,8 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire plugin configuration -->
             <plugin>
+                <!-- Surefire plugin configuration -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
@@ -152,8 +142,8 @@
                 </executions>
             </plugin>
 
-            <!-- Release plugin configuration-->
             <plugin>
+                <!-- Release plugin configuration-->
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <!-- @ : substitute the values after the version transformation has taken place -->
@@ -162,8 +152,8 @@
                 </configuration>
             </plugin>
 
-            <!-- Source plugin configuration -->
             <plugin>
+                <!-- Source plugin configuration -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven.source.plugin.version}</version>
