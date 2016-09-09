@@ -93,6 +93,7 @@ public class BytecodeParser {
         }
         try {
             JavaSpecification javaSpecification = this.javaSpecificationManager.getSpecification(resource);
+            // TODO: if spec not complete, return (else it will fail -> ConstantPoolParser Optional.get()
             StringBuilder buffer = new StringBuilder();
             buffer.append("About to analyse byte code of: ").append(resource.getName());
             buffer.append(", for JVM spec: ").append((javaSpecification == null ? "None found" : javaSpecification.getVersion()));

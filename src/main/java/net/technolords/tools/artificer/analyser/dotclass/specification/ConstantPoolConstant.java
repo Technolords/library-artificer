@@ -11,7 +11,7 @@ import java.util.List;
 public class ConstantPoolConstant {
     private String type;
     private String tag;
-    List<ConstantPoolInfoFragment> fragments;
+    private List<ConstantPoolInfoFragment> fragments;
 
     public void ConstantPoolConstant() {
         this.fragments = new ArrayList<>();
