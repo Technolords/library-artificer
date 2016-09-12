@@ -147,8 +147,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <!-- @ : substitute the values after the version transformation has taken place -->
-                    <tagNameFormat>${project.artifactId}-@{project.version}-${maven.build.timestamp}</tagNameFormat>
-                    <tagBase>https://github.com/Technolords/techno-tools/releases/${project.artifactId}</tagBase>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
 
