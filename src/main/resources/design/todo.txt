@@ -33,3 +33,12 @@
 
     /analysis/dotmf
         ManifestManager
+
+------------------------------
+The extended idea is to have:
+- [ ] Provide a graphical representation of these .classes, using the groups, packages and weight factors (the actual view)
+- [ ] Identification of patterns applied (identifying the interfaces and implementations of those interfaces)
+- [ ] Generation of a class diagram
+- [ ] Generation of component diagram
+- [ ] Generation of sequence diagram
+- [ ] Create interactive layer with drill down functionality, so visual scope can be manipulated
